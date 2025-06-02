@@ -1,0 +1,33 @@
+# Node modules
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build
+client/build/
+server/dist/
+
+# Logs
+*.log
+
+# Env files
+.env
+.env.*.local
+client/.env
+server/.env
+
+# IDE
+.vscode/
+.idea/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Cache
+.next/
+.cache/
+coverage/
+
+# Uploads or temp
+uploads/
