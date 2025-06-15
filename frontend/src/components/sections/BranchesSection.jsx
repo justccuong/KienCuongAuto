@@ -57,45 +57,53 @@ const branches = [
   },
 ];
 
-const BranchesSlider = () => {
+const BranchesGrid = () => {
   return (
-    <section className="py-12 px-6 bg-white">
-      <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">Hệ thống chi nhánh của chúng tôi</h2>
-      <div className="max-w-6xl mx-auto">
-        <Swiper
-          modules={[Navigation]}
-          spaceBetween={24}
-          slidesPerView={1}
-          breakpoints={{
-            640: { slidesPerView: 1 },
-            768: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
-          }}
-          navigation
-          loop
-        >
-          {branches.map((branch, index) => (
-            <SwiperSlide key={index}>
-              <div className="p-6 bg-gray-50 rounded-2xl shadow-md h-full flex flex-col items-center text-gray-800 transition-transform hover:scale-105 duration-300">
-                <img src={branch.img} alt={branch.name} className="w-3/4 h-64 object-cover rounded-2xl" />
-                <h3 className="text-xl font-semibold mb-2 mt-4 text-center">{branch.name}</h3>
+    <section className="py-12 px-4 bg-white">
+      <h2 className="text-3xl font-bold text-gray-800 text-center mb-10">
+        Hệ thống chi nhánh của chúng tôi
+      </h2>
+
+      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 md:gap-x-10 gap-y-8 px-4">
+        {branches.map((branch, index) => {
+          const isFirst = index === 0;
+          return (
+            <div
+              key={index}
+              className={`
+                ${isFirst ? 'md:col-span-3 md:flex md:justify-center' : ''}
+              `}
+            >
+              <div className="w-full max-w-[350px] bg-gray-50 rounded-2xl shadow-md p-6 flex flex-col items-center text-gray-800 hover:scale-105 transition-transform duration-300 mx-auto">
+                <img
+                  src={branch.img}
+                  alt={branch.name}
+                  className="w-full h-64 object-cover rounded-2xl mb-4"
+                />
+                <h3 className="text-xl font-semibold text-center mb-2">
+                  {branch.name}
+                </h3>
                 <p className="text-center mb-1">
-                  <i className="fas fa-map-marker-alt mr-2" /> {branch.location}
+                  <i className="fas fa-map-marker-alt mr-2" />
+                  {branch.location}
                 </p>
-                <p className="text-center text-lg font-semibold text-gray-700 mt-1">
+                <p className="text-center font-semibold text-gray-700 mt-1">
                   <i className="fas fa-phone-alt mr-2 text-blue-600" />
                   {branch.hotline}
                 </p>
-                <a className="mt-6 w-full" href={branch.link}>
-                  <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Chi tiết</button>
+                <a href={branch.link} className="mt-6 w-full">
+                  <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                    Chi tiết
+                  </button>
                 </a>
               </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+            </div>
+          );
+        })}
       </div>
+
     </section>
   );
 };
 
-export default BranchesSlider;
+export default BranchesGrid;

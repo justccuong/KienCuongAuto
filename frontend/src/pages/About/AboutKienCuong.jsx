@@ -5,7 +5,7 @@ import Header from "../../components/layouts/Header";
 export default function About() {
   return (
     <div className="w-full bg-white text-gray-900">
-      <Header />
+   
 
       <div className="max-w-7xl mx-auto px-6 py-20">
         {/* Tiêu đề chính */}
@@ -93,7 +93,6 @@ export default function About() {
         </div>
       </div>
 
-      <Footer />
     </div>
   );
 }

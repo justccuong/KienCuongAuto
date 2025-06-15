@@ -107,11 +107,11 @@ export default function CarDetail() {
           <div className="bg-white shadow rounded-2xl p-6 grid grid-cols-2 gap-2">
             <span className="font-semibold">Năm:</span><span>{car.year}</span>
             <span className="font-semibold">Số km:</span><span>{car.kilometers}</span>
-            <span className="font-semibold">Loại xe:</span><span>{car.type}</span>
+      
             <span className="font-semibold">Nhiên liệu:</span><span>{car.fuel}</span>
             <span className="font-semibold">Giá:</span><span>{car.price}</span>
             <span className="font-semibold">Trạng thái:</span><span>{car.status}</span>
-            <span className="font-semibold">Hãng:</span><span>{car.brand}</span>
+            <span className="font-semibold">Hãng:</span><span>{car.manufacturer}</span>
             <span className="font-semibold">Màu:</span><span>{car.color}</span>
             <span className="font-semibold">Hệ dẫn động:</span><span>{car.drive}</span>
             <span className="font-semibold">Hộp số:</span><span>{car.gearbox}</span>

@@ -1,18 +1,15 @@
-require("dotenv").config();
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('../utils/cloudinary').cloudinary;
+const { cloudinary } = require('../utils/cloudinary');
 
-// Lưu ảnh lên Cloudinary, folder "cars"
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
+  cloudinary,
   params: {
     folder: 'cars',
-    allowed_formats: ['jpg', 'png', 'jpeg'],
+    allowed_formats: ['jpg', 'jpeg', 'png'],
   },
 });
 
 const upload = multer({ storage });
 
 module.exports = upload;
-
