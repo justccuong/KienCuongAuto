@@ -13,7 +13,7 @@ const isAuthenticated = async (req, res, next) => {
     const user = await User.findById(decoded.id);
     if (!user) return res.status(401).json({ message: "Người dùng không tồn tại" });
 
-    req.user = user; // gắn user vào request
+    req.user = user; 
     next();
   } catch (err) {
     return res.status(401).json({ message: "Token không hợp lệ" });

@@ -4,17 +4,25 @@ const router = express.Router();
 const Car = require('../models/Car');
 const upload = require('../middleware/upload');
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
+const cloudinary = require('../utils/cloudinary');
 
-// POST: Thêm ô tô mới (admin only)
 router.post(
   '/',
-  isAuthenticated, 
-  isAdmin, 
+  isAuthenticated,
+  isAdmin,
   upload.array('images', 11),
   async (req, res) => {
     try {
-      const imageUrls = req.files.map(file => file.path);
-      const newCar = new Car({ ...req.body, images: imageUrls });
+      const images = req.files.map(file => ({
+        url: file.path,
+        public_id: file.filename, 
+      }));
+
+      const newCar = new Car({
+        ...req.body,
+        images: images, 
+      });
+
       await newCar.save();
       res.status(201).json({ message: 'Thêm ô tô thành công!', car: newCar });
     } catch (err) {
@@ -24,11 +32,11 @@ router.post(
   }
 );
 
-// PUT: Sửa thông tin ô tô (admin only)
 router.put(
-  '/:id',
-  isAuthenticated, 
-  isAdmin, 
+  "/:id",
+  isAuthenticated,
+  isAdmin,
+  upload.none(), 
   async (req, res) => {
     const { id } = req.params;
 
@@ -39,7 +47,7 @@ router.put(
     try {
       const updatedCar = await Car.findByIdAndUpdate(id, req.body, {
         new: true,
-        runValidators: true
+        runValidators: true,
       });
 
       if (!updatedCar) {
@@ -54,11 +62,10 @@ router.put(
   }
 );
 
-// DELETE: Xoá ô tô (admin only)
 router.delete(
   '/:id',
-  isAuthenticated, 
-  isAdmin, 
+  isAuthenticated,
+  isAdmin,
   async (req, res) => {
     const { id } = req.params;
 
@@ -67,12 +74,24 @@ router.delete(
     }
 
     try {
-      const deletedCar = await Car.findByIdAndDelete(id);
-      if (!deletedCar) {
+      const car = await Car.findById(id);
+      if (!car) {
         return res.status(404).json({ message: "Không tìm thấy ô tô để xoá" });
       }
 
-      res.status(200).json({ message: "Xoá thành công", car: deletedCar });
+      for (const img of car.images) {
+        if (img.public_id) {
+          try {
+            await cloudinary.uploader.destroy(img.public_id); 
+          } catch (cloudErr) {
+            console.error("❌ Lỗi xoá ảnh:", cloudErr);
+          }
+        }
+      }
+
+      await car.deleteOne();
+
+      res.status(200).json({ message: "Xoá thành công", car });
     } catch (err) {
       console.error("❌ Error deleting car:", err);
       res.status(500).json({ message: "Lỗi server khi xoá ô tô" });
@@ -80,10 +99,45 @@ router.delete(
   }
 );
 
-// GET: Lấy toàn bộ xe
 router.get('/', async (req, res) => {
   try {
-    const cars = await Car.find();
+    const {
+      name, 
+      branch,
+      status,
+      color,
+      drive,
+      gearbox,
+      condition,
+      fuel,
+      manufacturer,
+      installment,
+      quality,
+    } = req.query;
+
+    let query = {};
+
+    if (name) {
+      query.name = new RegExp(name, "i");
+    }
+
+    // Helper: thêm các filter khác nếu có
+    const addQuery = (key, value) => {
+      if (value) query[key] = new RegExp(`^${value}$`, "i");
+    };
+
+    addQuery("branch", branch);
+    addQuery("status", status);
+    addQuery("color", color);
+    addQuery("drive", drive);
+    addQuery("gearbox", gearbox);
+    addQuery("condition", condition);
+    addQuery("fuel", fuel);
+    addQuery("manufacturer", manufacturer);
+    addQuery("installment", installment);
+    addQuery("quality", quality);
+
+    const cars = await Car.find(query);
     res.json(cars);
   } catch (err) {
     console.error("❌ Error getting cars:", err);
@@ -91,7 +145,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET: Lấy chi tiết xe
 router.get('/detail/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -113,3 +166,4 @@ router.get('/detail/:id', async (req, res) => {
 });
 
 module.exports = router;
+

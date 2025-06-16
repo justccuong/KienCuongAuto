@@ -91,7 +91,7 @@ const BranchesPage = () => {
                 </div>
                 <a
                   href={branch.link}
-                  className="inline-block w-full text-center mt-2 bg-red-600 text-white py-2 rounded-xl font-medium hover:bg-red-700 transition"
+                  className="inline-block w-full text-center mt-2 bg-gray-200 text-white py-2 rounded-xl font-medium hover:bg-gray-400 transition"
                 >
                   Xem xe tại chi nhánh
                 </a>

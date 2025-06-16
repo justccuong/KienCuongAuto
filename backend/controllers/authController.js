@@ -5,8 +5,8 @@ const token = jwt.sign(
 );
 
 res.cookie("token", token, {
-  httpOnly: true,     // Không đọc được bằng JS
-  secure: true,       // Chỉ gửi qua HTTPS (trên production)
-  sameSite: "strict", // Chống CSRF
-  maxAge: 86400000,   // 1 ngày
+  httpOnly: true,     
+  secure: true,       
+  sameSite: "strict",
+  maxAge: 86400000,   
 }).json({ message: "Login success" });

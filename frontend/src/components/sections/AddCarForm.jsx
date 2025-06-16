@@ -65,7 +65,7 @@ const OPTIONS = {
   ],
   installment: [
     "Không hỗ trợ trả góp",
-    "Chỉ cần trả trước khoảng 30-35% giá trị xe",
+    "Hỗ trợ trả góp lên tới 70% giá trị xe",
   ],
   quality: [
     "Khuyến khích khách hàng đưa xe đi check test ở gara uy tín",
@@ -144,7 +144,7 @@ const AddCarForm = () => {
     console.log(formData); 
 
     try {
-      const res = await fetch("http://localhost:5000/api/cars", {
+      const res = await fetch("/api/cars", {
         method: "POST",
         body: data,
         credentials: "include",

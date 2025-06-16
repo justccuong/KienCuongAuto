@@ -4,11 +4,14 @@ import { Autoplay } from "swiper/modules";
 import "swiper/css";
 
 const banners = [
-  "/banner/1.jpg",
-  "/banner/2.jpg",
-  "/banner/3.jpg",
-  "/banner/4.jpg",
-  "/banner/5.jpg",
+  "/anh-co-so/truso.jpg",
+  "/anh-co-so/cs1.jpg",
+  "/anh-co-so/cs2.jpg",
+  "/anh-co-so/cs4.jpg",
+  "/anh-co-so/cs5.jpg",
+  "/anh-co-so/cs6.jpg",
+  "/anh-co-so/cs7.jpg",
+
 ];
 
 const HeroSection = () => (

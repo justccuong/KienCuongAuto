@@ -1,12 +1,13 @@
-const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const { cloudinary } = require('../utils/cloudinary');
+const multer = require('multer');
+const cloudinary = require('../utils/cloudinary'); 
 
 const storage = new CloudinaryStorage({
-  cloudinary,
+  cloudinary: cloudinary, 
   params: {
-    folder: 'cars',
-    allowed_formats: ['jpg', 'jpeg', 'png'],
+    folder: 'kiencuong_cars', 
+    allowed_formats: ['jpg', 'png', 'jpeg'],
+    transformation: [{ width: 800, height: 600, crop: 'limit' }],
   },
 });
 

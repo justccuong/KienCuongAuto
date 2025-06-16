@@ -1,34 +1,40 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import OptimizedImage from "../input/OptimizedImage";
 
 const CarSearchBar = () => {
   const [cars, setCars] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/cars");
-        const data = await res.json();
-        setCars(Array.isArray(data) ? data : data.cars || []);
-      } catch (error) {
-        console.error("Lỗi fetch xe:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const delayDebounce = setTimeout(() => {
+      const fetchCars = async () => {
+        if (!searchTerm) {
+          setCars([]);
+          return;
+        }
 
-    fetchCars();
-  }, []);
+        setLoading(true);
+        try {
+          const res = await fetch(
+            `/api/cars?name=${encodeURIComponent(searchTerm)}`
+          );
+          const data = await res.json();
+          setCars(Array.isArray(data) ? data : data.cars || []);
+        } catch (error) {
+          console.error("Lỗi fetch xe:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-  const filteredCars = (cars || []).filter(
-    (car) =>
-      typeof car.name === "string" &&
-      car.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      fetchCars();
+    }, 400); // delay 400ms
+
+    return () => clearTimeout(delayDebounce); // clear timeout nếu user gõ tiếp
+  }, [searchTerm]);
 
   const handleClick = (id) => {
     navigate(`/cars/${id}`);
@@ -49,19 +55,21 @@ const CarSearchBar = () => {
         <ul className="absolute left-0 right-0 z-10 mt-1 max-h-60 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg">
           {loading ? (
             <li className="px-4 py-2 italic text-gray-500">Đang tải dữ liệu...</li>
-          ) : filteredCars.length > 0 ? (
-            filteredCars.map((car) => (
+          ) : cars.length > 0 ? (
+            cars.map((car) => (
               <li
-                key={car._id || car.id}
+                key={car._id}
                 className="flex items-center justify-between px-4 py-2 hover:bg-blue-100 cursor-pointer"
-                onClick={() => handleClick(car._id || car.id)}
+                onClick={() => handleClick(car._id)}
               >
                 <div className="flex items-center gap-2">
                   {Array.isArray(car.images) && car.images.length > 0 && (
-                    <img
-                      src={car.images[0]}
+                    <OptimizedImage
+                      src={car.images?.[0]?.url}
                       alt={car.name}
-                      className="w-10 h-10 object-cover rounded-md"
+                      width={360}
+                      height={360}
+                      className="w-full h-5 object-cover rounded"
                     />
                   )}
                   <span>{car.name} ({car.year})</span>

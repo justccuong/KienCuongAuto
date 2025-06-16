@@ -12,22 +12,20 @@ router.post("/register", async (req, res) => {
   const { name, phone, email, password, role } = req.body;
 
   try {
-    // ✅ Kiểm tra email đã tồn tại chưa
+ 
     const userExist = await User.findOne({ email });
     if (userExist) {
       return res.status(400).json({ msg: "Email đã tồn tại" });
     }
 
-    // ✅ Hash mật khẩu
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ✅ Tạo user mới
     const newUser = new User({
       name,
       phone,
       email,
       password: hashedPassword,
-      role: role || "user" // hoặc có thể hardcode luôn: role: "user"
+      role: role || "user"
     });
 
     await newUser.save();
@@ -44,15 +42,12 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // ✅ Tìm user
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ msg: "Email không đúng" });
 
-    // ✅ So sánh mật khẩu
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ msg: "Sai mật khẩu" });
 
-    // ✅ Tạo token
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -65,7 +60,6 @@ router.post("/login", async (req, res) => {
       secure: false       // true nếu dùng HTTPS
     });
 
-    // ✅ Trả về token + user info (không gồm mật khẩu)
     res.status(200).json({
       token,
       user: {
@@ -99,4 +93,35 @@ router.post("/logout", (req, res) => {
   });
   res.status(200).json({ msg: "Đăng xuất thành công" });
 });
+
+// =================== CẬP NHẬT THÔNG TIN CÁ NHÂN ===================
+router.put("/me", verifyToken, async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ msg: "Không tìm thấy người dùng" });
+
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+
+    await user.save();
+
+    res.status(200).json({
+      msg: "Cập nhật thông tin thành công",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error("❌ Lỗi khi cập nhật thông tin:", err);
+    res.status(500).json({ msg: "Lỗi server khi cập nhật thông tin cá nhân" });
+  }
+});
+
+
 module.exports = router;

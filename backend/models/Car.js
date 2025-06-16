@@ -17,7 +17,15 @@ const carSchema = new mongoose.Schema({
   condition: String,
   doors: Number,
   seats: Number,
-  images: [String],
+  engineCapacity: String,
+  installment: String,
+  quality: String,
+  images: [
+    {
+      url: String,
+      public_id: String,
+    }
+  ],
  
 });
 

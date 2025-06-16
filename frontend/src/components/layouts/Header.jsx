@@ -66,8 +66,12 @@ const Header = () => {
           <a className="ct-top-menu-item" href="/home">TRANG CHỦ</a>
           <a className="ct-top-menu-item" href="/about-kien-cuong">VỀ KIÊN CƯỜNG</a>
           <a className="ct-top-menu-item" href="/branches">CÁC CHI NHÁNH</a>
-          <a className="ct-top-menu-item" href="/about-kien-cuong">TÌM MUA XE</a>
-          <a className="ct-top-menu-item" href="/contact">LIÊN HỆ</a>
+          <a className="ct-top-menu-item" href="/find-car">TÌM MUA XE</a>
+          {user?.role === "admin" && (
+            <a className="ct-top-menu-item text-red-600 font-semibold" href="/admin">
+              QUẢN LÝ XE
+            </a>
+          )}
         </nav>
 
         {/* Desktop Account */}
@@ -115,8 +119,12 @@ const Header = () => {
             <a href="/home" className="ct-top-menu-item block py-1">TRANG CHỦ</a>
             <a href="/about-kien-cuong" className="ct-top-menu-item block py-1">VỀ KIÊN CƯỜNG</a>
             <a href="/branches" className="ct-top-menu-item block py-1">CÁC CHI NHÁNH</a>
-            <a href="/about-kien-cuong" className="ct-top-menu-item block py-1">TÌM MUA XE</a>
-            <a href="/contact" className="ct-top-menu-item block py-1">LIÊN HỆ</a>
+            <a href="/find-car" className="ct-top-menu-item block py-1">TÌM MUA XE</a>
+            {user?.role === "admin" && (
+              <a href="/admin" className="ct-top-menu-item block py-1 text-red-600 font-semibold">
+                QUẢN LÝ XE
+              </a>
+            )}
             <div className="border-t pt-3 mt-2">
               {user ? (
                 <>
