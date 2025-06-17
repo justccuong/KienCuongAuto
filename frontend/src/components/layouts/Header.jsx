@@ -9,11 +9,10 @@ const Header = () => {
   const menuRef = useRef(null);
   const toggleRef = useRef(null);
 
-  // 👀 Fetch user info nếu đã đăng nhập
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await api.get("/api/auth/me", {
+        const res = await api.get("/auth/me", {
           withCredentials: true,
         });
         setUser(res.data);
@@ -24,10 +23,9 @@ const Header = () => {
     fetchUser();
   }, []);
 
-  // 👋 Logout
   const handleLogout = async () => {
     try {
-      await api.post("/api/auth/logout", {}, {
+      await api.post("/auth/logout", {}, {
         withCredentials: true,
       });
       setUser(null);

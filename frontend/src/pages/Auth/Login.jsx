@@ -18,7 +18,7 @@ const Login = () => {
     setLoading(true);
     try {
       await api.post(
-        "/api/auth/login",
+        "/auth/login",
         { email, password },
         { withCredentials: true }
       );

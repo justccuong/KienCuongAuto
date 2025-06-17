@@ -144,7 +144,7 @@ const AddCarForm = () => {
     console.log(formData); 
 
     try {
-      const res = await fetch("/api/cars", {
+      const res = await fetch("/cars", {
         method: "POST",
         body: data,
         credentials: "include",

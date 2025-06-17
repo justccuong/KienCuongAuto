@@ -20,7 +20,7 @@ const BranchDetail = () => {
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const res = await api.get("/api/branches");
+        const res = await api.get("/branches");
         setBranches(res.data);
 
         const matched = res.data.find((b) => b.id === id);
@@ -37,7 +37,7 @@ const BranchDetail = () => {
     const fetchCars = async () => {
       if (!branch?.name) return;
       try {
-        const res = await api.get(`/api/cars?branch=${encodeURIComponent(branch.name)}`);
+        const res = await api.get(`/cars?branch=${encodeURIComponent(branch.name)}`);
         setCars(res.data);
       } catch (error) {
         console.error("❌ Lỗi khi lấy danh sách xe:", error);

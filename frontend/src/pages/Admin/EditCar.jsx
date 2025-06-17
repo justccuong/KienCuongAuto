@@ -41,7 +41,7 @@ const EditCarForm = () => {
   useEffect(() => {
     const fetchCar = async () => {
       try {
-        const res = await api.get(`/api/cars/detail/${carId}`);
+        const res = await api.get(`/cars/detail/${carId}`);
         setFormData(res.data.car); // giống AdminOverview
       } catch (err) {
         console.error("Lỗi khi fetch chi tiết xe:", err);
@@ -62,7 +62,7 @@ const EditCarForm = () => {
     e.preventDefault();
     try {
       const res = await api.put(
-        `/api/cars/${carId}`,
+        `/cars/${carId}`,
         formData,
         {
           withCredentials: true,

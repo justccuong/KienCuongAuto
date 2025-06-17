@@ -24,7 +24,7 @@ const Overview = () => {
       setLoading(true);
       try {
         const res = await axios.get(
-          `/api/cars?branch=${encodeURIComponent(selectedBranch)}`
+          `/cars?branch=${encodeURIComponent(selectedBranch)}`
         );
         setCars(res.data);
       } catch (err) {
@@ -41,7 +41,7 @@ const Overview = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Xác nhận xoá xe này?")) return;
     try {
-      await axios.delete(`/api/cars/${id}`);
+      await axios.delete(`/cars/${id}`);
       setCars((prev) => prev.filter((c) => c._id !== id));
     } catch (err) {
       console.error("Lỗi khi xoá xe: ", err);

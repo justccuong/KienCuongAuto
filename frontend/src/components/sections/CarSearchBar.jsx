@@ -19,7 +19,7 @@ const CarSearchBar = () => {
         setLoading(true);
         try {
           const res = await fetch(
-            `/api/cars?name=${encodeURIComponent(searchTerm)}`
+            `/cars?name=${encodeURIComponent(searchTerm)}`
           );
           const data = await res.json();
           setCars(Array.isArray(data) ? data : data.cars || []);

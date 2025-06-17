@@ -13,17 +13,17 @@ export default function CarDetail() {
   useEffect(() => {
     const fetchCar = async () => {
       try {
-        const res = await api.get(`/api/cars/detail/${id}`);
+        const res = await api.get(`/cars/detail/${id}`);
         const carData = res.data.car;
         setCar(carData);
 
         // 🏢 Lấy thông tin chi nhánh tương ứng theo name
-        const branchRes = await api.get(`/api/branches`);
+        const branchRes = await api.get(`/branches`);
         const foundBranch = branchRes.data.find((b) => b.name === carData.branch);
         setBranch(foundBranch);
 
         // 🚗 Fetch xe liên quan cùng chi nhánh
-        const relatedRes = await api.get(`/api/cars?branch=${encodeURIComponent(carData.branch)}`);
+        const relatedRes = await api.get(`/cars?branch=${encodeURIComponent(carData.branch)}`);
         const filteredCars = relatedRes.data.filter((c) => c._id !== carData._id);
         const randomCars = filteredCars.sort(() => 0.5 - Math.random()).slice(0, 3);
         setRelatedCars(randomCars);

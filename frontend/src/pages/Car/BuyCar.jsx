@@ -92,7 +92,7 @@ const FindCarPage = () => {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const res = await api.get("/api/cars", { params: filters });
+        const res = await api.get("/cars", { params: filters });
         const filtered = res.data.filter((car) => {
           const matchesSearch = Object.values(car).join(" ").toLowerCase().includes(search.toLowerCase());
           const matchesMinPrice = minPrice ? car.price >= parseInt(minPrice) : true;

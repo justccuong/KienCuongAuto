@@ -11,7 +11,7 @@ const AddCar = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await api.get("/api/auth/me", {
+        const res = await api.get("/auth/me", {
           withCredentials: true,
         });
         setUser(res.data); // -> nên log ra nếu cần debug: console.log("User info:", res.data);
