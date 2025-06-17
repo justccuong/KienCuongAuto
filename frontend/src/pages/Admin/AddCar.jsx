@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddCarForm from "../../components/sections/AddCarForm";
-import axios from "axios";
+import api from "../../utils/axios";
 
 const AddCar = () => {
   const [user, setUser] = useState(null);
@@ -11,7 +11,7 @@ const AddCar = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("/api/auth/me", {
+        const res = await api.get("/api/auth/me", {
           withCredentials: true,
         });
         setUser(res.data); // -> nên log ra nếu cần debug: console.log("User info:", res.data);

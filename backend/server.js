@@ -17,8 +17,18 @@ app.use(compression());
 app.use(cookieParser());
 
 const allowedOrigins = [
-  process.env.CLIENT_URL,              // = https://kiencuongauto.vn
-  "http://localhost:4173",             // Cho phép khi preview frontend
+  // 🌐 Production domains
+  "https://kiencuongauto.vn",
+  "https://www.kiencuongauto.vn",
+  "http://kiencuongauto.vn",
+  "http://www.kiencuongauto.vn",
+
+  // 🧪 Local dev
+  "http://localhost:5000",   // FE dev mode (Vite default)
+  "http://localhost:4173",
+
+  // 🔐 Dùng biến môi trường nếu muốn linh hoạt
+  process.env.CLIENT_URL,
 ];
 
 app.use(cors({
@@ -56,7 +66,7 @@ app.use("/api/branches", branchRoutes);
 const path = require("path");
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-app.get("*", (req, res) => {
+app.get("/{*any}", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 

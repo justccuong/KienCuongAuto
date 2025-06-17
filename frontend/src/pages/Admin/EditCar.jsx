@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../utils/axios";
 import { useParams } from "react-router-dom";
 
 const OPTIONS = {
@@ -41,7 +41,7 @@ const EditCarForm = () => {
   useEffect(() => {
     const fetchCar = async () => {
       try {
-        const res = await axios.get(`/api/cars/detail/${carId}`);
+        const res = await api.get(`/api/cars/detail/${carId}`);
         setFormData(res.data.car); // giống AdminOverview
       } catch (err) {
         console.error("Lỗi khi fetch chi tiết xe:", err);
@@ -61,7 +61,7 @@ const EditCarForm = () => {
     const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(
+      const res = await api.put(
         `/api/cars/${carId}`,
         formData,
         {

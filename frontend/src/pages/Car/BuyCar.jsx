@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/axios";
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
@@ -92,7 +92,7 @@ const FindCarPage = () => {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const res = await axios.get("/api/cars", { params: filters });
+        const res = await api.get("/api/cars", { params: filters });
         const filtered = res.data.filter((car) => {
           const matchesSearch = Object.values(car).join(" ").toLowerCase().includes(search.toLowerCase());
           const matchesMinPrice = minPrice ? car.price >= parseInt(minPrice) : true;

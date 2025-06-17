@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../utils/axios";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -17,7 +17,7 @@ const Login = () => {
     setError("");
     setLoading(true);
     try {
-      await axios.post(
+      await api.post(
         "/api/auth/login",
         { email, password },
         { withCredentials: true }

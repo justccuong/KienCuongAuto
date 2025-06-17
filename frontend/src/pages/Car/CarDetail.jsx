@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/axios";
 
 export default function CarDetail() {
   const { id } = useParams();
@@ -13,17 +13,17 @@ export default function CarDetail() {
   useEffect(() => {
     const fetchCar = async () => {
       try {
-        const res = await axios.get(`/api/cars/detail/${id}`);
+        const res = await api.get(`/api/cars/detail/${id}`);
         const carData = res.data.car;
         setCar(carData);
 
         // 🏢 Lấy thông tin chi nhánh tương ứng theo name
-        const branchRes = await axios.get(`/api/branches`);
+        const branchRes = await api.get(`/api/branches`);
         const foundBranch = branchRes.data.find((b) => b.name === carData.branch);
         setBranch(foundBranch);
 
         // 🚗 Fetch xe liên quan cùng chi nhánh
-        const relatedRes = await axios.get(`/api/cars?branch=${encodeURIComponent(carData.branch)}`);
+        const relatedRes = await api.get(`/api/cars?branch=${encodeURIComponent(carData.branch)}`);
         const filteredCars = relatedRes.data.filter((c) => c._id !== carData._id);
         const randomCars = filteredCars.sort(() => 0.5 - Math.random()).slice(0, 3);
         setRelatedCars(randomCars);

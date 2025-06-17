@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import CarSearchBar from "../sections/CarSearchBar";
-import axios from "axios";
+import api from "../../utils/axios";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +13,7 @@ const Header = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/me", {
+        const res = await api.get("/api/auth/me", {
           withCredentials: true,
         });
         setUser(res.data);
@@ -27,7 +27,7 @@ const Header = () => {
   // 👋 Logout
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:5000/api/auth/logout", {}, {
+      await api.post("/api/auth/logout", {}, {
         withCredentials: true,
       });
       setUser(null);

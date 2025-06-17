@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../utils/axios";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -25,7 +25,7 @@ const Signup = () => {
     setError("");
     setLoading(true);
     try {
-      await axios.post("/api/auth/register", form, {
+      await api.post("/api/auth/register", form, {
         withCredentials: true
       });
       navigate("/home");

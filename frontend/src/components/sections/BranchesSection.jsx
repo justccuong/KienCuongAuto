@@ -91,10 +91,11 @@ const BranchesGrid = () => {
                   <i className="fas fa-phone-alt mr-2 text-blue-600" />
                   {branch.hotline}
                 </p>
-                <a href={branch.link} className="mt-6 w-full">
-                  <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
-                    Chi tiết
-                  </button>
+                <a
+                  href={branch.link}
+                  className="inline-block w-full text-center mt-2 bg-gray-200 text-white py-2 rounded-xl font-medium hover:bg-gray-400 transition"
+                >
+                  Xem xe tại chi nhánh
                 </a>
               </div>
             </div>

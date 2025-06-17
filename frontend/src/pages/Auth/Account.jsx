@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/axios";
 import { toast } from "react-toastify";
 
 const AccountPage = () => {
@@ -12,7 +12,7 @@ const AccountPage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("/api/auth/me");
+        const res = await api.get("/api/auth/me");
         setUser(res.data);
         setName(res.data.name || "");
         setPhone(res.data.phone || "");
@@ -27,7 +27,7 @@ const AccountPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.put("/api/auth/me", { name, phone });
+      const res = await api.put("/api/auth/me", { name, phone });
       setUser(res.data.user);
       toast.success("✅ Cập nhật thành công!");
     } catch (err) {
