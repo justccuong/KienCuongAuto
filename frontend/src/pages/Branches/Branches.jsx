@@ -80,18 +80,25 @@ const BranchesPage = () => {
               </div>
 
               <div className="p-6">
-                <h3 className="text-xl font-bold text-red-600 mb-2">{branch.name}</h3>
+                <h3 className="text-xl font-bold text-black mb-2">{branch.name}</h3>
                 <div className="text-sm text-gray-700 mb-1 flex items-center">
-                  <i className="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                  <i className="fas fa-map-marker-alt text-green-500 mr-2"></i>
                   <span>{branch.location}</span>
                 </div>
                 <div className="text-sm text-gray-700 mb-3 flex items-center">
-                  <i className="fas fa-phone-alt text-red-500 mr-2"></i>
+                  <i className="fas fa-phone-alt text-blue-500 mr-2"></i>
                   <span>{branch.hotline}</span>
                 </div>
                 <a
                   href={branch.link}
-                  className="inline-block w-full text-center mt-2 bg-gray-200 text-white py-2 rounded-xl font-medium hover:bg-gray-400 transition"
+                  className="
+                      inline-block w-full text-center mt-auto
+                      bg-red-600 text-white py-2 px-4 
+                      rounded-xl font-semibold 
+                      hover:bg-red-700 
+                      shadow-md hover:shadow-lg 
+                      transition duration-300
+                    "
                 >
                   Xem xe tại chi nhánh
                 </a>

@@ -64,45 +64,48 @@ const BranchesGrid = () => {
         Hệ thống chi nhánh của chúng tôi
       </h2>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 md:gap-x-10 gap-y-8 px-4">
-        {branches.map((branch, index) => {
-          const isFirst = index === 0;
-          return (
-            <div
-              key={index}
-              className={`
-                ${isFirst ? 'md:col-span-3 md:flex md:justify-center' : ''}
-              `}
+      <div className="
+        max-w-6xl mx-auto 
+        grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 
+        gap-8
+      ">
+        {branches.map((branch, index) => (
+          <div
+            key={index}
+            className="w-full bg-gray-50 rounded-2xl shadow-md p-6 flex flex-col items-center text-gray-800 hover:scale-105 transition-transform duration-300"
+          >
+            <img
+              src={branch.img}
+              alt={branch.name}
+              className="w-full h-64 object-cover rounded-2xl mb-4"
+            />
+            <h3 className="text-xl font-semibold text-center mb-2">
+              {branch.name}
+            </h3>
+            <p className="text-center mb-1 text-sm">
+              <i className="fas fa-map-marker-alt mr-2" />
+              {branch.location}
+            </p>
+            <p className="text-center font-semibold text-gray-700 mt-1 text-sm">
+              <i className="fas fa-phone-alt mr-2 text-blue-600" />
+              {branch.hotline}
+            </p>
+            <a
+              href={branch.link}
+              className="
+                inline-block w-full text-center mt-auto
+                bg-red-600 text-white py-2 px-4 
+                rounded-xl font-semibold 
+                hover:bg-red-700 
+                shadow-md hover:shadow-lg 
+                transition duration-300
+              "
             >
-              <div className="w-full max-w-[350px] bg-gray-50 rounded-2xl shadow-md p-6 flex flex-col items-center text-gray-800 hover:scale-105 transition-transform duration-300 mx-auto">
-                <img
-                  src={branch.img}
-                  alt={branch.name}
-                  className="w-full h-64 object-cover rounded-2xl mb-4"
-                />
-                <h3 className="text-xl font-semibold text-center mb-2">
-                  {branch.name}
-                </h3>
-                <p className="text-center mb-1">
-                  <i className="fas fa-map-marker-alt mr-2" />
-                  {branch.location}
-                </p>
-                <p className="text-center font-semibold text-gray-700 mt-1">
-                  <i className="fas fa-phone-alt mr-2 text-blue-600" />
-                  {branch.hotline}
-                </p>
-                <a
-                  href={branch.link}
-                  className="inline-block w-full text-center mt-2 bg-gray-200 text-white py-2 rounded-xl font-medium hover:bg-gray-400 transition"
-                >
-                  Xem xe tại chi nhánh
-                </a>
-              </div>
-            </div>
-          );
-        })}
+              Xem xe tại chi nhánh
+            </a>
+          </div>
+        ))}
       </div>
-
     </section>
   );
 };

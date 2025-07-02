@@ -107,6 +107,21 @@ const FindCarPage = () => {
     fetchCars();
   }, [filters, search, minPrice, maxPrice]);
 
+  const [branches, setBranches] = useState([]);
+
+    useEffect(() => {
+      const fetchBranches = async () => {
+        try {
+          const res = await api.get("/branches");
+          setBranches(res.data);
+        } catch (err) {
+          console.error("Lỗi khi lấy chi nhánh:", err);
+        }
+      };
+
+      fetchBranches();
+    }, []);
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Tìm mua ô tô</h1>
@@ -155,22 +170,32 @@ const FindCarPage = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cars.map((car) => (
-          <Link
-            to={`/cars/${car._id}`}
-            key={car._id}
-            className="border rounded p-4 shadow hover:scale-105 transform transition-all duration-200 block"
+        {cars.map((car) => {
+          const branchInfo = branches.find(b => b.name === car.branch);
+
+          return (
+            <Link
+              to={`/cars/${car._id}`}
+              key={car._id}
+              className="border rounded p-4 shadow hover:scale-105 transform transition-all duration-200 block"
             >
-            <img
+              <img
                 src={car.images?.[0]?.url || "/placeholder.png"}
                 alt={car.name}
                 className="w-full h-48 object-cover rounded mb-2"
-            />
-            <h2 className="font-semibold text-xl mb-1">{car.name}</h2>
-            <p className="text-red-600 font-bold text-lg">{car.price} triệu</p>
-            <p className="text-sm text-gray-500">{car.branch}</p>
+              />
+              <h2 className="font-semibold text-xl mb-1">{car.name}</h2>
+              <p className="text-red-600 font-bold text-lg">{car.price} triệu</p>
+              <p className="text-sm text-gray-500">{car.branch}</p>
+
+              {branchInfo && (
+                <p className="text-sm text-blue-600 font-semibold">
+                  ☎️ {branchInfo.hotline}
+                </p>
+              )}
             </Link>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
