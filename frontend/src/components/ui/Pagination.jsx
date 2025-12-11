@@ -9,13 +9,11 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const [inputPage, setInputPage] = useState("");
 
-  // Nếu ít hơn hoặc bằng 1 trang thì ẩn luôn
   if (totalPages <= 1) return null;
 
-  // Logic tạo danh sách trang (Hiển thị rút gọn 1,2,3 ... 10)
   const renderPageNumbers = () => {
     const pageNumbers = [];
-    const maxVisibleButtons = 5; // Số nút tối đa hiển thị
+    const maxVisibleButtons = 5; 
 
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, currentPage + 2);
@@ -33,14 +31,13 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
     return pageNumbers;
   };
 
-  // Xử lý khi nhập số trang
   const handleInputSubmit = (e) => {
     e.preventDefault();
     const pageNumber = parseInt(inputPage);
     
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       onPageChange(pageNumber);
-      setInputPage(""); // Reset ô nhập
+      setInputPage(""); 
     } else {
       alert(`Vui lòng nhập số trang từ 1 đến ${totalPages}`);
     }
@@ -49,9 +46,8 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
   return (
     <div className="flex flex-col md:flex-row justify-center items-center gap-4 mt-12 text-gray-600">
       
-      {/* 1. DÃY NÚT BẤM */}
       <div className="flex items-center gap-2">
-        {/* Nút về Đầu (<<) */}
+        
         <button
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
@@ -63,7 +59,6 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
           <FaAngleDoubleLeft />
         </button>
 
-        {/* Nút Lùi (<) */}
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -74,7 +69,6 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
           <FaChevronLeft />
         </button>
 
-        {/* Các số trang (1 2 3...) */}
         {renderPageNumbers().map((number) => (
           <button
             key={number}
@@ -89,7 +83,6 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
           </button>
         ))}
 
-        {/* Nút Tiến (>) */}
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
@@ -100,7 +93,6 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
           <FaChevronRight />
         </button>
 
-        {/* Nút về Cuối (>>) */}
         <button
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages}
@@ -113,7 +105,6 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
         </button>
       </div>
 
-      {/* 2. Ô NHẬP TRANG (GO TO) */}
       <form onSubmit={handleInputSubmit} className="flex items-center gap-2 pl-4 border-l border-gray-300">
         <span className="text-sm">Đến trang:</span>
         <input

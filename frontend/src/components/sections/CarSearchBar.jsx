@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import OptimizedImage from "../input/OptimizedImage";
-import api from "../../utils/axios"; // Nhớ import cái này để nó nhận đúng port 5000
+import api from "../../utils/axios"; 
 
 const CarSearchBar = () => {
   const [cars, setCars] = useState([]);
@@ -10,7 +10,6 @@ const CarSearchBar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Debounce: Chờ user gõ xong 500ms mới gọi API cho đỡ lag server
     const delayDebounce = setTimeout(() => {
       const fetchCars = async () => {
         if (!searchTerm.trim()) {
@@ -20,11 +19,8 @@ const CarSearchBar = () => {
 
         setLoading(true);
         try {
-          // Dùng api instance thay vì fetch thường
           const res = await api.get(`/cars?name=${encodeURIComponent(searchTerm)}`);
           
-          // Axios trả data trong res.data
-          // Check kỹ logic backend trả về mảng hay object
           const result = res.data;
           setCars(Array.isArray(result) ? result : result.cars || []);
         } catch (error) {
@@ -43,8 +39,8 @@ const CarSearchBar = () => {
 
   const handleClick = (id) => {
     navigate(`/cars/${id}`);
-    setSearchTerm(""); // Chọn xong thì xóa text đi cho gọn
-    setCars([]);       // Ẩn luôn danh sách gợi ý
+    setSearchTerm(""); 
+    setCars([]);      
   };
 
   return (
@@ -57,10 +53,8 @@ const CarSearchBar = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
       
-      {/* Icon search */}
       <i className="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
 
-      {/* Dropdown kết quả */}
       {searchTerm && (
         <ul className="absolute left-0 right-0 z-50 mt-2 max-h-80 overflow-y-auto bg-white border border-gray-100 rounded-xl shadow-2xl animate-fade-in-down">
           {loading ? (
@@ -74,7 +68,6 @@ const CarSearchBar = () => {
                 className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 cursor-pointer border-b last:border-none transition-colors"
                 onClick={() => handleClick(car._id)}
               >
-                {/* Ảnh thumbnail - Đã chỉnh lại size cho đẹp */}
                 <div className="w-14 h-10 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                   {car.images && car.images.length > 0 ? (
                     <OptimizedImage
@@ -91,7 +84,6 @@ const CarSearchBar = () => {
                   )}
                 </div>
 
-                {/* Thông tin xe */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-gray-800 truncate">{car.name}</p>
                   <p className="text-xs text-gray-500 flex justify-between">

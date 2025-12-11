@@ -1,36 +1,30 @@
 import React from "react";
 
-// Bảng màu Full Option chuẩn Showroom ⭐️
+
 const COLOR_MAP = {
-  // Cơ bản
+
   "Màu Trắng": "#FFFFFF",
   "Màu Đen": "#000000",
   "Màu Xám (Grey)": "#4B5563",
   "Màu Bạc (Silver)": "linear-gradient(135deg, #E5E7EB 0%, #9CA3AF 100%)",
-  
-  // Tông Đỏ/Cam/Vàng
   "Màu Đỏ": "#DC2626",
-  "Màu Đỏ Đô": "#991B1B", // Dark Red
+  "Màu Đỏ Đô": "#991B1B", 
   "Màu Cam": "#EA580C",
   "Màu Vàng": "#FACC15",
-  "Màu Vàng Cát": "#D4A017", // Metallic Gold
-  "Màu Vàng Đồng": "#B45309", // Bronze
-  "Màu Champagne": "#FDE68A", // Vàng nhạt sang trọng
+  "Màu Vàng Cát": "#D4A017", 
+  "Màu Vàng Đồng": "#B45309",
+  "Màu Champagne": "#FDE68A", 
   "Màu Be (Beige)": "#F5F5DC",
-
-  // Tông Xanh
   "Màu Xanh (Blue)": "#2563EB",
-  "Màu Xanh Đen (Cavansite)": "#172554", // Deep Blue
+  "Màu Xanh Đen (Cavansite)": "#172554", 
   "Màu Xanh Lá": "#16A34A",
-  "Màu Xanh Ngọc": "#0D9488", // Teal
+  "Màu Xanh Ngọc": "#0D9488",
   "Màu Xanh Rêu": "#3F6212",
-  
-  // Tông Nâu/Tím/Khác
   "Màu Nâu (Cafe)": "#451a03",
   "Màu Nâu Đất": "#78350F",
   "Màu Tím": "#7C3AED",
   "Màu Hồng": "#DB2777",
-  "Màu Titan": "linear-gradient(135deg, #374151 0%, #111827 100%)", // Titan
+  "Màu Titan": "linear-gradient(135deg, #374151 0%, #111827 100%)",
 };
 
 const ColorSelect = ({ label, name, value, options, onChange }) => {
@@ -45,7 +39,6 @@ const ColorSelect = ({ label, name, value, options, onChange }) => {
   const getBackgroundStyle = (colorName) => {
     let bg = COLOR_MAP[colorName];
     if (!bg) {
-        // Fallback thông minh
         const lower = colorName.toLowerCase();
         if (lower.includes('trắng')) bg = '#FFFFFF';
         else if (lower.includes('đen')) bg = '#000000';
@@ -62,7 +55,7 @@ const ColorSelect = ({ label, name, value, options, onChange }) => {
         {label}
       </span>
       
-      <div className="flex flex-wrap gap-2.5"> {/* Giảm gap chút cho gọn */}
+      <div className="flex flex-wrap gap-2.5"> 
         {options.map((opt) => {
           const bgStyle = getBackgroundStyle(opt);
           const isSelected = value === opt;
@@ -72,7 +65,6 @@ const ColorSelect = ({ label, name, value, options, onChange }) => {
             <div
               key={opt}
               onClick={() => handleSelect(opt)}
-              // Thêm group/tooltip để xử lý hover
               className={`
                 group/tooltip relative cursor-pointer w-9 h-9 rounded-full shadow-sm transition-all duration-200
                 flex items-center justify-center
@@ -83,18 +75,14 @@ const ColorSelect = ({ label, name, value, options, onChange }) => {
               `}
               style={{ background: bgStyle }}
             >
-              {/* Dấu tích */}
               {isSelected && (
                 <i className={`fas fa-check text-xs ${isLightColor ? 'text-gray-800' : 'text-white'}`}></i>
               )}
-
-              {/* Tooltip XỊN: position absolute, z-index cao, pointer-events-none */}
               <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 
                               bg-gray-800 text-white text-[10px] font-medium px-2 py-1 rounded 
                               opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200
                               whitespace-nowrap z-50 pointer-events-none shadow-lg">
                 {opt}
-                {/* Mũi tên nhỏ trỏ lên */}
                 <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45"></div>
               </div>
             </div>
@@ -102,7 +90,6 @@ const ColorSelect = ({ label, name, value, options, onChange }) => {
         })}
       </div>
       
-      {/* Text hiển thị màu đang chọn */}
       <div className="mt-2 text-xs font-medium text-gray-500 h-4 flex items-center gap-1">
         {value ? (
           <>

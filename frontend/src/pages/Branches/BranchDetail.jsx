@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../../utils/axios";
 import OptimizedImage from "../../components/input/OptimizedImage";
-import Pagination from "../../components/ui/Pagination"; // 👈 1. Import Pagination
+import Pagination from "../../components/ui/Pagination";
 import {
   FaMapMarkerAlt,
   FaPhoneAlt,
@@ -13,7 +13,7 @@ import {
   FaCar
 } from "react-icons/fa";
 
-const ITEMS_PER_PAGE = 16; // 👈 2. Định nghĩa số xe mỗi trang
+const ITEMS_PER_PAGE = 16; 
 
 const BranchDetail = () => {
   const { id } = useParams();
@@ -23,16 +23,14 @@ const BranchDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // 👇 3. State phân trang
   const [currentPage, setCurrentPage] = useState(1);
-  const carsListRef = useRef(null); // Ref để cuộn lên đầu danh sách xe
+  const carsListRef = useRef(null); 
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        // 1. Fetch all branches first to find the current one
         const branchesRes = await api.get("/branches");
         const matchedBranch = branchesRes.data.find((b) => b.id === id || b._id === id);
 
@@ -44,7 +42,6 @@ const BranchDetail = () => {
 
         setBranch(matchedBranch);
 
-        // 2. Fetch cars for this branch
         if (matchedBranch.name) {
           const carsRes = await api.get(`/cars?branch=${encodeURIComponent(matchedBranch.name)}`);
           setCars(carsRes.data);
@@ -60,21 +57,17 @@ const BranchDetail = () => {
     fetchData();
   }, [id]);
 
-  // 👇 4. Tính toán xe hiển thị
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
   const currentCars = cars.slice(indexOfFirstItem, indexOfLastItem);
 
-  // 👇 5. Hàm chuyển trang
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
-    // Cuộn nhẹ lên đầu danh sách xe
     if (carsListRef.current) {
         carsListRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
-  // Loading View
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -86,7 +79,6 @@ const BranchDetail = () => {
     );
   }
 
-  // Error View
   if (error || !branch) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-center px-4">
@@ -108,7 +100,6 @@ const BranchDetail = () => {
   return (
     <section className="bg-gray-50 min-h-screen py-8 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Navigation Breadcrumb */}
         <nav className="mb-6">
           <Link
             to="/branches"
@@ -118,7 +109,6 @@ const BranchDetail = () => {
           </Link>
         </nav>
 
-        {/* Branch Info Card */}
         <div className="bg-white rounded-3xl shadow-sm overflow-hidden mb-10">
           <div className="relative h-64 md:h-80 lg:h-96 w-full">
             <img
@@ -174,8 +164,7 @@ const BranchDetail = () => {
           </div>
         </div>
 
-        {/* Cars List Section */}
-        <div className="mb-12" ref={carsListRef}> {/* Thêm ref ở đây để scroll tới */}
+        <div className="mb-12" ref={carsListRef}> 
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-bold text-gray-900">
               Xe đang bán tại <span className="text-red-600">{branch.name}</span>
@@ -187,7 +176,6 @@ const BranchDetail = () => {
 
           {cars.length > 0 ? (
             <div className="space-y-8">
-                {/* Grid Xe */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {currentCars.map((car) => (
                     <div
@@ -237,7 +225,6 @@ const BranchDetail = () => {
                 ))}
                 </div>
 
-                {/* 👇 6. Thêm Pagination */}
                 <Pagination 
                     itemsPerPage={ITEMS_PER_PAGE} 
                     totalItems={cars.length} 
@@ -256,7 +243,6 @@ const BranchDetail = () => {
           )}
         </div>
 
-        {/* Map Section */}
         {branch.mapsEmbed && (
           <div className="bg-white p-6 rounded-3xl shadow-sm">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">

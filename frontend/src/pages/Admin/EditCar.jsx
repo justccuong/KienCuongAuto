@@ -48,7 +48,6 @@ const EditCarForm = () => {
     const fetchCar = async () => {
       try {
         const res = await api.get(`/cars/detail/${carId}`);
-        // Đảm bảo description luôn có string rỗng nếu null để tránh lỗi uncontrolled input
         const data = res.data.car;
         if (!data.description) data.description = ""; 
         setFormData(data);
@@ -171,7 +170,6 @@ const EditCarForm = () => {
                   <SelectInput label="Cam kết chất lượng" name="quality" value={formData.quality} options={OPTIONS.quality} onChange={handleChange} />
               </div>
 
-              {/* 👇 PHẦN MÔ TẢ ĐƯỢC THÊM VÀO ĐÂY 👇 */}
               <div className="md:col-span-2 pt-4 pb-1 border-b border-gray-100">
                  <h3 className="font-bold text-gray-800 text-sm uppercase tracking-wide border-l-4 border-red-500 pl-2">4. Mô tả chi tiết</h3>
               </div>
@@ -215,7 +213,6 @@ const EditCarForm = () => {
   );
 };
 
-// ... (Giữ nguyên Components con TextInput, SelectInput) ...
 const TextInput = ({ label, name, value, onChange, required }) => (
   <label className="block text-gray-700 group">
     <span className="font-semibold text-sm mb-1.5 block group-hover:text-red-600 transition-colors">{label}</span>

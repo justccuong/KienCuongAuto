@@ -7,8 +7,6 @@ const AccountPage = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // Lấy thông tin user khi vào trang
   useEffect(() => {
     const fetchUser = async () => {
       try {

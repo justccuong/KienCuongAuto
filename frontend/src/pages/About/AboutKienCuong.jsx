@@ -5,9 +5,8 @@ export default function About() {
   return (
     <div className="w-full bg-gray-50 text-gray-800 font-sans">
       
-      {/* --- HERO BANNER --- */}
       <div className="relative bg-gradient-to-r from-red-900 to-red-600 py-20 px-6 text-center text-white overflow-hidden">
-        {/* Họa tiết nền mờ (Optional) */}
+    
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
         
         <div className="relative z-10 max-w-4xl mx-auto">
@@ -27,7 +26,6 @@ export default function About() {
 
       <div className="max-w-7xl mx-auto px-6 py-16 -mt-10 relative z-20">
         
-        {/* --- GIỚI THIỆU CHUNG (Card lớn) --- */}
         <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border-t-8 border-red-600">
           <div className="flex flex-col md:flex-row gap-10 items-center">
             <div className="flex-1">
@@ -41,7 +39,6 @@ export default function About() {
                 <span className="text-red-600 font-bold"> "Chuẩn chất lượng - Rõ pháp lý - Minh bạch giá"</span>.
               </p>
             </div>
-            {/* Ảnh minh họa hoặc Logo phụ */}
             <div className="w-full md:w-1/3">
                <img 
                  src="/anh-co-so/truso.jpg" 
@@ -53,10 +50,8 @@ export default function About() {
           </div>
         </div>
 
-        {/* --- 4 GIÁ TRỊ CỐT LÕI (Grid 2x2) --- */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           
-          {/* Sứ mệnh */}
           <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition border-l-4 border-blue-500 group">
             <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-2xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition">
               <FaHandshake />
@@ -67,7 +62,6 @@ export default function About() {
             </p>
           </div>
 
-          {/* Tầm nhìn */}
           <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition border-l-4 border-green-500 group">
             <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-2xl mb-4 group-hover:bg-green-600 group-hover:text-white transition">
               <FaEye />
@@ -78,7 +72,6 @@ export default function About() {
             </p>
           </div>
 
-          {/* Giá trị cốt lõi */}
           <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition border-l-4 border-yellow-500 group">
             <div className="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 text-2xl mb-4 group-hover:bg-yellow-500 group-hover:text-white transition">
               <FaGem />
@@ -91,7 +84,6 @@ export default function About() {
             </ul>
           </div>
 
-          {/* Triết lý vận hành */}
           <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition border-l-4 border-purple-500 group">
             <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-2xl mb-4 group-hover:bg-purple-600 group-hover:text-white transition">
               <FaBalanceScale />
@@ -103,9 +95,8 @@ export default function About() {
           </div>
         </div>
 
-        {/* --- THỐNG KÊ (Counter) --- */}
         <div className="bg-gray-900 rounded-3xl p-10 md:p-16 text-center text-white shadow-2xl relative overflow-hidden">
-          {/* Background decoration */}
+       
           <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
           
           <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-10">

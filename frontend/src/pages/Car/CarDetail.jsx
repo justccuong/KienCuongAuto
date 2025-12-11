@@ -93,7 +93,6 @@ export default function CarDetail() {
     <div className="bg-gray-50 text-gray-900 min-h-screen py-8 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         
-        {/* --- NÚT QUAY LẠI (TO RÕ, NẰM TRÊN CÙNG) --- */}
         <div className="mb-6">
             <button 
                 onClick={() => navigate(-1)} 
@@ -106,13 +105,11 @@ export default function CarDetail() {
             </button>
         </div>
 
-        {/* --- LAYOUT CHÍNH (2 Cột) --- */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
-          {/* CỘT TRÁI: GALLERY ẢNH */}
           <div>
             <div className="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 sticky top-4">
-              {/* Ảnh chính */}
+           
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] group bg-gray-100">
                 {hasImages ? (
                   <OptimizedImage
@@ -128,7 +125,7 @@ export default function CarDetail() {
                   </div>
                 )}
 
-                {/* Nút Next/Prev */}
+             
                 {hasImages && car.images.length > 1 && (
                   <>
                     <button onClick={prevImage} className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10">
@@ -140,7 +137,7 @@ export default function CarDetail() {
                   </>
                 )}
                 
-                {/* Bộ đếm ảnh */}
+         
                 {hasImages && (
                     <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
                         {selectedImage + 1}/{car.images.length}
@@ -148,7 +145,7 @@ export default function CarDetail() {
                 )}
               </div>
 
-              {/* Thumbnails */}
+             
               {hasImages && car.images.length > 1 && (
                 <div className="flex gap-2 mt-2 overflow-x-auto pb-2 px-1 scrollbar-hide snap-x snap-mandatory">
                   {car.images.map((img, index) => (
@@ -174,10 +171,8 @@ export default function CarDetail() {
             </div>
           </div>
 
-          {/* CỘT PHẢI: THÔNG TIN CHI TIẾT */}
           <div className="space-y-6">
             
-            {/* Header Xe */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-red-600">
                 <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-snug mb-3">
                     {car.name}
@@ -196,7 +191,6 @@ export default function CarDetail() {
                 </div>
             </div>
 
-            {/* Bảng Thông số */}
             <div className="bg-white p-6 rounded-2xl shadow-sm">
                 <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
                     <FaCogs className="text-red-500" /> Thông số kỹ thuật
@@ -213,7 +207,6 @@ export default function CarDetail() {
                 </div>
             </div>
 
-            {/* Chi nhánh & Liên hệ */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <div className="flex items-start gap-3 mb-6">
                     <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600 flex-shrink-0">
@@ -245,7 +238,6 @@ export default function CarDetail() {
                 </div>
             </div>
 
-            {/* Mô tả (Nếu có) */}
             {car.description && (
                 <div className="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-blue-500">
                     <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
@@ -260,7 +252,6 @@ export default function CarDetail() {
           </div>
         </div>
 
-        {/* --- XE TƯƠNG TỰ --- */}
         <div className="mt-16 pt-8 border-t border-gray-200">
           <h3 className="text-2xl font-bold text-gray-900 mb-8 border-l-4 border-red-600 pl-4">
             Gợi ý xe tương tự
@@ -297,7 +288,6 @@ export default function CarDetail() {
   );
 }
 
-// Component con hiển thị 1 dòng thông số
 const InfoRow = ({ icon, label, value }) => (
     <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0 group hover:bg-gray-50 transition-colors px-1 rounded">
         <div className="flex items-center gap-2.5 text-gray-500 group-hover:text-red-500 transition-colors">

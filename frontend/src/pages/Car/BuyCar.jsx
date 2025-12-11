@@ -3,13 +3,11 @@ import api from "../../utils/axios";
 import { Link } from "react-router-dom";
 import { FaSearch, FaFilter, FaCar, FaMapMarkerAlt } from "react-icons/fa";
 
-// Import các component xịn xò đã làm
 import ColorSelect from "../../components/input/ColorSelect";
 import SearchableSelect from "../../components/input/SearchableSelect";
 import OptimizedImage from "../../components/input/OptimizedImage";
-import Pagination from "../../components/ui/Pagination"; // Phần phân trang
+import Pagination from "../../components/ui/Pagination"; 
 
-// List Option cho bộ lọc (Đã bỏ Branch và Color fix cứng)
 const FILTER_OPTIONS = {
   status: { label: "Tình trạng kho", values: ["Sẵn xe", "Hết hàng"] },
   condition: { label: "Tình trạng xe", values: ["Xe mới", "Xe đã qua sử dụng"] },
@@ -19,7 +17,6 @@ const FILTER_OPTIONS = {
   installment: { label: "Trả góp", values: ["Không hỗ trợ trả góp", "Hỗ trợ trả góp lên tới 70% giá trị xe"] },
 };
 
-// List Hãng xe (Để truyền vào SearchableSelect)
 const MANUFACTURER_OPTIONS = [
   "Ford", "Vinfast", "Subaru", "Toyota", "Honda", "KIA", "Hyundai", "Mazda",
   "Nissan", "Suzuki", "Volkswagen", "BMW", "Mercedes-Benz", "Audi", "Lexus",
@@ -28,15 +25,11 @@ const MANUFACTURER_OPTIONS = [
   "Skoda", "SsangYong", "Tata",
 ];
 
-// List Màu (Để truyền vào ColorSelect)
 const COLOR_OPTIONS = [
-      // Cơ bản
     "Màu Trắng", 
     "Màu Đen", 
     "Màu Xám (Grey)", 
     "Màu Bạc (Silver)",
-
-    // Tông Đỏ/Cam/Vàng
     "Màu Đỏ", 
     "Màu Đỏ Đô", 
     "Màu Cam", 
@@ -45,15 +38,11 @@ const COLOR_OPTIONS = [
     "Màu Vàng Đồng", 
     "Màu Champagne", 
     "Màu Be (Beige)",
-
-    // Tông Xanh
     "Màu Xanh (Blue)", 
     "Màu Xanh Đen (Cavansite)", 
     "Màu Xanh Lá", 
     "Màu Xanh Ngọc", 
     "Màu Xanh Rêu",
-
-    // Tông Nâu/Tím/Khác
     "Màu Nâu (Cafe)", 
     "Màu Nâu Đất", 
     "Màu Tím", 
@@ -61,24 +50,21 @@ const COLOR_OPTIONS = [
     "Màu Titan",
   ];
 
-const ITEMS_PER_PAGE = 15; // 👈 SỐ XE MỖI TRANG
+const ITEMS_PER_PAGE = 15; 
 
 const FindCarPage = () => {
   const [cars, setCars] = useState([]);
   const [branches, setBranches] = useState([]); 
   const [loading, setLoading] = useState(true);
   
-  // State bộ lọc
   const [filters, setFilters] = useState({});
   const [search, setSearch] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [showFilters, setShowFilters] = useState(false); 
 
-  // 👇 STATE PHÂN TRANG
   const [currentPage, setCurrentPage] = useState(1);
 
-  // 1. Fetch dữ liệu ban đầu 
   useEffect(() => {
     const initData = async () => {
       setLoading(true);
@@ -103,7 +89,6 @@ const FindCarPage = () => {
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Logic lọc xe
   const filteredCars = cars.filter((car) => {
     const matchesSearch = !search || car.name.toLowerCase().includes(search.toLowerCase());
     
@@ -119,17 +104,14 @@ const FindCarPage = () => {
     return matchesSearch && matchesMinPrice && matchesMaxPrice && matchesFilters;
   });
 
-  // 👇 LOGIC CẮT DANH SÁCH XE CHO TRANG HIỆN TẠI
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
   const currentCars = filteredCars.slice(indexOfFirstItem, indexOfLastItem);
 
-  // 👇 RESET VỀ TRANG 1 KHI LỌC/TÌM KIẾM
   useEffect(() => {
     setCurrentPage(1);
   }, [filters, search, minPrice, maxPrice]);
 
-  // 👇 HÀM CHUYỂN TRANG
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -139,7 +121,6 @@ const FindCarPage = () => {
     <div className="bg-gray-50 min-h-screen py-8 px-4">
       <div className="max-w-7xl mx-auto">
         
-        {/* ... HEADER & SEARCH BAR ... */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
             <span className="text-red-600"><FaCar /></span> Tìm mua xe
@@ -166,7 +147,6 @@ const FindCarPage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           
-          {/* ... CỘT TRÁI: BỘ LỌC (SIDEBAR) GIỮ NGUYÊN ... */}
           <div className={`lg:col-span-1 space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
             <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2 border-b pb-2">
@@ -260,7 +240,6 @@ const FindCarPage = () => {
             </div>
           </div>
 
-          {/* --- CỘT PHẢI: KẾT QUẢ TÌM KIẾM --- */}
           <div className="lg:col-span-3">
             {loading ? (
               <div className="text-center py-20">
@@ -284,7 +263,6 @@ const FindCarPage = () => {
                   </p>
                 </div>
 
-                {/* GRID XE: Dùng currentCars thay vì filteredCars */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                   {currentCars.map((car) => (
                     <Link
@@ -306,7 +284,6 @@ const FindCarPage = () => {
                         </div>
                       </div>
                       
-                      {/* Thông tin */}
                       <div className="p-4">
                         <h3 className="text-lg font-bold text-gray-900 mb-1 truncate" title={car.name}>
                           {car.name}
@@ -340,7 +317,6 @@ const FindCarPage = () => {
                   ))}
                 </div>
 
-                {/* 👇 COMPONENT PHÂN TRANG Ở DƯỚI CÙNG 👇 */}
                 <Pagination 
                     itemsPerPage={ITEMS_PER_PAGE} 
                     totalItems={filteredCars.length} 

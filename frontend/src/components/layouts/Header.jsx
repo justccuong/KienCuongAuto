@@ -5,8 +5,8 @@ import CarSearchBar from "../sections/CarSearchBar";
 import api from "../../utils/axios";
 
 const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);       // State cho Menu 3 gạch
-  const [showSearch, setShowSearch] = useState(false); // State cho Thanh tìm kiếm Mobile
+  const [isOpen, setIsOpen] = useState(false);      
+  const [showSearch, setShowSearch] = useState(false);
   const [user, setUser] = useState(null);
   const menuRef = useRef(null);
   const toggleRef = useRef(null);
@@ -33,17 +33,12 @@ const Header = () => {
     }
   };
 
-  // Click ra ngoài thì đóng cả Menu lẫn Search
   useEffect(() => {
     const handleClickOutside = (e) => {
-      // Nếu click vào nút toggle menu hoặc nội dung menu thì ko làm gì
       if (toggleRef.current && toggleRef.current.contains(e.target)) return;
       if (menuRef.current && menuRef.current.contains(e.target)) return;
 
-      // Logic đóng
       setIsOpen(false);
-      // Riêng search bar nếu click vào input thì ko đóng, logic này CarSearchBar tự lo hoặc click ra ngoài hẳn header mới đóng
-      // Nhưng để đơn giản, click ra ngoài header sẽ đóng tất
       if (!e.target.closest('header')) {
         setShowSearch(false);
       }
@@ -56,7 +51,6 @@ const Header = () => {
     <header className="relative bg-white text-gray-900 top-0 left-0 w-full z-50 shadow-md">
       <div className="flex items-center justify-between px-4 md:px-10 h-14 md:h-16 w-full max-w-full">
 
-        {/* --- LOGO --- */}
         <div className="flex-shrink-0 flex items-center gap-3 overflow-hidden">
           <Link to="/home" className="block">
             <img 
@@ -67,12 +61,10 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* --- SEARCH BAR (Desktop Only) --- */}
         <div className="hidden md:block flex-1 mx-4 max-w-xl">
            <CarSearchBar />
         </div>
 
-        {/* --- DESKTOP MENU --- */}
         <nav className="hidden md:flex gap-6 items-center flex-shrink-0">
           <Link className="ct-top-menu-item" to="/home">TRANG CHỦ</Link>
           <Link className="ct-top-menu-item" to="/about-kien-cuong">VỀ KIÊN CƯỜNG</Link>
@@ -85,7 +77,6 @@ const Header = () => {
           )}
         </nav>
 
-        {/* --- DESKTOP ACCOUNT --- */}
         <div className="hidden md:flex items-center gap-3 ml-6 flex-shrink-0">
           {user ? (
             <div className="flex items-center gap-2">
@@ -107,25 +98,22 @@ const Header = () => {
           )}
         </div>
 
-        {/* --- MOBILE BUTTONS GROUP --- */}
         <div className="flex items-center gap-3 md:hidden flex-shrink-0 ml-auto">
-          {/* Nút Kính lúp Mobile */}
           <button 
             onClick={() => {
               setShowSearch(!showSearch);
-              setIsOpen(false); // Đóng menu nếu đang mở cho đỡ rối
+              setIsOpen(false); 
             }}
             className={`text-xl p-2 transition-colors ${showSearch ? 'text-red-600' : 'text-gray-600'}`}
           >
              <i className={`fas ${showSearch ? 'fa-times' : 'fa-search'}`}></i>
           </button>
           
-          {/* Nút 3 gạch Menu */}
           <button
             ref={toggleRef}
             onClick={() => {
               setIsOpen(!isOpen);
-              setShowSearch(false); // Đóng search nếu đang mở
+              setShowSearch(false);
             }}
             className="text-2xl text-gray-800 focus:outline-none p-1"
           >
@@ -134,14 +122,12 @@ const Header = () => {
         </div>
       </div>
 
-      {/* --- MOBILE SEARCH BAR AREA (Hiện ra khi bấm kính lúp) --- */}
       {showSearch && (
         <div className="absolute top-full left-0 w-full bg-white p-4 shadow-inner border-t z-40 md:hidden animate-fade-in-down">
            <CarSearchBar />
         </div>
       )}
 
-      {/* --- MOBILE DROPDOWN MENU --- */}
       {isOpen && (
         <div
           ref={menuRef}

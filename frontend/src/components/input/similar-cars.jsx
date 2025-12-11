@@ -1,5 +1,5 @@
 export function SimilarCars() {
-  // Dữ liệu fake
+  // Dummy data
   const cars = [
     {
       id: 1,

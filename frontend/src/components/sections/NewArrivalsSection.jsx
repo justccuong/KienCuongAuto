@@ -12,7 +12,7 @@ const NewArrivalsSection = () => {
     const fetchNewestCars = async () => {
       try {
         const res = await api.get("/cars");
-        // Logic: Lấy 8 xe cuối cùng trong mảng (xe mới thêm) và đảo ngược lại để xe mới nhất lên đầu
+        
         const newestCars = res.data.slice(-8).reverse(); 
         setCars(newestCars);
       } catch (err) {
@@ -45,7 +45,6 @@ const NewArrivalsSection = () => {
           </Link>
         </div>
 
-        {/* Grid Xe */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {cars.map((car) => (
             <div
@@ -53,7 +52,6 @@ const NewArrivalsSection = () => {
               onClick={() => navigate(`/cars/${car._id}`)}
               className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1"
             >
-              {/* Ảnh xe */}
               <div className="relative aspect-[4/3] overflow-hidden">
                 <OptimizedImage
                   src={car.images?.[0]?.url}
@@ -67,7 +65,6 @@ const NewArrivalsSection = () => {
                 </div>
               </div>
 
-              {/* Thông tin */}
               <div className="p-4">
                 <h3 className="text-md font-bold text-gray-900 mb-1 truncate group-hover:text-red-600 transition-colors" title={car.name}>
                   {car.name}
@@ -76,7 +73,6 @@ const NewArrivalsSection = () => {
                   {car.price} triệu
                 </p>
 
-                {/* Thông số mini */}
                 <div className="flex items-center justify-between text-[11px] text-gray-500 border-t pt-3 bg-gray-50 -mx-4 -mb-4 px-4 py-2 mt-2">
                    <div className="flex items-center gap-1"><FaCogs/> {car.gearbox}</div>
                    <div className="flex items-center gap-1"><FaRoad/> {car.kilometers}km</div>
@@ -86,7 +82,6 @@ const NewArrivalsSection = () => {
           ))}
         </div>
 
-        {/* Nút xem tất cả cho Mobile */}
         <div className="mt-8 text-center md:hidden">
           <Link 
             to="/find-car" 

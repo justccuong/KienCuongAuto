@@ -14,8 +14,6 @@ const Overview = () => {
     const fetchBranches = async () => {
       try {
         const res = await api.get("/branches");
-        
-        // Logic sắp xếp: Trụ sở chính -> Cơ sở 1, 2...
         const sortedBranches = res.data.sort((a, b) => {
           const nameA = a.name.toLowerCase();
           const nameB = b.name.toLowerCase();
@@ -137,7 +135,6 @@ const Overview = () => {
                 alt={car.name}
                 width={360}
                 height={180}
-                // 👇 Đã trả lại h-60 như cũ
                 className="w-full h-60 object-cover"
               />
               <div className="p-4 text-black">
@@ -155,7 +152,6 @@ const Overview = () => {
                       {car.gearbox}
                   </div>
                   <div className="text-center">
-                      {/* 👇 Đã đổi lại thành Km */}
                       <span className="block text-xs font-semibold">Km</span>
                       {car.kilometers}
                   </div>

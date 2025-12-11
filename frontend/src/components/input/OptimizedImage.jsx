@@ -1,4 +1,3 @@
-// components/OptimizedImage.jsx
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 
@@ -10,7 +9,6 @@ const OptimizedImage = ({
   className = "",
   fallback = "/images/no-image.jpg",
 }) => {
-  // 🛠 Nếu là Cloudinary thì tối ưu URL
   const getOptimizedUrl = (url) => {
     if (!url) return fallback;
     if (url.includes("cloudinary")) {

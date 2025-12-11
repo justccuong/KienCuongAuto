@@ -13,7 +13,7 @@ const ScrollToTop = () => {
         return () => {
             window.removeEventListener("scroll", toggleVisibility);
         };
-    }, [toggleVisibility]); // 🔥 Dependency đảm bảo cập nhật đúng
+    }, [toggleVisibility]); 
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });

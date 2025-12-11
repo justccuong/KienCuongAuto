@@ -44,7 +44,7 @@ const AddCarForm = () => {
     name: "", status: "", manufacturer: "", color: "", drive: "", gearbox: "",
     condition: "", year: "", kilometers: "", fuel: "", doors: "", seats: "",
     engineCapacity: "", price: "", branch: "", installment: "", quality: "",
-    description: "", // 👈 Thêm trường description vào state
+    description: "",
   });
 
   const [images, setImages] = useState([]); 
@@ -160,7 +160,6 @@ const AddCarForm = () => {
             <SelectInput label="Cam kết chất lượng" name="quality" value={formData.quality} options={OPTIONS.quality} onChange={handleChange} />
         </div>
 
-        {/* 👇 PHẦN MÔ TẢ ĐƯỢC THÊM VÀO ĐÂY 👇 */}
         <div className="md:col-span-2 pt-4 border-t border-gray-100">
             <label className="block text-gray-700 font-semibold text-sm mb-2">Mô tả chi tiết</label>
             <textarea

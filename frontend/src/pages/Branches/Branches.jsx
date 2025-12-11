@@ -13,7 +13,6 @@ const BranchesPage = () => {
       try {
         const res = await api.get("/branches");
         
-        // Logic sắp xếp: Trụ sở chính -> Cơ sở 1, 2...
         const sortedBranches = res.data.sort((a, b) => {
           const nameA = a.name.toLowerCase();
           const nameB = b.name.toLowerCase();
@@ -52,7 +51,6 @@ const BranchesPage = () => {
     <section className="bg-gray-50 min-h-screen py-16 px-4 md:px-8 font-sans">
       <div className="max-w-7xl mx-auto">
         
-        {/* HEADER SECTION */}
         <div className="text-center mb-16">
           <span className="text-red-600 font-bold uppercase tracking-wider text-sm bg-red-50 px-4 py-1 rounded-full border border-red-100 mb-4 inline-block">
             Hệ thống Showroom
@@ -65,7 +63,6 @@ const BranchesPage = () => {
           </p>
         </div>
 
-        {/* GRID CARD */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {branches.map((branch) => (
             <Link
@@ -73,7 +70,6 @@ const BranchesPage = () => {
               key={branch.id}
               className="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 flex flex-col h-full transform hover:-translate-y-2"
             >
-              {/* Ảnh Card - Tràn viền & Zoom Effect */}
               <div className="relative h-64 overflow-hidden">
                 <img
                   src={branch.image}
@@ -82,10 +78,8 @@ const BranchesPage = () => {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 
-                {/* Overlay gradient đen mờ bên dưới ảnh */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
                 
-                {/* Badge tên ngắn gọn */}
                 <div className="absolute bottom-4 left-4 right-4 text-white">
                    <div className="flex items-center gap-2 text-sm font-medium bg-black/30 backdrop-blur-md w-fit px-3 py-1 rounded-lg border border-white/20">
                       <FaBuilding className="text-yellow-400" /> Showroom
@@ -93,7 +87,6 @@ const BranchesPage = () => {
                 </div>
               </div>
 
-              {/* Nội dung Card */}
               <div className="p-6 flex flex-col flex-grow">
                 <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-red-600 transition-colors line-clamp-2 min-h-[3.5rem]">
                   {branch.name}
@@ -110,7 +103,6 @@ const BranchesPage = () => {
                   </div>
                 </div>
 
-                {/* Nút Xem chi tiết */}
                 <div className="mt-auto pt-4 border-t border-gray-100">
                   <span className="flex items-center justify-center gap-2 w-full bg-gray-50 text-gray-800 py-3 rounded-xl font-bold group-hover:bg-red-600 group-hover:text-white transition-all duration-300">
                     Xem xe tại đây <FaArrowRight className="text-xs transition-transform group-hover:translate-x-1" />

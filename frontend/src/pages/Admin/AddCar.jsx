@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom"; // Import thêm Link
+import { useNavigate, Link } from "react-router-dom";
 import AddCarForm from "../../components/sections/AddCarForm";
 import api from "../../utils/axios";
-import '@fortawesome/fontawesome-free/css/all.min.css'; // Đảm bảo có icon
-
+import '@fortawesome/fontawesome-free/css/all.min.css';
 const AddCar = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,7 +25,6 @@ const AddCar = () => {
     fetchUser();
   }, []);
 
-  // Hiển thị trong lúc chờ load user info
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -38,13 +36,11 @@ const AddCar = () => {
     );
   }
 
-  // Nếu chưa đăng nhập
   if (!user) {
     navigate("/login");
     return null;
   }
 
-  // Nếu không phải admin
   if (user.role !== "admin") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -60,12 +56,10 @@ const AddCar = () => {
     );
   }
 
-  // Nếu là admin => Hiển thị form đã được tút tát
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 font-sans">
       <div className="max-w-4xl mx-auto">
         
-        {/* 🔙 Nút Quay lại */}
         <Link 
           to="/admin" 
           className="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 mb-6 transition-colors font-semibold group"
@@ -74,10 +68,8 @@ const AddCar = () => {
           Quay lại Quản lý
         </Link>
 
-        {/* 📦 Container dạng Card */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
           
-          {/* Header màu mè chút cho sang */}
           <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-5 flex items-center justify-between">
             <h1 className="text-xl md:text-2xl font-bold text-white flex items-center gap-3">
                <i className="fas fa-plus-circle opacity-80"></i>
@@ -88,7 +80,6 @@ const AddCar = () => {
             </span>
           </div>
 
-          {/* Form Content */}
           <div className="p-6 md:p-10">
             <AddCarForm />
           </div>

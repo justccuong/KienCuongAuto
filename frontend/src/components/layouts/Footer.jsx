@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, matchPath } from "react-router-dom"; 
-import api from "../../utils/axios"; // 👈 Nhớ import API
+import api from "../../utils/axios"; 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const Footer = () => {
   const location = useLocation();
 
-  // 1. Cấu hình mặc định (Trụ sở chính)
   const DEFAULT_INFO = {
     hotline: "0562 73 6868",
     facebook: "https://www.facebook.com/kiencuongmedia",
@@ -18,12 +17,10 @@ const Footer = () => {
 
   const [info, setInfo] = useState(DEFAULT_INFO);
 
-  // 2. Logic "Thông minh": Tự đổi thông tin theo trang đang đứng
   useEffect(() => {
     const updateFooterInfo = async () => {
       const path = location.pathname;
 
-      // CASE A: Đang ở trang Chi tiết xe (/cars/:id)
       const carMatch = matchPath("/cars/:id", path);
       if (carMatch) {
         try {
@@ -41,7 +38,7 @@ const Footer = () => {
                 tiktok: foundBranch.socials?.tiktok || DEFAULT_INFO.tiktok,
                 zalo: foundBranch.socials?.zalo || DEFAULT_INFO.zalo,
                 address: foundBranch.location || DEFAULT_INFO.address,
-                youtube: DEFAULT_INFO.youtube, // Chi nhánh thường k có Youtube riêng, dùng chung
+                youtube: DEFAULT_INFO.youtube, 
               });
               return;
             }
@@ -51,7 +48,6 @@ const Footer = () => {
         }
       }
 
-      // CASE B: Đang ở trang Chi tiết Chi nhánh (/branches/:id)
       const branchMatch = matchPath("/branches/:id", path);
       if (branchMatch) {
         try {
@@ -74,7 +70,6 @@ const Footer = () => {
         }
       }
 
-      // CASE C: Các trang còn lại -> Về mặc định
       setInfo(DEFAULT_INFO);
     };
 
@@ -87,7 +82,6 @@ const Footer = () => {
         
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6 text-center md:text-left">
           
-          {/* Cột 1: Logo & Slogan */}
           <div className="col-span-2 lg:col-span-1 flex flex-col items-center lg:items-start">
             <Link to="/home" className="group">
               <img 
@@ -107,7 +101,6 @@ const Footer = () => {
             <div className="text-xs text-gray-400">© 2025 KienCuongAuto. All rights reserved.</div>
           </div>
 
-          {/* Cột 2: Danh mục */}
           <div className="flex flex-col gap-3">
             <h3 className="font-bold text-gray-800 uppercase tracking-wider text-sm mb-2 border-b-2 border-red-500 w-fit mx-auto lg:mx-0 pb-1">Danh mục</h3>
             <Link to="/home" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 transform duration-200 inline-block">Trang chủ</Link>
@@ -116,11 +109,9 @@ const Footer = () => {
             <Link to="/find-car" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 transform duration-200 inline-block">Tìm mua xe</Link>
           </div>
 
-          {/* Cột 3: Kết nối (Dynamic Data) */}
           <div className="flex flex-col gap-3">
             <h3 className="font-bold text-gray-800 uppercase tracking-wider text-sm mb-2 border-b-2 border-red-500 w-fit mx-auto lg:mx-0 pb-1">Kết nối</h3>
             
-            {/* Facebook (Động) */}
             <a href={info.facebook} target="_blank" rel="noreferrer" className="group flex items-center justify-center lg:justify-start gap-3 hover:text-blue-600 transition-colors text-sm">
               <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 group-hover:rotate-12">
                 <i className="fab fa-facebook-f"></i>
@@ -128,7 +119,6 @@ const Footer = () => {
               <span className="font-medium">Facebook</span>
             </a>
 
-            {/* Youtube (Mặc định) */}
             <a href={info.youtube} target="_blank" rel="noreferrer" className="group flex items-center justify-center lg:justify-start gap-3 hover:text-red-600 transition-colors text-sm">
               <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all duration-300 group-hover:rotate-12">
                 <i className="fab fa-youtube"></i>
@@ -136,7 +126,6 @@ const Footer = () => {
               <span className="font-medium">Youtube</span>
             </a>
 
-            {/* TikTok (Động) */}
             <a href={info.tiktok} target="_blank" rel="noreferrer" className="group flex items-center justify-center lg:justify-start gap-3 hover:text-black transition-colors text-sm">
               <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-black group-hover:bg-black group-hover:text-white transition-all duration-300 group-hover:rotate-12">
                 <i className="fab fa-tiktok"></i>
@@ -144,7 +133,6 @@ const Footer = () => {
               <span className="font-medium">TikTok</span>
             </a>
 
-            {/* Hotline (Động) */}
             <a href={`tel:${info.hotline.replace(/\s/g, '')}`} className="group flex items-center justify-center lg:justify-start gap-3 hover:text-green-600 transition-colors text-sm font-bold">
                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-300 group-hover:animate-pulse">
                  <i className="fas fa-phone-alt"></i>
@@ -153,11 +141,9 @@ const Footer = () => {
             </a>
           </div>
 
-          {/* Cột 4: Hỗ trợ & Watermark */}
           <div className="flex flex-col gap-3 items-center lg:items-start">
              <h3 className="font-bold text-gray-800 uppercase tracking-wider text-sm mb-2 border-b-2 border-red-500 w-fit mx-auto lg:mx-0 pb-1">Hỗ trợ</h3>
              
-             {/* Địa chỉ (Động - Thêm cho uy tín) */}
              <div className="text-sm text-gray-500 flex gap-2 items-start justify-center lg:justify-start">
                 <i className="fas fa-map-marker-alt text-red-500 mt-1"></i>
                 <span className="max-w-[200px] text-left">{info.address}</span>

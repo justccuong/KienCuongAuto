@@ -1,8 +1,8 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation } from "swiper/modules"; // 👈 1. Thêm Navigation vào đây
+import { Autoplay, Navigation } from "swiper/modules"; 
 import "swiper/css";
-import "swiper/css/navigation"; // 👈 2. Import CSS navigation
+import "swiper/css/navigation"; 
 
 const banners = [
   "/anh-co-so/truso.jpg",
@@ -16,7 +16,6 @@ const banners = [
 const HeroSection = () => (
   <section className="w-full h-[250px] sm:h-[400px] lg:h-180 relative group">
     
-    {/* 👇 Style đè để mũi tên màu trắng, nhỏ gọn và chỉ hiện khi hover (tùy chỉnh) */}
     <style>
       {`
         .swiper-button-next, .swiper-button-prev {
@@ -44,8 +43,8 @@ const HeroSection = () => (
     </style>
 
     <Swiper
-      modules={[Autoplay, Navigation]} // 👈 3. Khai báo module
-      navigation={true} // 👈 4. Bật tính năng navigation
+      modules={[Autoplay, Navigation]} 
+      navigation={true} 
       autoplay={{ delay: 3000, disableOnInteraction: false }}
       loop
       className="h-full"
@@ -56,7 +55,7 @@ const HeroSection = () => (
             className="w-full h-full bg-cover bg-center bg-no-repeat relative"
             style={{ backgroundImage: `url('${img}')` }}
           >
-            {/* Overlay nhẹ để chữ menu bên trên dễ nhìn hơn (nếu có) */}
+           
             <div className="absolute inset-0 bg-black/10"></div>
           </div>
         </SwiperSlide>

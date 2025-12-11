@@ -14,13 +14,12 @@ import Signup from "./pages/Auth/SignUp";
 import AdminOverview from "./pages/Admin/Overview";
 import FindCarPage from "./pages/Car/BuyCar";
 import AccountPage from "./pages/Auth/Account";
-
-import FixedChatButtons from "./components/input/FixedChatButton"; // 👈 Thêm dòng này
+import FixedChatButtons from "./components/input/FixedChatButton";
 
 const App = () => {
   return (
     <Router>
-      <FixedChatButtons /> {/* 👈 Thêm 2 nút cố định ở đây */}
+      <FixedChatButtons /> 
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />

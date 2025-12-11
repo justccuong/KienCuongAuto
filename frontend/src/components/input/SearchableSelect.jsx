@@ -6,10 +6,8 @@ const SearchableSelect = ({ label, name, value, options, onChange }) => {
   const [filteredOptions, setFilteredOptions] = useState(options);
   const wrapperRef = useRef(null);
 
-  // 1. Logic lọc danh sách khi gõ
   useEffect(() => {
     if (query === "" && !isOpen) {
-      // Nếu đóng menu thì reset list về full
       setFilteredOptions(options);
     } else {
       setFilteredOptions(
@@ -20,17 +18,14 @@ const SearchableSelect = ({ label, name, value, options, onChange }) => {
     }
   }, [query, options, isOpen]);
 
-  // 2. Đồng bộ giá trị từ Parent vào ô Input (khi mới load hoặc khi chọn xong)
   useEffect(() => {
     setQuery(value || "");
   }, [value]);
 
-  // 3. Xử lý click ra ngoài để đóng menu (Click Outside)
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setIsOpen(false);
-        // Nếu gõ linh tinh mà không chọn -> Reset về giá trị cũ
         if (!options.includes(query)) {
            setQuery(value || "");
         }
@@ -40,9 +35,7 @@ const SearchableSelect = ({ label, name, value, options, onChange }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [wrapperRef, options, query, value]);
 
-  // 4. Khi chọn 1 item
   const handleSelect = (optionValue) => {
-    // Giả lập event để gửi về hàm handleChange của Parent
     const fakeEvent = {
       target: {
         name: name,
@@ -60,21 +53,19 @@ const SearchableSelect = ({ label, name, value, options, onChange }) => {
         {label}
       </span>
       
-      {/* Ô Input */}
       <div className="relative">
         <input
           type="text"
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
-            setIsOpen(true); // Gõ là mở
+            setIsOpen(true); 
           }}
-          onClick={() => setIsOpen(true)} // Click vào là mở
+          onClick={() => setIsOpen(true)}
           placeholder={`-- Nhập để tìm ${label.toLowerCase()} --`}
           className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none transition-all placeholder-gray-400"
         />
         
-        {/* Mũi tên chỉ xuống */}
         <div 
           className="absolute inset-y-0 right-0 flex items-center px-3 cursor-pointer text-gray-400 hover:text-red-600"
           onClick={() => setIsOpen(!isOpen)}
@@ -83,7 +74,6 @@ const SearchableSelect = ({ label, name, value, options, onChange }) => {
         </div>
       </div>
 
-      {/* Danh sách sổ xuống */}
       {isOpen && (
         <ul className="absolute z-50 w-full mt-1 max-h-60 overflow-auto bg-white border border-gray-200 rounded-lg shadow-xl animate-fade-in-down scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           {filteredOptions.length > 0 ? (
