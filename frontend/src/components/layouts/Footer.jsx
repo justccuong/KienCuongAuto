@@ -1,53 +1,189 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, matchPath } from "react-router-dom"; 
+import api from "../../utils/axios"; // 👈 Nhớ import API
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
-const Footer = () =>{
-    return(
-        <>
-          <div className="bg-gray-100 ">
-            <footer className="w-95 xl:w-[70%] mx-auto pb-24 text-gray-500 text-base p-7">
-                <div className="flex flex-col md:flex-row text-center md:text-left gap-8">
-                  <div className="basis-1/3">
-                    <div className="flex flex-col items-center">
-                      <img src="/logo_done.png" alt="logo-lib-hub" className="w-44 h-auto mb-1" />
-                    </div>
-                    <div className="">
-                      <p className="mb-8 md:mb-20 text-center text-[15px]"><q><span className="underline decoration-sky-500/30">Uy tín </span> tạo nên thương hiệu <span className="underline decoration-pink-500/30">- Chất lượng </span></q> dẫn lối thành công.</p>
-                    </div>
-                    <div className="text-gray-400 hover:text-pornhub-200 hover:duration-100 text-sm text-center">Copyright © KienCuongAuto 2025</div>
-                  </div>
-                  <div className="basis-1/6 mt-7">
-                    <div className="uppercase font-semibold tracking-wider text-gray-600 mb-4">Danh mục</div>
-                    <div className="flex flex-col gap-3">
-                      <a href="/home" className="ct-top-menu-item block py-1">TRANG CHỦ</a>
-                      <a href="/about-kien-cuong" className="ct-top-menu-item block py-1">VỀ KIÊN CƯỜNG</a>
-                      <a href="/branches" className="ct-top-menu-item block py-1">CÁC CHI NHÁNH</a>
-                      <a href="/about-kien-cuong" className="ct-top-menu-item block py-1">TÌM MUA XE</a>
-                    </div>  
-                  </div>
+const Footer = () => {
+  const location = useLocation();
 
-                  <div className="basis-1/6 mt-7">
-                    <div className="uppercase font-semibold tracking-wider text-gray-600 mb-4">Theo dõi chúng tôi</div>
-                    <div className="flex flex-col gap-3">
-                      <div className=""><a href="https://www.facebook.com/kiencuongmedia" className="ct-link">Facebook</a></div>
-                      <div className=""><a href="https://youtube.com/@kiencuongmedia?si=_QcFTt9bfZmdvvaP" className="ct-link">Youtube</a></div>
-                      <div className=""><a href="https://www.tiktok.com/@kiencuongmedia?_t=ZS-8xDi5xLrRrz&_r=1" className="ct-link">TikTok</a></div>
-                      <div className=""><a href="https://zalo.me/0562736868" className="ct-link">Hotline: 0562 73 6868</a></div>
+  // 1. Cấu hình mặc định (Trụ sở chính)
+  const DEFAULT_INFO = {
+    hotline: "0562 73 6868",
+    facebook: "https://www.facebook.com/kiencuongmedia",
+    tiktok: "https://www.tiktok.com/@kiencuongmedia",
+    youtube: "https://youtube.com/@kiencuongmedia",
+    zalo: "https://zalo.me/0562736868",
+    address: "771 Đình Ấm, Khai Quang, Vĩnh Yên, Vĩnh Phúc"
+  };
 
-      
-                    </div>  
-                  </div>
-                  <div className="basis-1/3 mt-7">
-                  <div className="uppercase font-semibold text-gray-600 mb-4 tracking-wide">Liên Hệ Chúng tôi</div>
-                  <div className="mb-4 text-sm">We&apos;re Always Happy to Help</div>
-                  <div className=" mb-16 text-xl font-medium"><a className="ct-link" href="mailto:jsclub.fpt@gmail.com">KienCuongAuto.vn</a></div>
-                  <div className=""><a href="https://github.com/justccuong" target="blank" className="text-gray-400 hover:text-pornhub-200 hover:duration-100 text-sm">Powered by KienCuongAuto</a></div>
-                  </div>           
-                </div>
-            </footer> {/*End Footer*/}    
+  const [info, setInfo] = useState(DEFAULT_INFO);
+
+  // 2. Logic "Thông minh": Tự đổi thông tin theo trang đang đứng
+  useEffect(() => {
+    const updateFooterInfo = async () => {
+      const path = location.pathname;
+
+      // CASE A: Đang ở trang Chi tiết xe (/cars/:id)
+      const carMatch = matchPath("/cars/:id", path);
+      if (carMatch) {
+        try {
+          const carRes = await api.get(`/cars/detail/${carMatch.params.id}`);
+          const branchName = carRes.data.car.branch;
+
+          if (branchName) {
+            const branchesRes = await api.get("/branches");
+            const foundBranch = branchesRes.data.find(b => b.name === branchName);
+            
+            if (foundBranch) {
+              setInfo({
+                hotline: foundBranch.hotline || DEFAULT_INFO.hotline,
+                facebook: foundBranch.socials?.facebook || DEFAULT_INFO.facebook,
+                tiktok: foundBranch.socials?.tiktok || DEFAULT_INFO.tiktok,
+                zalo: foundBranch.socials?.zalo || DEFAULT_INFO.zalo,
+                address: foundBranch.location || DEFAULT_INFO.address,
+                youtube: DEFAULT_INFO.youtube, // Chi nhánh thường k có Youtube riêng, dùng chung
+              });
+              return;
+            }
+          }
+        } catch (err) {
+          console.error("Footer: Lỗi lấy info từ xe", err);
+        }
+      }
+
+      // CASE B: Đang ở trang Chi tiết Chi nhánh (/branches/:id)
+      const branchMatch = matchPath("/branches/:id", path);
+      if (branchMatch) {
+        try {
+          const branchesRes = await api.get("/branches");
+          const foundBranch = branchesRes.data.find(b => b.id === branchMatch.params.id || b._id === branchMatch.params.id);
+
+          if (foundBranch) {
+            setInfo({
+              hotline: foundBranch.hotline || DEFAULT_INFO.hotline,
+              facebook: foundBranch.socials?.facebook || DEFAULT_INFO.facebook,
+              tiktok: foundBranch.socials?.tiktok || DEFAULT_INFO.tiktok,
+              zalo: foundBranch.socials?.zalo || DEFAULT_INFO.zalo,
+              address: foundBranch.location || DEFAULT_INFO.address,
+              youtube: DEFAULT_INFO.youtube,
+            });
+            return;
+          }
+        } catch (err) {
+          console.error("Footer: Lỗi lấy info từ chi nhánh", err);
+        }
+      }
+
+      // CASE C: Các trang còn lại -> Về mặc định
+      setInfo(DEFAULT_INFO);
+    };
+
+    updateFooterInfo();
+  }, [location.pathname]);
+
+  return (
+    <div className="bg-gray-100 border-t border-gray-200 mt-auto">
+      <footer className="max-w-7xl mx-auto px-4 py-12 text-gray-600">
+        
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6 text-center md:text-left">
+          
+          {/* Cột 1: Logo & Slogan */}
+          <div className="col-span-2 lg:col-span-1 flex flex-col items-center lg:items-start">
+            <Link to="/home" className="group">
+              <img 
+                src="/logo_done.png" 
+                alt="Kiên Cường Auto" 
+                className="w-40 h-auto mb-4 transition-transform transform group-hover:scale-105 duration-300" 
+              />
+            </Link>
+            <p className="text-sm italic mb-4 leading-relaxed max-w-xs mx-auto lg:mx-0">
+              <q>
+                <span className="font-semibold text-red-600">Uy tín </span> 
+                tạo nên thương hiệu - 
+                <span className="font-semibold text-red-600"> Chất lượng </span> 
+                dẫn lối thành công.
+              </q>
+            </p>
+            <div className="text-xs text-gray-400">© 2025 KienCuongAuto. All rights reserved.</div>
           </div>
-         
-        </>
-    )
-}
 
-export default Footer
+          {/* Cột 2: Danh mục */}
+          <div className="flex flex-col gap-3">
+            <h3 className="font-bold text-gray-800 uppercase tracking-wider text-sm mb-2 border-b-2 border-red-500 w-fit mx-auto lg:mx-0 pb-1">Danh mục</h3>
+            <Link to="/home" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 transform duration-200 inline-block">Trang chủ</Link>
+            <Link to="/about-kien-cuong" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 transform duration-200 inline-block">Về chúng tôi</Link>
+            <Link to="/branches" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 transform duration-200 inline-block">Hệ thống chi nhánh</Link>
+            <Link to="/find-car" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 transform duration-200 inline-block">Tìm mua xe</Link>
+          </div>
+
+          {/* Cột 3: Kết nối (Dynamic Data) */}
+          <div className="flex flex-col gap-3">
+            <h3 className="font-bold text-gray-800 uppercase tracking-wider text-sm mb-2 border-b-2 border-red-500 w-fit mx-auto lg:mx-0 pb-1">Kết nối</h3>
+            
+            {/* Facebook (Động) */}
+            <a href={info.facebook} target="_blank" rel="noreferrer" className="group flex items-center justify-center lg:justify-start gap-3 hover:text-blue-600 transition-colors text-sm">
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 group-hover:rotate-12">
+                <i className="fab fa-facebook-f"></i>
+              </div>
+              <span className="font-medium">Facebook</span>
+            </a>
+
+            {/* Youtube (Mặc định) */}
+            <a href={info.youtube} target="_blank" rel="noreferrer" className="group flex items-center justify-center lg:justify-start gap-3 hover:text-red-600 transition-colors text-sm">
+              <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all duration-300 group-hover:rotate-12">
+                <i className="fab fa-youtube"></i>
+              </div>
+              <span className="font-medium">Youtube</span>
+            </a>
+
+            {/* TikTok (Động) */}
+            <a href={info.tiktok} target="_blank" rel="noreferrer" className="group flex items-center justify-center lg:justify-start gap-3 hover:text-black transition-colors text-sm">
+              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-black group-hover:bg-black group-hover:text-white transition-all duration-300 group-hover:rotate-12">
+                <i className="fab fa-tiktok"></i>
+              </div>
+              <span className="font-medium">TikTok</span>
+            </a>
+
+            {/* Hotline (Động) */}
+            <a href={`tel:${info.hotline.replace(/\s/g, '')}`} className="group flex items-center justify-center lg:justify-start gap-3 hover:text-green-600 transition-colors text-sm font-bold">
+               <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-300 group-hover:animate-pulse">
+                 <i className="fas fa-phone-alt"></i>
+               </div>
+               <span>{info.hotline}</span>
+            </a>
+          </div>
+
+          {/* Cột 4: Hỗ trợ & Watermark */}
+          <div className="flex flex-col gap-3 items-center lg:items-start">
+             <h3 className="font-bold text-gray-800 uppercase tracking-wider text-sm mb-2 border-b-2 border-red-500 w-fit mx-auto lg:mx-0 pb-1">Hỗ trợ</h3>
+             
+             {/* Địa chỉ (Động - Thêm cho uy tín) */}
+             <div className="text-sm text-gray-500 flex gap-2 items-start justify-center lg:justify-start">
+                <i className="fas fa-map-marker-alt text-red-500 mt-1"></i>
+                <span className="max-w-[200px] text-left">{info.address}</span>
+             </div>
+
+             <a href="mailto:contact@kiencuongauto.vn" className="text-red-600 font-bold text-lg hover:underline decoration-2 underline-offset-4 mt-2">
+                KienCuongAuto.vn
+             </a>
+
+             <div className="mt-6 pt-6 border-t border-gray-200 w-full text-center lg:text-left">
+                <a 
+                  href="https://github.com/justccuong" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="inline-flex items-center gap-1 text-[10px] text-gray-400 hover:text-gray-600 transition-colors cursor-pointer select-none group"
+                  title="Dev by Cuong"
+                >
+                  Code with <span className="text-red-400 group-hover:scale-125 transition-transform duration-300">❤️</span> by <span className="font-mono font-bold ml-1">justccuong</span>
+                </a>
+             </div>
+          </div>
+
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Footer;

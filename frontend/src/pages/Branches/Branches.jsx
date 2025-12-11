@@ -1,109 +1,123 @@
-import React from "react";
-
-const branches = [
-  {
-    name: "Trụ sở chính Kiên Cường Auto",
-    location: "771 Đình Ấm, Khai Quang, Vĩnh Yên, Vĩnh Phúc",
-    hotline: "0966812888",
-    link: "/branches/tru-so-chinh",
-    img: "/anh-co-so/truso.jpg",
-  },
-  {
-    name: "Kiên Cường Auto Cơ sở 1",
-    location: "646 Đình Ấm, Khai Quang, Vĩnh Yên, Vĩnh Phúc",
-    hotline: "0986388922",
-    link: "/branches/cs1",
-    img: "/anh-co-so/cs1.jpg",
-  },
-  {
-    name: "Kiên Cường Auto Cơ sở 2",
-    location: "646 Đình Ấm, Khai Quang, Vĩnh Yên, Vĩnh Phúc",
-    hotline: "0366691888",
-    link: "/branches/cs2",
-    img: "/anh-co-so/cs2.jpg",
-  },
-  {
-    name: "Kiên Cường Auto Cơ sở 4 - Tuyên Quang",
-    location: "Km5, Lưỡng Vượng, TP. Tuyên Quang",
-    hotline: "0848724999",
-    link: "/branches/cs4",
-    img: "/anh-co-so/cs4.jpg",
-  },
-  {
-    name: "Kiên Cường Auto Cơ sở 5 - Việt Trì",
-    location: "559 Đại lộ Hùng Vương, TP. Việt Trì, Phú Thọ",
-    hotline: "0987771022",
-    link: "/branches/cs5",
-    img: "/anh-co-so/cs5.jpg",
-  },
-  {
-    name: "Kiên Cường Auto Cơ sở 6 - Bình Dương",
-    location: "278 ĐT 743, Tân Đông Hiệp, TP. Dĩ An, Bình Dương",
-    hotline: "0385882418",
-    link: "/branches/cs6",
-    img: "/anh-co-so/cs6.jpg",
-  },
-  {
-    name: "Kiên Cường Auto Cơ sở 7 - Hương Canh",
-    location: "Hương Canh, Bình Xuyên, Vĩnh Phúc",
-    hotline: "0962969926",
-    link: "/branches/cs7",
-    img: "/anh-co-so/cs7.jpg",
-  },
-];
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import api from "../../utils/axios";
+import { FaMapMarkerAlt, FaPhoneAlt, FaBuilding, FaArrowRight } from "react-icons/fa";
 
 const BranchesPage = () => {
+  const [branches, setBranches] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      setLoading(true);
+      try {
+        const res = await api.get("/branches");
+        
+        // Logic sắp xếp: Trụ sở chính -> Cơ sở 1, 2...
+        const sortedBranches = res.data.sort((a, b) => {
+          const nameA = a.name.toLowerCase();
+          const nameB = b.name.toLowerCase();
+
+          if (nameA.includes("trụ sở chính")) return -1;
+          if (nameB.includes("trụ sở chính")) return 1;
+
+          const getNumber = (str) => {
+            const match = str.match(/cơ sở\s*(\d+)/i);
+            return match ? parseInt(match[1], 10) : 999;
+          };
+
+          return getNumber(nameA) - getNumber(nameB);
+        });
+
+        setBranches(sortedBranches);
+      } catch (error) {
+        console.error("Lỗi lấy danh sách chi nhánh:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBranches();
+  }, []);
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+      </div>
+    );
+  }
+
   return (
-    <section className="bg-gray-50 py-14 px-4 md:px-12">
+    <section className="bg-gray-50 min-h-screen py-16 px-4 md:px-8 font-sans">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-gray-800">Hệ thống chi nhánh Kiên Cường Auto</h2>
-          <p className="text-gray-600 mt-3 text-lg">Khám phá các chi nhánh gần bạn và lựa chọn xe ưng ý</p>
+        
+        {/* HEADER SECTION */}
+        <div className="text-center mb-16">
+          <span className="text-red-600 font-bold uppercase tracking-wider text-sm bg-red-50 px-4 py-1 rounded-full border border-red-100 mb-4 inline-block">
+            Hệ thống Showroom
+          </span>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
+            Chi nhánh Kiên Cường Auto
+          </h2>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
+            Mạng lưới phủ rộng khắp các tỉnh thành, mang đến sự thuận tiện tối đa cho quý khách hàng trong việc tham quan và mua sắm.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {branches.map((branch, index) => (
-            <div
-              key={index}
-              className="bg-white border border-gray-200 rounded-3xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+        {/* GRID CARD */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {branches.map((branch) => (
+            <Link
+              to={`/branches/${branch.id}`}
+              key={branch.id}
+              className="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 flex flex-col h-full transform hover:-translate-y-2"
             >
-              <div className="relative h-52 w-full overflow-hidden">
+              {/* Ảnh Card - Tràn viền & Zoom Effect */}
+              <div className="relative h-64 overflow-hidden">
                 <img
-                  src={branch.img}
+                  src={branch.image}
                   alt={branch.name}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/default-branch.jpg";
-                  }}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  onError={(e) => { e.target.src = "https://via.placeholder.com/600x400?text=Kien+Cuong+Auto"; }}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
+                
+                {/* Overlay gradient đen mờ bên dưới ảnh */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                
+                {/* Badge tên ngắn gọn */}
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                   <div className="flex items-center gap-2 text-sm font-medium bg-black/30 backdrop-blur-md w-fit px-3 py-1 rounded-lg border border-white/20">
+                      <FaBuilding className="text-yellow-400" /> Showroom
+                   </div>
+                </div>
               </div>
 
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-black mb-2">{branch.name}</h3>
-                <div className="text-sm text-gray-700 mb-1 flex items-center">
-                  <i className="fas fa-map-marker-alt text-green-500 mr-2"></i>
-                  <span>{branch.location}</span>
+              {/* Nội dung Card */}
+              <div className="p-6 flex flex-col flex-grow">
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-red-600 transition-colors line-clamp-2 min-h-[3.5rem]">
+                  {branch.name}
+                </h3>
+                
+                <div className="space-y-3 mb-6 flex-grow">
+                  <div className="flex items-start gap-3 text-gray-600 text-sm">
+                    <FaMapMarkerAlt className="text-red-500 mt-1 flex-shrink-0" />
+                    <span className="line-clamp-2">{branch.location}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-gray-600 text-sm font-medium">
+                    <FaPhoneAlt className="text-green-600 flex-shrink-0" />
+                    <span>{branch.hotline}</span>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-700 mb-3 flex items-center">
-                  <i className="fas fa-phone-alt text-blue-500 mr-2"></i>
-                  <span>{branch.hotline}</span>
+
+                {/* Nút Xem chi tiết */}
+                <div className="mt-auto pt-4 border-t border-gray-100">
+                  <span className="flex items-center justify-center gap-2 w-full bg-gray-50 text-gray-800 py-3 rounded-xl font-bold group-hover:bg-red-600 group-hover:text-white transition-all duration-300">
+                    Xem xe tại đây <FaArrowRight className="text-xs transition-transform group-hover:translate-x-1" />
+                  </span>
                 </div>
-                <a
-                  href={branch.link}
-                  className="
-                      inline-block w-full text-center mt-auto
-                      bg-red-600 text-white py-2 px-4 
-                      rounded-xl font-semibold 
-                      hover:bg-red-700 
-                      shadow-md hover:shadow-lg 
-                      transition duration-300
-                    "
-                >
-                  Xem xe tại chi nhánh
-                </a>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

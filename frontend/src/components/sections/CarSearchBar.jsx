@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import OptimizedImage from "../input/OptimizedImage";
+import api from "../../utils/axios"; // Nhớ import cái này để nó nhận đúng port 5000
 
 const CarSearchBar = () => {
   const [cars, setCars] = useState([]);
@@ -9,76 +10,101 @@ const CarSearchBar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Debounce: Chờ user gõ xong 500ms mới gọi API cho đỡ lag server
     const delayDebounce = setTimeout(() => {
       const fetchCars = async () => {
-        if (!searchTerm) {
+        if (!searchTerm.trim()) {
           setCars([]);
           return;
         }
 
         setLoading(true);
         try {
-          const res = await fetch(
-            `/cars?name=${encodeURIComponent(searchTerm)}`
-          );
-          const data = await res.json();
-          setCars(Array.isArray(data) ? data : data.cars || []);
+          // Dùng api instance thay vì fetch thường
+          const res = await api.get(`/cars?name=${encodeURIComponent(searchTerm)}`);
+          
+          // Axios trả data trong res.data
+          // Check kỹ logic backend trả về mảng hay object
+          const result = res.data;
+          setCars(Array.isArray(result) ? result : result.cars || []);
         } catch (error) {
           console.error("Lỗi fetch xe:", error);
+          setCars([]);
         } finally {
           setLoading(false);
         }
       };
 
       fetchCars();
-    }, 400); // delay 400ms
+    }, 500);
 
-    return () => clearTimeout(delayDebounce); // clear timeout nếu user gõ tiếp
+    return () => clearTimeout(delayDebounce);
   }, [searchTerm]);
 
   const handleClick = (id) => {
     navigate(`/cars/${id}`);
+    setSearchTerm(""); // Chọn xong thì xóa text đi cho gọn
+    setCars([]);       // Ẩn luôn danh sách gợi ý
   };
 
   return (
     <div className="relative w-full max-w-[430px]">
       <input
         type="text"
-        placeholder="Tìm xe..."
-        className="w-full px-4 pr-10 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="Tìm tên xe (vd: Mazda, CX5...)"
+        className="w-full px-4 pr-10 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <i className="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+      
+      {/* Icon search */}
+      <i className="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
 
+      {/* Dropdown kết quả */}
       {searchTerm && (
-        <ul className="absolute left-0 right-0 z-10 mt-1 max-h-60 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg">
+        <ul className="absolute left-0 right-0 z-50 mt-2 max-h-80 overflow-y-auto bg-white border border-gray-100 rounded-xl shadow-2xl animate-fade-in-down">
           {loading ? (
-            <li className="px-4 py-2 italic text-gray-500">Đang tải dữ liệu...</li>
+            <li className="px-4 py-3 text-gray-500 text-center text-sm">
+              <i className="fas fa-spinner fa-spin mr-2"></i> Đang tìm kiếm...
+            </li>
           ) : cars.length > 0 ? (
             cars.map((car) => (
               <li
                 key={car._id}
-                className="flex items-center justify-between px-4 py-2 hover:bg-blue-100 cursor-pointer"
+                className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 cursor-pointer border-b last:border-none transition-colors"
                 onClick={() => handleClick(car._id)}
               >
-                <div className="flex items-center gap-2">
-                  {Array.isArray(car.images) && car.images.length > 0 && (
+                {/* Ảnh thumbnail - Đã chỉnh lại size cho đẹp */}
+                <div className="w-14 h-10 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                  {car.images && car.images.length > 0 ? (
                     <OptimizedImage
-                      src={car.images?.[0]?.url}
+                      src={car.images[0].url}
                       alt={car.name}
-                      width={360}
-                      height={360}
-                      className="w-full h-5 object-cover rounded"
+                      width={100}
+                      height={100}
+                      className="w-full h-full object-cover"
                     />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center text-xs text-gray-500">
+                      No img
+                    </div>
                   )}
-                  <span>{car.name} ({car.year})</span>
                 </div>
-                <span className="text-sm text-gray-500">{car.branch}</span>
+
+                {/* Thông tin xe */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-800 truncate">{car.name}</p>
+                  <p className="text-xs text-gray-500 flex justify-between">
+                    <span>{car.year}</span>
+                    <span className="text-red-600 font-medium">{car.branch}</span>
+                  </p>
+                </div>
               </li>
             ))
           ) : (
-            <li className="px-4 py-2 italic text-gray-500">Không tìm thấy xe nào</li>
+            <li className="px-4 py-3 text-center text-gray-500 text-sm">
+              Không tìm thấy xe nào phù hợp 😅
+            </li>
           )}
         </ul>
       )}

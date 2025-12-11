@@ -4,16 +4,13 @@ const ScrollToTop = () => {
     const [isVisible, setIsVisible] = useState(false);
 
     const toggleVisibility = useCallback(() => {
-        console.log("ScrollY:", window.scrollY);
         setIsVisible(window.scrollY > 0);
     }, []);
 
     useEffect(() => {
-        console.log("Event Listener Added!");
         window.addEventListener("scroll", toggleVisibility);
         
         return () => {
-            console.log("Event Listener Removed!");
             window.removeEventListener("scroll", toggleVisibility);
         };
     }, [toggleVisibility]); // 🔥 Dependency đảm bảo cập nhật đúng

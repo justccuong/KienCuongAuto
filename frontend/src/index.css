@@ -11,6 +11,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 .branches-grid {
   display: grid !important;
   grid-template-columns: 1fr !important;

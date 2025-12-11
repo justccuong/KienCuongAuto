@@ -10,52 +10,67 @@ import {
 
 const strengths = [
   {
-    icon: <FaUsers className="text-3xl mb-4" />,
-    title: "Đội ngũ nhân viên chuyên nghiệp",
-    desc: "Đội ngũ nhân viên tâm huyết với nghề, được đào tạo chuyên nghiệp, bài bản về chuyên môn, tư vấn nhiệt tình, chăm sóc chu đáo, tạo cảm giác thoải mái nhất cho mọi khách hàng.",
+    icon: <FaUsers />,
+    title: "Đội ngũ chuyên nghiệp",
+    desc: "Nhân viên tận tâm, được đào tạo bài bản, sẵn sàng tư vấn 24/7.",
   },
   {
-    icon: <FaTags className="text-3xl mb-4" />,
+    icon: <FaTags />,
     title: "Giá cả cạnh tranh",
-    desc: "Giá cả sản phẩm hợp lý cùng các chương trình khuyến mãi ưu đãi hấp dẫn nhất. Bên cạnh đó còn có các dịch vụ hậu mãi bảo hành sửa chữa chu đáo với đội ngũ kỹ thuật tay nghề cao.",
+    desc: "Cam kết giá tốt nhất thị trường cùng nhiều chương trình ưu đãi hấp dẫn.",
   },
   {
-    icon: <FaCheckSquare className="text-3xl mb-4" />,
+    icon: <FaCheckSquare />,
     title: "Uy tín hàng đầu",
-    desc: "“Chữ tín luôn được đặt hàng đầu”. Ô Tô Kiên Cường lấy uy tín làm kim chỉ nam để hoạt động và phát triển, cung cấp xe cũ chất lượng giá tốt.",
+    desc: "Chữ tín là kim chỉ nam. Cam kết chất lượng xe và pháp lý minh bạch.",
   },
   {
-    icon: <FaTruck className="text-3xl mb-4" />,
-    title: "Hỗ trợ giao xe nhanh tận nơi",
-    desc: "Dù ở xa hay gần, khách hàng không phải lo lắng bởi khi mua xe tại Ô Tô Kiên Cường, chúng tôi sẽ giao xe tận nơi nhanh chóng đúng thời hạn theo yêu cầu của quý khách.",
+    icon: <FaTruck />,
+    title: "Giao xe tận nhà",
+    desc: "Hỗ trợ vận chuyển xe an toàn đến tận tay khách hàng trên toàn quốc.",
   },
   {
-    icon: <FaCreditCard className="text-3xl mb-4" />,
-    title: "Hỗ trợ trả góp thủ tục nhanh",
-    desc: "Hỗ trợ khách hàng mua xe trả góp lên đến 70% giá trị xe, thời gian vay tối đa 7 năm, lãi tính theo dư nợ giảm dần. Thủ tục đơn giản, nhanh gọn.",
+    icon: <FaCreditCard />,
+    title: "Hỗ trợ trả góp 70%",
+    desc: "Thủ tục nhanh gọn, lãi suất ưu đãi, thời gian vay linh hoạt tới 7 năm.",
   },
   {
-    icon: <FaCar className="text-3xl mb-4" />,
-    title: "Xe có sẵn lái trải nghiệm",
-    desc: "Showroom trưng bày các mẫu xe có sẵn, giúp khách hàng trải nghiệm thực tế để có cái nhìn chân thật hơn và lựa chọn dòng xe phù hợp.",
+    icon: <FaCar />,
+    title: "Lái thử miễn phí",
+    desc: "Trải nghiệm thực tế các dòng xe có sẵn tại showroom trước khi quyết định.",
   },
 ];
 
-const StrengthsSection = () => {
+const ServicesSection = () => {
   return (
-    <section className="bg-gray-50 py-12 px-4 text-center">
-      <h2 className="text-3xl font-bold mb-10">Thế mạnh của Ô Tô Kiên Cường</h2>
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-        {strengths.map((item, index) => (
-          <div key={index} className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
-            <div className="text-primary">{item.icon}</div>
-            <h3 className="font-semibold text-lg mt-2 mb-3">{item.title}</h3>
-            <p className="text-gray-600 text-sm">{item.desc}</p>
-          </div>
-        ))}
+    <section className="bg-gray-50 py-16 px-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Vì sao chọn Kiên Cường Auto?</h2>
+          <div className="w-20 h-1 bg-red-600 mx-auto rounded-full"></div>
+        </div>
+
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {strengths.map((item, index) => (
+            <div 
+              key={index} 
+              className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+            >
+              <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center text-2xl text-red-600 mb-6 group-hover:bg-red-600 group-hover:text-white transition-colors duration-300">
+                {item.icon}
+              </div>
+              <h3 className="font-bold text-xl text-gray-900 mb-3 group-hover:text-red-600 transition-colors">
+                {item.title}
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                {item.desc}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
 };
 
-export default StrengthsSection;
+export default ServicesSection;

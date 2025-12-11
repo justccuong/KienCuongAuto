@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const carSchema = new mongoose.Schema({
   name: String,
+  description: { type: String, default: "" },
   year: Number,
   kilometers: String,
   manufacturer: String,
