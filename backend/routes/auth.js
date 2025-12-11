@@ -6,8 +6,6 @@ const User = require("../models/User");
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
 const { verifyToken } = require('../middleware/verifyToken');
 
-
-// =================== ĐĂNG KÝ ===================
 router.post("/register", async (req, res) => {
   const { name, phone, email, password, role } = req.body;
 
@@ -37,7 +35,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// =================== ĐĂNG NHẬP ===================
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -56,8 +53,8 @@ router.post("/login", async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "lax",     // hoặc "none" nếu dùng HTTPS
-      secure: false       // true nếu dùng HTTPS
+      sameSite: "lax",    
+      secure: false     
     });
 
     res.status(200).json({
@@ -88,13 +85,12 @@ router.get("/me", verifyToken, async (req, res) => {
 router.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "lax",  // hoặc "none" nếu đang xài HTTPS
-    secure: false     // đổi sang true nếu dùng HTTPS
+    sameSite: "lax",  
+    secure: false    
   });
   res.status(200).json({ msg: "Đăng xuất thành công" });
 });
 
-// =================== CẬP NHẬT THÔNG TIN CÁ NHÂN ===================
 router.put("/me", verifyToken, async (req, res) => {
   try {
     const { name, phone } = req.body;

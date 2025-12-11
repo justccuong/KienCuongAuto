@@ -1,4 +1,3 @@
-// seed/seedBranches.js
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const branches = require("../seed/sampleBranches");

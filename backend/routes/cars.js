@@ -121,7 +121,6 @@ router.get('/', async (req, res) => {
       query.name = new RegExp(name, "i");
     }
 
-    // Helper: thêm các filter khác nếu có
     const addQuery = (key, value) => {
       if (value) query[key] = new RegExp(`^${value}$`, "i");
     };
