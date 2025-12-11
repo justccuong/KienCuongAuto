@@ -19,7 +19,7 @@ This project demonstrates a complete **Software Development Life Cycle (SDLC)** 
 - **React.js**: Functional Components, Hooks.
 - **State Management**: Context API / Redux.
 - **Routing**: React Router v6.
-- **UI/UX**: Responsive design with CSS/SCSS.
+- **UI/UX**: Tailwind CSS (Utility-first framework) for modern & responsive design.
 - **API Client**: Axios (with Interceptors).
 
 ### 🔙 Backend (Server)
@@ -153,5 +153,3 @@ KienCuongAuto/
 -----
 
 *If you find this project helpful, please give it a star ⭐\!*
-
-```
