@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Layout from "./components/layouts/Layout";
 import FixedChatButtons from "./components/input/FixedChatButton";
 import AdminRoute from "./components/AdminRoute"; 
+import ScrollToTop from "./components/ScrollToTop";
 
 // --- Pages: Auth ---
 import Login from "./pages/Auth/Login";
@@ -29,7 +30,7 @@ const App = () => {
     <Router>
       {/*some buttons*/}
       <FixedChatButtons />
-
+      <ScrollToTop />
       <Routes>
         {/* 1. KHU VỰC AUTH (Không có Header/Footer) */}
         <Route path="/login" element={<Login />} />

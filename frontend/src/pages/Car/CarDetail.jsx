@@ -5,7 +5,7 @@ import OptimizedImage from "../../components/input/OptimizedImage";
 import { 
   FaMapMarkerAlt, FaPhoneAlt, FaArrowLeft, FaCheckCircle, 
   FaCogs, FaGasPump, FaRoad, FaCalendarAlt, FaCarSide,
-  FaPalette, FaChair, FaDoorClosed, FaInfoCircle
+  FaPalette, FaChair, FaDoorClosed, FaInfoCircle, FaCar
 } from "react-icons/fa";
 
 export default function CarDetail() {
@@ -37,7 +37,9 @@ export default function CarDetail() {
         const relatedRes = await api.get(
           `/cars?branch=${encodeURIComponent(carData.branch || "")}`
         );
+        // Lấy xe khác xe hiện tại
         const filtered = relatedRes.data.filter((c) => c._id !== carData._id);
+        // Random lấy 4 xe (để xếp vừa đẹp 1 hàng 4 cột)
         const randomCars = filtered.sort(() => 0.5 - Math.random()).slice(0, 4);
         setRelatedCars(randomCars);
       } catch (err) {
@@ -93,6 +95,7 @@ export default function CarDetail() {
     <div className="bg-gray-50 text-gray-900 min-h-screen py-8 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         
+        {/* Nút quay lại */}
         <div className="mb-6">
             <button 
                 onClick={() => navigate(-1)} 
@@ -105,11 +108,13 @@ export default function CarDetail() {
             </button>
         </div>
 
+        {/* Layout chính: Ảnh & Thông tin */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
+          {/* Cột trái: Gallery Ảnh */}
           <div>
             <div className="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 sticky top-4">
-           
+              {/* Ảnh lớn */}
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] group bg-gray-100">
                 {hasImages ? (
                   <OptimizedImage
@@ -125,7 +130,7 @@ export default function CarDetail() {
                   </div>
                 )}
 
-             
+                {/* Nút điều hướng ảnh */}
                 {hasImages && car.images.length > 1 && (
                   <>
                     <button onClick={prevImage} className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10">
@@ -137,7 +142,7 @@ export default function CarDetail() {
                   </>
                 )}
                 
-         
+                {/* Số thứ tự ảnh */}
                 {hasImages && (
                     <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
                         {selectedImage + 1}/{car.images.length}
@@ -145,7 +150,7 @@ export default function CarDetail() {
                 )}
               </div>
 
-             
+              {/* Thumbnails */}
               {hasImages && car.images.length > 1 && (
                 <div className="flex gap-2 mt-2 overflow-x-auto pb-2 px-1 scrollbar-hide snap-x snap-mandatory">
                   {car.images.map((img, index) => (
@@ -157,7 +162,7 @@ export default function CarDetail() {
                       }`}
                       onClick={() => setSelectedImage(index)}
                     >
-                       <OptimizedImage
+                        <OptimizedImage
                         src={img?.url}
                         alt="thumb"
                         width={80}
@@ -171,8 +176,10 @@ export default function CarDetail() {
             </div>
           </div>
 
+          {/* Cột phải: Thông tin xe */}
           <div className="space-y-6">
             
+            {/* Header thông tin */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-red-600">
                 <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-snug mb-3">
                     {car.name}
@@ -191,6 +198,7 @@ export default function CarDetail() {
                 </div>
             </div>
 
+            {/* Thông số kỹ thuật */}
             <div className="bg-white p-6 rounded-2xl shadow-sm">
                 <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
                     <FaCogs className="text-red-500" /> Thông số kỹ thuật
@@ -207,6 +215,7 @@ export default function CarDetail() {
                 </div>
             </div>
 
+            {/* Thông tin liên hệ */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <div className="flex items-start gap-3 mb-6">
                     <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600 flex-shrink-0">
@@ -238,6 +247,7 @@ export default function CarDetail() {
                 </div>
             </div>
 
+            {/* Mô tả */}
             {car.description && (
                 <div className="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-blue-500">
                     <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
@@ -248,37 +258,80 @@ export default function CarDetail() {
                     </div>
                 </div>
             )}
-
           </div>
         </div>
-
         <div className="mt-16 pt-8 border-t border-gray-200">
-          <h3 className="text-2xl font-bold text-gray-900 mb-8 border-l-4 border-red-600 pl-4">
-            Gợi ý xe tương tự
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 border-l-4 border-red-600 pl-4 flex items-center gap-2">
+            <FaCar className="text-red-500" /> Gợi ý xe tương tự
           </h3>
+          
           {relatedCars.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {relatedCars.map(car => (
-                    <Link to={`/cars/${car._id}`} key={car._id} onClick={() => window.scrollTo(0,0)} className="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block">
-                        <div className="aspect-[4/3] relative overflow-hidden">
-                            <OptimizedImage src={car.images?.[0]?.url} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                            <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
-                                {car.year}
-                            </div>
-                        </div>
-                        <div className="p-4">
-                            <h4 className="font-bold text-gray-900 truncate mb-1 group-hover:text-red-600 transition-colors">{car.name}</h4>
-                            <p className="text-red-600 font-extrabold text-lg">{car.price} Triệu</p>
-                            <div className="mt-2 pt-2 border-t border-gray-100 flex items-center gap-1 text-xs text-gray-500">
-                                <FaMapMarkerAlt className="text-red-400" /> {car.branch}
-                            </div>
-                        </div>
-                    </Link>
-                ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {relatedCars.map((car) => (
+                <Link
+                  to={`/cars/${car._id}`}
+                  key={car._id}
+                  className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group cursor-pointer border border-gray-100 hover:-translate-y-1 block h-full flex flex-col"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                    <OptimizedImage
+                      src={car.images?.[0]?.url}
+                      alt={car.name}
+                      width={300} 
+                      height={225}
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    />
+                    
+                    {/* Badge Năm */}
+                    <div className="absolute top-2 right-2 bg-white/95 backdrop-blur text-gray-800 text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
+                      {car.year}
+                    </div>
+                    
+                    {/* Badge New */}
+                    {car.condition === "Xe mới" && (
+                      <div className="absolute top-2 left-2 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase shadow-sm">
+                        NEW
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Nội dung chi tiết - Padding nhỏ hơn */}
+                  <div className="p-3 flex flex-col flex-grow">
+                    <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-2 min-h-[2.5rem]" title={car.name}>
+                      {car.name}
+                    </h3>
+                    
+                    <p className="text-red-600 font-extrabold text-lg mb-2">
+                      {new Intl.NumberFormat('vi-VN').format(car.price)} Tr
+                    </p>
+                    
+                    {/* Thông số kỹ thuật - Ẩn bớt trên card bé */}
+                    <div className="flex items-center justify-between text-[10px] text-gray-500 border-t pt-2 bg-gray-50 -mx-3 px-3 py-2 mt-auto">
+                      <div className="flex items-center gap-1">
+                        <FaCogs className="text-gray-400"/>
+                        <span className="truncate max-w-[50px]">{car.gearbox?.replace("Hộp số ", "")}</span>
+                      </div>
+                      <div className="h-4 w-px bg-gray-200"></div>
+                      <div className="flex items-center gap-1">
+                        <FaRoad className="text-gray-400"/>
+                        <span>{car.kilometers ? `${car.kilometers}km` : "0km"}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Địa chỉ chi nhánh */}
+                    <div className="mt-0 pt-1.5 text-[10px] font-bold text-red-600 flex items-center gap-1 truncate border-t border-gray-100 bg-white -mx-3 px-3 pb-0 h-6">
+                      <FaMapMarkerAlt /> <span className="truncate">{car.branch}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
             </div>
           ) : (
-            <div className="text-center py-10 bg-white rounded-xl border border-dashed border-gray-300">
-                <p className="text-gray-500 italic">Chưa có xe tương tự nào.</p>
+            <div className="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+               <div className="text-3xl text-gray-300 mb-2">🚗</div>
+               <p className="text-gray-500 text-sm">Chưa có xe tương tự.</p>
+               <Link to="/find-car" className="text-red-600 hover:underline text-xs mt-1 inline-block">Xem tất cả kho xe</Link>
             </div>
           )}
         </div>

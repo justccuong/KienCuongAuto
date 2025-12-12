@@ -156,7 +156,7 @@ const FindCarPage = () => {
           
           {/* SIDEBAR BỘ LỌC */}
           <div className={`lg:col-span-1 space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 sticky top-20">
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 top-20">
               <div className="flex justify-between items-center border-b pb-2 mb-4">
                 <h3 className="font-bold text-lg flex items-center gap-2">
                   <FaFilter className="text-red-600" /> Bộ lọc

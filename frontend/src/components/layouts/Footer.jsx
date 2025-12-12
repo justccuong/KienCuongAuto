@@ -17,20 +17,18 @@ const Footer = () => {
 
   const [info, setInfo] = useState(DEFAULT_INFO);
 
+  // Logic lấy thông tin (Giữ nguyên)
   useEffect(() => {
     const updateFooterInfo = async () => {
       const path = location.pathname;
-
       const carMatch = matchPath("/cars/:id", path);
       if (carMatch) {
         try {
           const carRes = await api.get(`/cars/detail/${carMatch.params.id}`);
           const branchName = carRes.data.car.branch;
-
           if (branchName) {
             const branchesRes = await api.get("/branches");
             const foundBranch = branchesRes.data.find(b => b.name === branchName);
-            
             if (foundBranch) {
               setInfo({
                 hotline: foundBranch.hotline || DEFAULT_INFO.hotline,
@@ -43,17 +41,13 @@ const Footer = () => {
               return;
             }
           }
-        } catch (err) {
-          console.error("Footer: Lỗi lấy info từ xe", err);
-        }
+        } catch (err) {}
       }
-
       const branchMatch = matchPath("/branches/:id", path);
       if (branchMatch) {
         try {
           const branchesRes = await api.get("/branches");
           const foundBranch = branchesRes.data.find(b => b.id === branchMatch.params.id || b._id === branchMatch.params.id);
-
           if (foundBranch) {
             setInfo({
               hotline: foundBranch.hotline || DEFAULT_INFO.hotline,
@@ -65,32 +59,29 @@ const Footer = () => {
             });
             return;
           }
-        } catch (err) {
-          console.error("Footer: Lỗi lấy info từ chi nhánh", err);
-        }
+        } catch (err) {}
       }
-
       setInfo(DEFAULT_INFO);
     };
-
     updateFooterInfo();
   }, [location.pathname]);
 
   return (
-    <div className="bg-gray-100 border-t border-gray-200 mt-auto">
-      <footer className="max-w-7xl mx-auto px-4 py-12 text-gray-600">
+    <div className="bg-gray-50 border-t border-gray-200 mt-auto">
+      <footer className="max-w-7xl mx-auto px-6 py-12 text-gray-600">
         
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6 text-center md:text-left">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-8 text-center sm:text-left">
           
-          <div className="col-span-2 lg:col-span-1 flex flex-col items-center lg:items-start">
-            <Link to="/home" className="group">
+          {/* CỘT 1: LOGO */}
+          <div className="flex flex-col items-center sm:items-start">
+            <Link to="/home" className="group block mb-4">
               <img 
                 src="/logo_done.png" 
                 alt="Kiên Cường Auto" 
-                className="w-40 h-auto mb-4 transition-transform transform group-hover:scale-105 duration-300" 
+                className="w-48 h-auto transition-transform transform group-hover:scale-105 duration-300" 
               />
             </Link>
-            <p className="text-sm italic mb-4 leading-relaxed max-w-xs mx-auto lg:mx-0">
+            <p className="text-sm italic mb-4 leading-relaxed max-w-xs">
               <q>
                 <span className="font-semibold text-red-600">Uy tín </span> 
                 tạo nên thương hiệu - 
@@ -98,70 +89,83 @@ const Footer = () => {
                 dẫn lối thành công.
               </q>
             </p>
-            <div className="text-xs text-gray-400">© 2025 KienCuongAuto. All rights reserved.</div>
+            <div className="text-xs text-gray-400">© 2025 KienCuongAuto.</div>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <h3 className="font-bold text-gray-800 uppercase tracking-wider text-sm mb-2 border-b-2 border-red-500 w-fit mx-auto lg:mx-0 pb-1">Danh mục</h3>
-            <Link to="/home" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 transform duration-200 inline-block">Trang chủ</Link>
-            <Link to="/about-kien-cuong" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 transform duration-200 inline-block">Về chúng tôi</Link>
-            <Link to="/branches" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 transform duration-200 inline-block">Hệ thống chi nhánh</Link>
-            <Link to="/find-car" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 transform duration-200 inline-block">Tìm mua xe</Link>
+          {/* CỘT 2: DANH MỤC */}
+          <div className="flex flex-col items-center sm:items-start">
+            <h3 className="font-bold text-gray-900 uppercase tracking-wider text-sm mb-4 border-b-2 border-red-500 pb-1 w-fit">
+              Danh mục
+            </h3>
+            <div className="flex flex-col gap-2">
+                <Link to="/home" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 duration-200">Trang chủ</Link>
+                <Link to="/about-kien-cuong" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 duration-200">Về chúng tôi</Link>
+                <Link to="/branches" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 duration-200">Hệ thống chi nhánh</Link>
+                <Link to="/find-car" className="hover:text-red-600 transition-colors text-sm hover:translate-x-1 duration-200">Tìm mua xe</Link>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <h3 className="font-bold text-gray-800 uppercase tracking-wider text-sm mb-2 border-b-2 border-red-500 w-fit mx-auto lg:mx-0 pb-1">Kết nối</h3>
+          {/* CỘT 3: KẾT NỐI (Đã Fix thẳng hàng) */}
+          <div className="flex flex-col items-center sm:items-start">
+            <h3 className="font-bold text-gray-900 uppercase tracking-wider text-sm mb-4 border-b-2 border-red-500 pb-1 w-fit">
+              Kết nối
+            </h3>
             
-            <a href={info.facebook} target="_blank" rel="noreferrer" className="group flex items-center justify-center lg:justify-start gap-3 hover:text-blue-600 transition-colors text-sm">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 group-hover:rotate-12">
-                <i className="fab fa-facebook-f"></i>
-              </div>
-              <span className="font-medium">Facebook</span>
-            </a>
+            {/* 👇 FIX QUAN TRỌNG: Bọc trong w-fit để icon thẳng hàng dọc */}
+            <div className="flex flex-col gap-3 w-fit text-left">
+                <a href={info.facebook} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-blue-600 transition-colors text-sm group">
+                  <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <i className="fab fa-facebook-f"></i>
+                  </div>
+                  <span className="font-medium">Facebook</span>
+                </a>
 
-            <a href={info.youtube} target="_blank" rel="noreferrer" className="group flex items-center justify-center lg:justify-start gap-3 hover:text-red-600 transition-colors text-sm">
-              <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all duration-300 group-hover:rotate-12">
-                <i className="fab fa-youtube"></i>
-              </div>
-              <span className="font-medium">Youtube</span>
-            </a>
+                <a href={info.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-red-600 transition-colors text-sm group">
+                  <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all">
+                    <i className="fab fa-youtube"></i>
+                  </div>
+                  <span className="font-medium">Youtube</span>
+                </a>
 
-            <a href={info.tiktok} target="_blank" rel="noreferrer" className="group flex items-center justify-center lg:justify-start gap-3 hover:text-black transition-colors text-sm">
-              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-black group-hover:bg-black group-hover:text-white transition-all duration-300 group-hover:rotate-12">
-                <i className="fab fa-tiktok"></i>
-              </div>
-              <span className="font-medium">TikTok</span>
-            </a>
+                <a href={info.tiktok} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-black transition-colors text-sm group">
+                  <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-black group-hover:bg-black group-hover:text-white transition-all">
+                    <i className="fab fa-tiktok"></i>
+                  </div>
+                  <span className="font-medium">TikTok</span>
+                </a>
 
-            <a href={`tel:${info.hotline.replace(/\s/g, '')}`} className="group flex items-center justify-center lg:justify-start gap-3 hover:text-green-600 transition-colors text-sm font-bold">
-               <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-300 group-hover:animate-pulse">
-                 <i className="fas fa-phone-alt"></i>
-               </div>
-               <span>{info.hotline}</span>
-            </a>
+                <a href={`tel:${info.hotline.replace(/\s/g, '')}`} className="flex items-center gap-3 hover:text-green-600 transition-colors text-sm font-bold group">
+                   <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all animate-pulse">
+                     <i className="fas fa-phone-alt"></i>
+                   </div>
+                   <span className="text-base">{info.hotline}</span>
+                </a>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-3 items-center lg:items-start">
-             <h3 className="font-bold text-gray-800 uppercase tracking-wider text-sm mb-2 border-b-2 border-red-500 w-fit mx-auto lg:mx-0 pb-1">Hỗ trợ</h3>
+          {/* CỘT 4: LIÊN HỆ */}
+          <div className="flex flex-col items-center sm:items-start">
+             <h3 className="font-bold text-gray-900 uppercase tracking-wider text-sm mb-4 border-b-2 border-red-500 pb-1 w-fit">
+               Liên hệ
+             </h3>
              
-             <div className="text-sm text-gray-500 flex gap-2 items-start justify-center lg:justify-start">
-                <i className="fas fa-map-marker-alt text-red-500 mt-1"></i>
-                <span className="max-w-[200px] text-left">{info.address}</span>
+             <div className="text-sm text-gray-500 flex gap-2 items-start justify-center sm:justify-start text-left max-w-xs sm:max-w-none">
+                <i className="fas fa-map-marker-alt text-red-500 mt-1 flex-shrink-0"></i>
+                <span className="leading-snug">{info.address}</span>
              </div>
 
-             <a href="mailto:contact@kiencuongauto.vn" className="text-red-600 font-bold text-lg hover:underline decoration-2 underline-offset-4 mt-2">
-                KienCuongAuto.vn
+             <a href="mailto:contact@kiencuongauto.vn" className="text-gray-800 font-bold hover:text-red-600 transition-colors mt-3 block">
+                contact@kiencuongauto.vn
              </a>
 
-             <div className="mt-6 pt-6 border-t border-gray-200 w-full text-center lg:text-left">
+             <div className="mt-6 pt-6 border-t border-gray-200 w-full text-center sm:text-left">
                 <a 
                   href="https://github.com/justccuong" 
                   target="_blank" 
                   rel="noreferrer" 
-                  className="inline-flex items-center gap-1 text-[10px] text-gray-400 hover:text-gray-600 transition-colors cursor-pointer select-none group"
-                  title="Dev by Cuong"
+                  className="inline-flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  Code with <span className="text-red-400 group-hover:scale-125 transition-transform duration-300">❤️</span> by <span className="font-mono font-bold ml-1">justccuong</span>
+                  Code with <span className="text-red-500 animate-pulse">❤️</span> by <span className="font-mono font-bold">justccuong</span>
                 </a>
              </div>
           </div>

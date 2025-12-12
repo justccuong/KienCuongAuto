@@ -12,7 +12,6 @@ const Header = () => {
   const toggleRef = useRef(null);
 
   useEffect(() => {
-    // 1. Ưu tiên lấy từ LocalStorage trước cho nhanh (đỡ bị giật layout)
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
@@ -22,16 +21,12 @@ const Header = () => {
       }
     }
 
-    // 2. Gọi API lấy thông tin mới nhất (để cập nhật nếu có thay đổi)
     const fetchUser = async () => {
       try {
         const res = await api.get("/auth/me");
         setUser(res.data);
-        // Đồng bộ lại local storage luôn
         localStorage.setItem("user", JSON.stringify(res.data));
       } catch (err) {
-        // Nếu lỗi (hết hạn token) thì thôi, coi như chưa login
-        // setUser(null); 
       }
     };
     fetchUser();
@@ -40,9 +35,9 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       await api.post("/auth/logout");
-      localStorage.removeItem("user"); // Xóa local storage
+      localStorage.removeItem("user"); 
       setUser(null);
-      window.location.href = "/login"; // Chuyển trang cứng để reset state
+      window.location.href = "/login"; 
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -81,10 +76,10 @@ const Header = () => {
         </div>
 
         <nav className="hidden md:flex gap-6 items-center flex-shrink-0">
-          <Link className="ct-top-menu-item" to="/home">TRANG CHỦ</Link>
-          <Link className="ct-top-menu-item" to="/about-kien-cuong">VỀ KIÊN CƯỜNG</Link>
-          <Link className="ct-top-menu-item" to="/branches">CHI NHÁNH</Link>
-          <Link className="ct-top-menu-item" to="/find-car">TÌM XE</Link>
+          <Link className="ct-top-menu-item font-bold" to="/home">TRANG CHỦ</Link>
+          <Link className="ct-top-menu-item font-bold" to="/about-kien-cuong">VỀ KIÊN CƯỜNG</Link>
+          <Link className="ct-top-menu-item font-bold" to="/branches">CHI NHÁNH</Link>
+          <Link className="ct-top-menu-item font-bold" to="/find-car">TÌM XE</Link>
           {user?.role === "admin" && (
             <Link className="ct-top-menu-item text-red-600 font-bold hover:text-red-800" to="/admin">
               QUẢN LÝ
@@ -96,7 +91,6 @@ const Header = () => {
         <div className="hidden md:flex items-center gap-3 ml-6 flex-shrink-0">
           {user ? (
             <div className="flex items-center gap-2">
-              {/* 👇 ĐÃ SỬA: Biến tên thành Link bấm vào được */}
               <Link 
                 to="/account" 
                 className="flex items-center gap-2 hover:bg-gray-100 px-2 py-1 rounded transition-colors group"
@@ -173,11 +167,10 @@ const Header = () => {
               {user ? (
                 <div className="bg-gray-50 p-3 rounded-lg flex justify-between items-center">
                   
-                  {/* 👇 ĐÃ SỬA: Link Mobile bấm vào tên để đến Account */}
                   <Link 
                     to="/account" 
                     className="flex items-center gap-2 flex-1"
-                    onClick={() => setIsOpen(false)} // Bấm xong thì đóng menu lại
+                    onClick={() => setIsOpen(false)} 
                   >
                     <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600">
                        <i className="fa-regular fa-user"></i>
