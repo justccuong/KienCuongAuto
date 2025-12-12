@@ -12,12 +12,26 @@ const Header = () => {
   const toggleRef = useRef(null);
 
   useEffect(() => {
+    // 1. Ưu tiên lấy từ LocalStorage trước cho nhanh (đỡ bị giật layout)
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error("Lỗi parse user", e);
+      }
+    }
+
+    // 2. Gọi API lấy thông tin mới nhất (để cập nhật nếu có thay đổi)
     const fetchUser = async () => {
       try {
         const res = await api.get("/auth/me");
         setUser(res.data);
+        // Đồng bộ lại local storage luôn
+        localStorage.setItem("user", JSON.stringify(res.data));
       } catch (err) {
-        setUser(null);
+        // Nếu lỗi (hết hạn token) thì thôi, coi như chưa login
+        // setUser(null); 
       }
     };
     fetchUser();
@@ -26,8 +40,9 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       await api.post("/auth/logout");
+      localStorage.removeItem("user"); // Xóa local storage
       setUser(null);
-      window.location.reload();
+      window.location.href = "/login"; // Chuyển trang cứng để reset state
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -77,16 +92,27 @@ const Header = () => {
           )}
         </nav>
 
+        {/* --- KHU VỰC USER (DESKTOP) --- */}
         <div className="hidden md:flex items-center gap-3 ml-6 flex-shrink-0">
           {user ? (
             <div className="flex items-center gap-2">
-              <i className="fa-regular fa-user text-red-600 text-lg"></i>
-              <span className="text-sm font-semibold truncate max-w-[100px]">{user.name}</span>
+              {/* 👇 ĐÃ SỬA: Biến tên thành Link bấm vào được */}
+              <Link 
+                to="/account" 
+                className="flex items-center gap-2 hover:bg-gray-100 px-2 py-1 rounded transition-colors group"
+                title="Xem thông tin tài khoản"
+              >
+                <i className="fa-regular fa-user text-red-600 text-lg group-hover:scale-110 transition-transform"></i>
+                <span className="text-sm font-semibold truncate max-w-[120px] text-gray-700 group-hover:text-red-600">
+                  {user.name}
+                </span>
+              </Link>
+
               <button
                 onClick={handleLogout}
-                className="text-sm text-gray-500 hover:text-red-500 ml-1"
+                className="text-sm text-gray-400 hover:text-red-500 ml-1 border-l pl-2 border-gray-300"
               >
-                (Thoát)
+                Thoát
               </button>
             </div>
           ) : (
@@ -146,13 +172,20 @@ const Header = () => {
             <div className="pt-2 border-t mt-2">
               {user ? (
                 <div className="bg-gray-50 p-3 rounded-lg flex justify-between items-center">
-                  <div className="flex items-center gap-2">
+                  
+                  {/* 👇 ĐÃ SỬA: Link Mobile bấm vào tên để đến Account */}
+                  <Link 
+                    to="/account" 
+                    className="flex items-center gap-2 flex-1"
+                    onClick={() => setIsOpen(false)} // Bấm xong thì đóng menu lại
+                  >
                     <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600">
                        <i className="fa-regular fa-user"></i>
                     </div>
                     <span className="font-bold text-gray-800">{user.name}</span>
-                  </div>
-                  <button onClick={handleLogout} className="text-sm text-red-500 font-semibold">
+                  </Link>
+
+                  <button onClick={handleLogout} className="text-sm text-red-500 font-semibold px-2 py-1 border border-red-200 rounded hover:bg-red-50">
                     Đăng xuất
                   </button>
                 </div>
@@ -161,7 +194,7 @@ const Header = () => {
                   <Link to="/login" className="text-center py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
                     Đăng nhập
                   </Link>
-                  <Link to="/register" className="text-center py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                  <Link to="/signup" className="text-center py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
                     Đăng ký
                   </Link>
                 </div>
