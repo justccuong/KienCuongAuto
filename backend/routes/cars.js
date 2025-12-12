@@ -6,7 +6,14 @@ const upload = require('../middleware/upload');
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
 const cloudinary = require('../utils/cloudinary');
 
-// 1. Thêm xe mới
+// 🛡️ HÀM HELPER: Escape Regex (Chống hack ReDoS)
+function escapeRegex(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+}
+
+// ==========================================
+// 1. ADMIN: THÊM XE MỚI
+// ==========================================
 router.post(
   '/',
   isAuthenticated,
@@ -33,7 +40,9 @@ router.post(
   }
 );
 
-// 2. Sửa xe
+// ==========================================
+// 2. ADMIN: SỬA XE
+// ==========================================
 router.put(
   "/:id",
   isAuthenticated,
@@ -64,7 +73,9 @@ router.put(
   }
 );
 
-// 3. Xóa xe 
+// ==========================================
+// 3. ADMIN: XÓA XE
+// ==========================================
 router.delete(
   '/:id',
   isAuthenticated,
@@ -82,7 +93,7 @@ router.delete(
         return res.status(404).json({ message: "Không tìm thấy ô tô để xoá" });
       }
 
-      // Xóa ảnh trên Cloudinary cho sạch
+      // Xóa ảnh trên Cloudinary
       for (const img of car.images) {
         if (img.public_id) {
           try {
@@ -102,61 +113,95 @@ router.delete(
   }
 );
 
-// 4. Lấy danh sách xe (ĐÃ FIX BẢO MẬT)
+// ==========================================
+// 4. PUBLIC: LẤY DANH SÁCH XE (ĐÃ NÂNG CẤP LỌC & BẢO MẬT)
+// ==========================================
 router.get('/', async (req, res) => {
   try {
-    // 🛡️ HÀM KHIÊN CHẮN: Ép kiểu về String để chặn Object Injection
+    // A. DANH SÁCH TRẮNG (Chỉ cho phép những tham số này đi qua)
+    const allowedParams = [
+      'name', 'minPrice', 'maxPrice', // Lọc cơ bản
+      'branch', 'status', 'color', 'drive', 
+      'gearbox', 'condition', 'fuel', 'manufacturer', 
+      'installment', 'quality'
+    ];
+
+    // B. KIỂM TRA THAM SỐ LẠ (Chống Hack)
+    const queryKeys = Object.keys(req.query);
+    const hasStrangeParam = queryKeys.some(key => !allowedParams.includes(key));
+
+    if (hasStrangeParam) {
+      console.log("🚫 [Security] Chặn tham số lạ:", req.query);
+      return res.json([]); // Trả về rỗng ngay
+    }
+
+    // C. HÀM ÉP KIỂU STRING (Chống NoSQL Injection)
     const getStringParam = (val) => {
       if (!val) return undefined;
       return String(val); 
     };
 
-    // Lọc dữ liệu đầu vào
+    // Lấy dữ liệu từ Query URL
     const name = getStringParam(req.query.name);
-    const branch = getStringParam(req.query.branch);
-    const status = getStringParam(req.query.status);
-    const color = getStringParam(req.query.color);
-    const drive = getStringParam(req.query.drive);
-    const gearbox = getStringParam(req.query.gearbox);
-    const condition = getStringParam(req.query.condition);
-    const fuel = getStringParam(req.query.fuel);
-    const manufacturer = getStringParam(req.query.manufacturer);
-    const installment = getStringParam(req.query.installment);
-    const quality = getStringParam(req.query.quality);
+    const minPrice = getStringParam(req.query.minPrice);
+    const maxPrice = getStringParam(req.query.maxPrice);
 
+    // --- TẠO QUERY MONGO DB ---
     let query = {};
 
-    // Logic tìm kiếm
+    // 1. Tìm theo tên (Dùng escapeRegex để an toàn)
     if (name) {
-      query.name = new RegExp(name, "i");
+      query.name = new RegExp(escapeRegex(name), "i");
     }
 
-    const addQuery = (key, value) => {
+    // 2. Tìm theo giá (Khoảng giá min-max)
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) {
+        // Chuyển về số để so sánh (Backend lưu price là số hoặc chuỗi số đều OK với Mongo)
+        // Lưu ý: Nếu DB lưu price là String thì cần đảm bảo convert đúng, 
+        // nhưng tốt nhất DB nên lưu price là Number.
+        query.price.$gte = Number(minPrice); 
+      }
+      if (maxPrice) {
+        query.price.$lte = Number(maxPrice);
+      }
+    }
+
+    // 3. Tìm chính xác các thuộc tính khác (Dropdown)
+    const addExactQuery = (key, value) => {
       if (value) {
-        query[key] = new RegExp(`^${value}$`, "i");
+        // Tìm chính xác (Case-insensitive) bắt đầu bằng ^ và kết thúc bằng $
+        query[key] = new RegExp(`^${escapeRegex(value)}$`, "i");
       }
     };
 
-    addQuery("branch", branch);
-    addQuery("status", status);
-    addQuery("color", color);
-    addQuery("drive", drive);
-    addQuery("gearbox", gearbox);
-    addQuery("condition", condition);
-    addQuery("fuel", fuel);
-    addQuery("manufacturer", manufacturer);
-    addQuery("installment", installment);
-    addQuery("quality", quality);
+    // Áp dụng cho danh sách các bộ lọc
+    addExactQuery("branch", getStringParam(req.query.branch));
+    addExactQuery("status", getStringParam(req.query.status));
+    addExactQuery("color", getStringParam(req.query.color));
+    addExactQuery("drive", getStringParam(req.query.drive));
+    addExactQuery("gearbox", getStringParam(req.query.gearbox));
+    addExactQuery("condition", getStringParam(req.query.condition));
+    addExactQuery("fuel", getStringParam(req.query.fuel));
+    addExactQuery("manufacturer", getStringParam(req.query.manufacturer));
+    addExactQuery("installment", getStringParam(req.query.installment));
+    addExactQuery("quality", getStringParam(req.query.quality));
 
-    const cars = await Car.find(query);
+    // Thực thi
+    // console.log("🔍 Final Query:", JSON.stringify(query));
+    const cars = await Car.find(query).sort({ _id: -1 }); // Mới nhất lên đầu
     res.json(cars);
+
   } catch (err) {
     console.error("❌ Error getting cars:", err);
     res.status(500).json({ message: 'Lỗi server khi lấy danh sách ô tô.' });
   }
 });
 
-// 5. Lấy chi tiết 1 xe
+// ==========================================
+// 5. PUBLIC: CHI TIẾT XE
+// ==========================================
 router.get('/detail/:id', async (req, res) => {
   const { id } = req.params;
 
