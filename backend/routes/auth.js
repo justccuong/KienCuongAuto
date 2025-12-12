@@ -3,14 +3,19 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const { isAuthenticated, isAdmin } = require('../middleware/auth');
 const { verifyToken } = require('../middleware/verifyToken');
 
+const clean = (val) => (val ? String(val) : "");
+
 router.post("/register", async (req, res) => {
-  const { name, phone, email, password, role } = req.body;
+
+  const name = clean(req.body.name);
+  const phone = clean(req.body.phone);
+  const email = clean(req.body.email);
+  const password = clean(req.body.password);
+  
 
   try {
- 
     const userExist = await User.findOne({ email });
     if (userExist) {
       return res.status(400).json({ msg: "Email đã tồn tại" });
@@ -23,7 +28,7 @@ router.post("/register", async (req, res) => {
       phone,
       email,
       password: hashedPassword,
-      role: role || "user"
+      role: "user" 
     });
 
     await newUser.save();
@@ -36,7 +41,8 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const email = clean(req.body.email); 
+  const password = clean(req.body.password);
 
   try {
     const user = await User.findOne({ email });
@@ -51,10 +57,13 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1d" }
     );
 
+    // 🔒 FIX: Cấu hình Cookie chuẩn cho Production (HTTPS)
+    const isProduction = process.env.NODE_ENV === 'production';
+    
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "lax",    
-      secure: false     
+      sameSite: isProduction ? "none" : "lax",
+      secure: isProduction,
     });
 
     res.status(200).json({
@@ -76,6 +85,7 @@ router.post("/login", async (req, res) => {
 router.get("/me", verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ msg: "User không tồn tại" });
     res.json(user);
   } catch (err) {
     res.status(500).json({ message: "Lỗi server khi lấy thông tin user" });
@@ -83,17 +93,20 @@ router.get("/me", verifyToken, async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "lax",  
-    secure: false    
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
   });
   res.status(200).json({ msg: "Đăng xuất thành công" });
 });
 
 router.put("/me", verifyToken, async (req, res) => {
   try {
-    const { name, phone } = req.body;
+    const name = clean(req.body.name);
+    const phone = clean(req.body.phone);
 
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ msg: "Không tìm thấy người dùng" });
@@ -118,6 +131,5 @@ router.put("/me", verifyToken, async (req, res) => {
     res.status(500).json({ msg: "Lỗi server khi cập nhật thông tin cá nhân" });
   }
 });
-
 
 module.exports = router;
