@@ -2,8 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const Car = require('../models/Car');
-const upload = require('../middleware/upload');
-const { isAuthenticated, isAdmin } = require('../middleware/auth');
+const upload = require('../middlewares/upload');
+const { isAuthenticated, isAdmin } = require('../middlewares/auth');
 const cloudinary = require('../utils/cloudinary');
 
 // 🛡️ HÀM HELPER: Escape Regex (Chống hack ReDoS)

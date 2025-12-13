@@ -3,19 +3,38 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const { verifyToken } = require('../middleware/verifyToken');
+const { verifyToken } = require('../middlewares/verifyToken');
 
-const clean = (val) => (val ? String(val) : "");
+// 1. FIX: Thêm trim() để cắt khoảng trắng thừa
+const clean = (val) => (val ? String(val).trim() : "");
+
+// Cấu hình Cookie chung để dùng lại cho đồng bộ (DRY)
+const getCookieConfig = () => {
+    const isProduction = process.env.NODE_ENV === 'production';
+    return {
+        httpOnly: true,
+        sameSite: isProduction ? "none" : "lax",
+        secure: isProduction,
+        path: '/', // 3. FIX: Quan trọng để tránh lỗi cookie trùng path
+        maxAge: 24 * 60 * 60 * 1000 // 1 ngày
+    };
+};
 
 router.post("/register", async (req, res) => {
-
-  const name = clean(req.body.name);
-  const phone = clean(req.body.phone);
-  const email = clean(req.body.email);
-  const password = clean(req.body.password);
-  
-
   try {
+    const name = clean(req.body.name);
+    const phone = clean(req.body.phone);
+    const email = clean(req.body.email);
+    const password = clean(req.body.password);
+
+    // 4. FIX: Validate cơ bản
+    if (!email || !password || !name) {
+        return res.status(400).json({ msg: "Vui lòng điền đầy đủ thông tin" });
+    }
+    if (password.length < 6) {
+        return res.status(400).json({ msg: "Mật khẩu phải từ 6 ký tự trở lên" });
+    }
+
     const userExist = await User.findOne({ email });
     if (userExist) {
       return res.status(400).json({ msg: "Email đã tồn tại" });
@@ -41,10 +60,10 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const email = clean(req.body.email); 
-  const password = clean(req.body.password);
-
   try {
+    const email = clean(req.body.email); 
+    const password = clean(req.body.password);
+
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ msg: "Email không đúng" });
 
@@ -57,17 +76,13 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    // 🔒 FIX: Cấu hình Cookie chuẩn cho Production (HTTPS)
-    const isProduction = process.env.NODE_ENV === 'production';
-    
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: isProduction ? "none" : "lax",
-      secure: isProduction,
-    });
+    // Set Cookie
+    res.cookie("token", token, getCookieConfig());
 
+    // 2. FIX: KHÔNG trả token về JSON nữa.
+    // Chỉ trả user info. Frontend tự hiểu là login thành công nếu status 200.
     res.status(200).json({
-      token,
+      msg: "Đăng nhập thành công",
       user: {
         id: user._id,
         name: user.name,
@@ -93,13 +108,16 @@ router.get("/me", verifyToken, async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
-  const isProduction = process.env.NODE_ENV === 'production';
+  // Clear cookie phải giống hệt options lúc tạo (trừ maxAge)
+  const cookieConfig = getCookieConfig();
   
   res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: isProduction ? "none" : "lax",
-    secure: isProduction,
+      httpOnly: true,
+      sameSite: cookieConfig.sameSite,
+      secure: cookieConfig.secure,
+      path: '/' // Phải có path
   });
+  
   res.status(200).json({ msg: "Đăng xuất thành công" });
 });
 

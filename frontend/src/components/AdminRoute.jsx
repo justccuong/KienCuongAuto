@@ -1,38 +1,35 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import React from "react";
+import { Navigate, Outlet } from "react-router-dom";
+// 👇 Import cái Hook mình vừa tạo trong Context
+import { useAuth } from "../context/AuthContext"; 
 
 const AdminRoute = () => {
-  // 1. Lấy user từ LocalStorage (Vì bên Login mình lưu vào đây)
-  const userStored = localStorage.getItem("user");
-  
-  let user = null;
-  if (userStored) {
-    try {
-      user = JSON.parse(userStored);
-    } catch (e) {
-      user = null;
-    }
+  // 1. Lấy dữ liệu từ "Tổng quản" AuthContext
+  // user: Thông tin user (đã được server xác thực qua cookie)
+  // isLoading: Trạng thái "đang hỏi server"
+  const { user, isLoading } = useAuth();
+
+  // 2. Màn hình chờ (Loading)
+  // CỰC QUAN TRỌNG: Khi F5, React cần chút thời gian để check cookie.
+  // Nếu không có đoạn này, user sẽ bị đá ra trang Login oan uổng.
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
+        <h3>⏳ Đang kiểm tra quyền Admin...</h3>
+      </div>
+    );
   }
 
-  // --- DEBUG LOG (Để soi xem nó đọc được gì) ---
-  // console.log("🔍 AdminRoute check:", user);
+  // 3. Logic chặn cửa (Check Role từ dữ liệu Server trả về)
+  const isAdmin = user && (user.role === 'admin' || user.role === 'ADMIN');
 
-  // 2. Logic kiểm tra
-  const isUser = !!user; 
-  // Chấp nhận cả chữ hoa chữ thường cho chắc
-  const isAdmin = user?.role === 'admin' || user?.role === 'ADMIN';
-
-  // 3. Chặn cửa
-  if (!isUser) {
-    return <Navigate to="/login" replace />;
-  }
-
+  // 4. Quyết định
   if (!isAdmin) {
-    // Nếu là user thường thì đá về Home
-    return <Navigate to="/home" replace />;
+    // Nếu không phải Admin, đá về trang chủ (hoặc trang login tùy ý)
+    return <Navigate to="/" replace />;
   }
 
-  // 4. Admin xịn -> Cho vào
+  // 5. Admin xịn -> Mở cửa (Outlet cho các route con hiển thị)
   return <Outlet />;
 };
 

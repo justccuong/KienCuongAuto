@@ -7,6 +7,9 @@ import FixedChatButtons from "./components/input/FixedChatButton";
 import AdminRoute from "./components/AdminRoute"; 
 import ScrollToTop from "./components/ScrollToTop";
 
+// --- IMPORT AUTH PROVIDER ---
+import { AuthProvider } from "./context/AuthContext"; // 👈 Nhớ import dòng này
+
 // --- Pages: Auth ---
 import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/SignUp";
@@ -28,39 +31,44 @@ import EditCar from "./pages/Admin/EditCar";
 const App = () => {
   return (
     <Router>
-      {/*some buttons*/}
-      <FixedChatButtons />
-      <ScrollToTop />
-      <Routes>
-        {/* 1. KHU VỰC AUTH (Không có Header/Footer) */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+      {/* 👇 BỌC AUTH PROVIDER Ở ĐÂY LÀ CHUẨN BÀI */}
+      <AuthProvider>
+        
+        {/* Những component này cũng cần biết user là ai để ẩn hiện chat/nút */}
+        <FixedChatButtons />
+        <ScrollToTop />
 
-        {/* 2. KHU VỰC CÓ LAYOUT (Header + Footer) */}
-        <Route path="/" element={<Layout />}>
-          
-          {/* --- Redirect mặc định --- */}
-          <Route index element={<Navigate to="/home" />} />
-          <Route path="home" element={<Home />} />
+        <Routes>
+          {/* 1. KHU VỰC AUTH */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-          {/* --- Các trang công khai --- */}
-          <Route path="about-kien-cuong" element={<AboutKienCuong />} />
-          <Route path="branches" element={<BranchesPage />} />
-          <Route path="branches/:id" element={<BranchDetail />} />
-          <Route path="find-car" element={<FindCarPage />} />
-          <Route path="cars/:id" element={<CarDetail />} />
+          {/* 2. KHU VỰC CÓ LAYOUT */}
+          <Route path="/" element={<Layout />}>
+            
+            <Route index element={<Navigate to="/home" />} />
+            <Route path="home" element={<Home />} />
 
-          <Route path="account" element={<AccountPage />} />
+            <Route path="about-kien-cuong" element={<AboutKienCuong />} />
+            <Route path="branches" element={<BranchesPage />} />
+            <Route path="branches/:id" element={<BranchDetail />} />
+            <Route path="find-car" element={<FindCarPage />} />
+            <Route path="cars/:id" element={<CarDetail />} />
 
-          {/*admin skibidi*/}
-          <Route element={<AdminRoute />}>
-            <Route path="admin" element={<AdminOverview />} />
-            <Route path="admin/add-car" element={<AddCar />} />
-            <Route path="admin/edit-car/:carId" element={<EditCar />} />
+            <Route path="account" element={<AccountPage />} />
+
+            {/* admin skibidi */}
+            <Route element={<AdminRoute />}>
+              <Route path="admin" element={<AdminOverview />} />
+              <Route path="admin/add-car" element={<AddCar />} />
+              <Route path="admin/edit-car/:carId" element={<EditCar />} />
+            </Route>
+
           </Route>
+        </Routes>
 
-        </Route>
-      </Routes>
+      </AuthProvider>
+      {/* 👆 KẾT THÚC BỌC */}
     </Router>
   );
 };
