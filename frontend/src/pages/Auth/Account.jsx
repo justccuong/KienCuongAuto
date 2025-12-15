@@ -2,33 +2,32 @@ import React, { useEffect, useState } from "react";
 import api from "../../utils/axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext"; // ✅ IMPORT
 
 const AccountPage = () => {
-  const [user, setUser] = useState(null);
+  const { user, setUser, logout } = useAuth(); // ✅ USE CONTEXT
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // 1. Lấy thông tin user mới nhất từ Server
+  // 1. Populate form when user data loads
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await api.get("/auth/me");
-        setUser(res.data);
-        setName(res.data.name || "");
-        setPhone(res.data.phone || "");
-      } catch (err) {
-        // Nếu token hết hạn hoặc lỗi -> đá về login
-        console.error(err);
-        toast.error("Phiên đăng nhập hết hạn");
-        navigate("/login");
-      }
-    };
-    fetchUser();
-  }, [navigate]);
+    if (user) {
+      setName(user.name || "");
+      setPhone(user.phone || "");
+    }
+  }, [user]);
 
-  // 2. Xử lý cập nhật thông tin
+  // 2. Redirect if not logged in
+  useEffect(() => {
+    if (!user) {
+      toast.error("Vui lòng đăng nhập");
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  // 3. Handle update
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -36,49 +35,52 @@ const AccountPage = () => {
       const res = await api.put("/auth/me", { name, phone });
       
       const updatedUser = res.data.user;
+      
+      // ✅ Update BOTH AuthContext and localStorage
       setUser(updatedUser);
-
-      // 👇 QUAN TRỌNG: Phải cập nhật cả LocalStorage để các component khác (Header/AdminRoute) nhận diện
       localStorage.setItem("user", JSON.stringify(updatedUser));
 
       toast.success("✅ Cập nhật thành công!");
     } catch (err) {
       console.error(err);
-      toast.error("❌ Cập nhật thất bại");
+      toast.error(err.response?.data?.msg || "❌ Cập nhật thất bại");
     } finally {
       setLoading(false);
     }
   };
 
-  // 3. Xử lý Đăng xuất
+  // 4. Handle logout using context
   const handleLogout = async () => {
     if (window.confirm("Bạn có chắc muốn đăng xuất?")) {
       try {
-        await api.post("/auth/logout"); // Gọi API xóa cookie
-        localStorage.removeItem("user"); // Xóa local storage
+        await logout(); // ✅ Use context logout
         toast.info("Đã đăng xuất 👋");
         navigate("/login");
       } catch (error) {
         console.error("Lỗi đăng xuất:", error);
-        // Kể cả lỗi API cũng cứ xóa local và đá về cho chắc
-        localStorage.removeItem("user");
-        navigate("/login");
       }
     }
   };
 
-  if (!user) return (
-    <div className="flex justify-center items-center h-64">
-      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
-    </div>
-  );
+  // Loading state
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-8 bg-white shadow-xl rounded-2xl mt-10 border border-gray-100">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-extrabold text-gray-800">Hồ sơ cá nhân</h1>
-        <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold capitalize">
-          {user.role}
+        <span className={`px-3 py-1 rounded-full text-sm font-semibold capitalize ${
+          user.role === 'admin' 
+            ? 'bg-red-100 text-red-800' 
+            : 'bg-blue-100 text-blue-800'
+        }`}>
+          {user.role === 'admin' ? '👑 Admin' : 'Người dùng'}
         </span>
       </div>
 
@@ -121,6 +123,17 @@ const AccountPage = () => {
           />
         </div>
 
+        {/* Created date */}
+        <div>
+          <label className="block mb-2 text-sm font-semibold text-gray-700">Ngày tham gia</label>
+          <input
+            type="text"
+            className="w-full px-4 py-2 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+            value={user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : 'N/A'}
+            disabled
+          />
+        </div>
+
         {/* Buttons Group */}
         <div className="pt-4 flex flex-col sm:flex-row gap-4">
           <button
@@ -132,18 +145,31 @@ const AccountPage = () => {
             }`}
             disabled={loading}
           >
-            {loading ? "Đang lưu..." : "Lưu thay đổi"}
+            {loading ? "Đang lưu..." : "💾 Lưu thay đổi"}
           </button>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="flex-1 py-2.5 px-4 rounded-lg font-bold text-red-600 border border-red-200 hover:bg-red-50 transition-all"
+            className="flex-1 py-2.5 px-4 rounded-lg font-bold text-red-600 border-2 border-red-200 hover:bg-red-50 hover:border-red-300 transition-all"
           >
-            Đăng xuất
+            🚪 Đăng xuất
           </button>
         </div>
       </form>
+
+      {/* Quick access for admin */}
+      {user.role === 'admin' && (
+        <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <h3 className="font-bold text-red-800 mb-2">🎛️ Quản trị viên</h3>
+          <button
+            onClick={() => navigate('/admin')}
+            className="text-sm text-red-600 hover:text-red-800 font-semibold hover:underline"
+          >
+            → Đi tới bảng điều khiển
+          </button>
+        </div>
+      )}
     </div>
   );
 };

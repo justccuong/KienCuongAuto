@@ -3,8 +3,8 @@ const rateLimit = require('express-rate-limit'); // 1. Đổi import thành requ
 
 // 2. Limiter chung cho toàn bộ ứng dụng
 const globalLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 phút
-    max: 100, // Tối đa 100 request mỗi IP
+    windowMs: 1 * 60 * 1000, // 15 phút
+    max: 300, // Tối đa 100 request mỗi IP
     message: {
         status: 429,
         error: "Gửi request nhiều quá! Nghỉ ngơi 15 phút nhé.",

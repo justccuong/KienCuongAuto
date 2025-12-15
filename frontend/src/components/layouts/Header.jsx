@@ -1,43 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CarSearchBar from "../sections/CarSearchBar";
-import api from "../../utils/axios";
+import { useAuth } from "../../context/AuthContext"; // ✅ USE AUTH CONTEXT
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);      
   const [showSearch, setShowSearch] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user, logout } = useAuth(); // ✅ Get user from context
+  const navigate = useNavigate();
   const menuRef = useRef(null);
   const toggleRef = useRef(null);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error("Lỗi parse user", e);
-      }
-    }
-
-    const fetchUser = async () => {
-      try {
-        const res = await api.get("/auth/me");
-        setUser(res.data);
-        localStorage.setItem("user", JSON.stringify(res.data));
-      } catch (err) {
-      }
-    };
-    fetchUser();
-  }, []);
-
   const handleLogout = async () => {
     try {
-      await api.post("/auth/logout");
-      localStorage.removeItem("user"); 
-      setUser(null);
-      window.location.href = "/login"; 
+      await logout(); // ✅ Use context logout
+      navigate("/login");
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -154,13 +132,13 @@ const Header = () => {
           className="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 z-50 md:hidden animate-fade-in-down"
         >
           <nav className="flex flex-col p-4 gap-4 text-base font-medium text-gray-700">
-            <Link to="/home" className="ct-top-menu-item block w-fit">TRANG CHỦ</Link>
-            <Link to="/about-kien-cuong" className="ct-top-menu-item block w-fit">VỀ KIÊN CƯỜNG</Link>
-            <Link to="/branches" className="ct-top-menu-item block w-fit">HỆ THỐNG CHI NHÁNH</Link>
-            <Link to="/find-car" className="ct-top-menu-item block w-fit">TÌM MUA XE</Link>
+            <Link to="/home" className="ct-top-menu-item block w-fit" onClick={() => setIsOpen(false)}>TRANG CHỦ</Link>
+            <Link to="/about-kien-cuong" className="ct-top-menu-item block w-fit" onClick={() => setIsOpen(false)}>VỀ KIÊN CƯỜNG</Link>
+            <Link to="/branches" className="ct-top-menu-item block w-fit" onClick={() => setIsOpen(false)}>HỆ THỐNG CHI NHÁNH</Link>
+            <Link to="/find-car" className="ct-top-menu-item block w-fit" onClick={() => setIsOpen(false)}>TÌM MUA XE</Link>
             
             {user?.role === "admin" && (
-              <Link to="/admin" className="ct-top-menu-item block w-fit text-red-600 font-bold">QUẢN LÝ XE</Link>
+              <Link to="/admin" className="ct-top-menu-item block w-fit text-red-600 font-bold" onClick={() => setIsOpen(false)}>QUẢN LÝ XE</Link>
             )}
 
             <div className="pt-2 border-t mt-2">
@@ -184,10 +162,10 @@ const Header = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
-                  <Link to="/login" className="text-center py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                  <Link to="/login" className="text-center py-2 border border-gray-300 rounded-lg hover:bg-gray-50" onClick={() => setIsOpen(false)}>
                     Đăng nhập
                   </Link>
-                  <Link to="/signup" className="text-center py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                  <Link to="/signup" className="text-center py-2 bg-red-600 text-white rounded-lg hover:bg-red-700" onClick={() => setIsOpen(false)}>
                     Đăng ký
                   </Link>
                 </div>

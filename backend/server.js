@@ -7,7 +7,9 @@ const compression = require("compression");
 const path = require("path");
 require("dotenv").config();
 
+// Sửa lại import: Bỏ analyticsRoutes ở đây cho đỡ trùng ở dưới
 const { globalLimiter, authLimiter } = require('./middlewares/rateLimiter');
+// const verifyToken = require('./middlewares/verifyToken'); // Cái này chưa dùng ở file này, có thể comment lại
 
 const app = express();
 
@@ -31,7 +33,6 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Cho phép requests không có origin (như Postman) hoặc nằm trong whitelist
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -41,15 +42,11 @@ app.use(cors({
   credentials: true,
 }));
 
-// --- 2. QUAN TRỌNG: RATE LIMIT PHẢI ĐẶT Ở ĐÂY ---
-// Đặt trước tất cả các routes để chặn ngay từ cửa
+// --- RATE LIMIT ---
 app.use(globalLimiter);
 
 // --- KẾT NỐI MONGODB ---
-mongoose.connect(process.env.MONGODB_URI, {
-  // useNewUrlParser: true, // Mấy dòng này Mongoose mới tự động rồi, có thể bỏ cho đỡ warning
-  // useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGODB_URI)
 .then(() => console.log("✅ MongoDB connected"))
 .catch((err) => console.error("❌ DB connection error:", err));
 
@@ -57,13 +54,13 @@ mongoose.connect(process.env.MONGODB_URI, {
 const authRoutes = require("./routes/auth");
 const carRoutes = require("./routes/cars");
 const branchRoutes = require("./routes/branchRoutes");
-// const productRoutes = require("./routes/products"); // <--- Mở comment nếu có file này
+const analyticsRoutes = require("./routes/analytics"); // Giữ lại dòng này
 
 // Áp dụng routes
-app.use("/api/auth", authRoutes); // Auth limiter nên gắn trực tiếp trong file routes/auth.js nhé
+app.use("/api/auth", authRoutes);
 app.use("/api/cars", carRoutes);
 app.use("/api/branches", branchRoutes);
-// app.use('/api/products', productRoutes); // <--- Mở comment nếu có file này
+app.use("/api/analytics", analyticsRoutes); // 👈 QUAN TRỌNG: Phải thêm dòng này Analytics mới chạy!
 
 // --- STATIC FILES (FRONTEND) ---
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
@@ -71,6 +68,8 @@ app.use(express.static(path.join(__dirname, "../frontend/dist")));
 // Test route
 app.get('/api/health', (req, res) => res.send('Server sống nhăn!'));
 
+// Wildcard route
+// Lưu ý: Nếu server báo lỗi "Missing parameter name", hãy đổi dòng dưới thành app.get("*", ...)
 app.get("/{*any}", (req, res)=> {
   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });

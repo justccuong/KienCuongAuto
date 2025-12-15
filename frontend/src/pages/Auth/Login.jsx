@@ -3,6 +3,7 @@ import api from "../../utils/axios";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../../context/AuthContext"; // ✅ IMPORT AUTH CONTEXT
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { setUser } = useAuth(); // ✅ GET setUser from context
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,26 +26,23 @@ const Login = () => {
         { withCredentials: true }
       );
 
-      // 👇 QUAN TRỌNG: Lưu thông tin user vào LocalStorage
-      // Để AdminRoute có cái mà kiểm tra
       if (res.data && res.data.user) {
+        // ✅ Update BOTH localStorage AND AuthContext
         localStorage.setItem("user", JSON.stringify(res.data.user));
+        setUser(res.data.user); // ✅ THIS IS THE KEY FIX!
         
-        // Logic điều hướng thông minh (Optional)
-        // Nếu là admin thì vào thẳng trang quản lý, user thường thì về Home
+        // Navigate based on role
         if (res.data.user.role === 'admin') {
            navigate("/admin");
         } else {
            navigate("/home");
         }
       } else {
-         // Fallback nếu không có role
          navigate("/home");
       }
 
     } catch (err) {
       console.error(err);
-      // Hiển thị lỗi từ backend trả về (nếu có) cho chi tiết
       setError(err.response?.data?.msg || "Invalid email or password");
     } finally {
       setLoading(false);
@@ -129,7 +128,7 @@ const Login = () => {
 
         {/* Sign up link */}
         <p className="text-sm text-center text-gray-700 mt-6">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <a href="/signup" className="text-blue-600 hover:underline font-medium">
             Sign up
           </a>

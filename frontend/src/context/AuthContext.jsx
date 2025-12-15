@@ -1,3 +1,4 @@
+// src/context/AuthContext.js
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
@@ -18,11 +19,14 @@ export const AuthProvider = ({ children }) => {
       
       // Nếu OK, lưu user vào State
       setUser(res.data);
+      // ✅ THÊM: Đồng bộ với localStorage
+      localStorage.setItem("user", JSON.stringify(res.data));
     } catch (error) {
       // Nếu lỗi (401, 403) -> Chưa đăng nhập hoặc Token hết hạn
       setUser(null);
+      localStorage.removeItem("user"); // ✅ Xóa localStorage khi invalid
     } finally {
-      setIsLoading(false); // Dù thành công hay thất bại cũng phải tắt Loading
+      setIsLoading(false);
     }
   };
 
@@ -33,21 +37,31 @@ export const AuthProvider = ({ children }) => {
   // Hàm Login (Gọi khi user bấm nút Đăng nhập thành công)
   const login = (userData) => {
     setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData)); // ✅ Lưu localStorage
   };
 
   // Hàm Logout
   const logout = async () => {
     try {
-      await axios.post("/api/auth/logout"); // Gọi API xóa cookie
-      setUser(null); // Xóa state
-      // Có thể thêm điều hướng về trang chủ ở đây nếu muốn
+      await axios.post("/api/auth/logout");
     } catch (error) {
       console.error("Lỗi logout", error);
+    } finally {
+      // ✅ Luôn clear state dù API fail
+      setUser(null);
+      localStorage.removeItem("user");
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, fetchUser }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      setUser, // ✅ EXPORT setUser để Login component có thể dùng
+      isLoading, 
+      login, 
+      logout, 
+      fetchUser 
+    }}>
       {children}
     </AuthContext.Provider>
   );

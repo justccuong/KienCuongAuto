@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../utils/axios";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext"; // ✅ IMPORT
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import SearchableSelect from "../../components/input/SearchableSelect";
 import ColorSelect from "../../components/input/ColorSelect";
@@ -40,6 +41,7 @@ const OPTIONS = {
 const EditCarForm = () => {
   const { carId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth(); // ✅ GET USER
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -98,15 +100,29 @@ const EditCarForm = () => {
     <div className="min-h-screen bg-gray-50 py-10 px-4 font-sans">
       <div className="max-w-4xl mx-auto">
         
-        <Link 
-          to="/admin" 
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 mb-6 transition-colors font-semibold group"
-        >
-          <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:bg-red-50 transition-colors border border-gray-200">
-            <i className="fas fa-arrow-left text-sm transform group-hover:-translate-x-0.5 transition-transform"></i>
-          </div>
-          Quay lại danh sách
-        </Link>
+        {/* Back button and admin info */}
+        <div className="flex justify-between items-center mb-6">
+          <Link 
+            to="/admin" 
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 transition-colors font-semibold group"
+          >
+            <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:bg-red-50 transition-colors border border-gray-200">
+              <i className="fas fa-arrow-left text-sm transform group-hover:-translate-x-0.5 transition-transform"></i>
+            </div>
+            Quay lại danh sách
+          </Link>
+
+          {/* ✅ ADMIN INFO */}
+          {user && (
+            <div className="hidden md:flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
+              <i className="fas fa-user-edit text-yellow-600"></i>
+              <div className="text-right">
+                <p className="text-xs text-gray-500">Đang chỉnh sửa bởi</p>
+                <p className="text-sm font-bold text-gray-800">{user.name}</p>
+              </div>
+            </div>
+          )}
+        </div>
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
           
@@ -120,6 +136,12 @@ const EditCarForm = () => {
              <p className="text-gray-500 text-sm mt-2 ml-11">
                 Cập nhật thông tin chi tiết cho xe mã: <span className="font-mono text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-100">{carId}</span>
              </p>
+             {/* ✅ Show car name */}
+             {formData.name && (
+               <p className="text-gray-700 text-sm mt-1 ml-11 font-semibold">
+                 Xe: {formData.name}
+               </p>
+             )}
           </div>
 
           <form onSubmit={handleSubmit} className="p-8 space-y-8">
@@ -207,6 +229,21 @@ const EditCarForm = () => {
               </button>
             </div>
           </form>
+        </div>
+
+        {/* ✅ HELPFUL INFO BOX */}
+        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <div className="flex gap-3">
+            <i className="fas fa-info-circle text-blue-600 text-lg mt-0.5"></i>
+            <div className="text-sm text-blue-800">
+              <p className="font-bold mb-1">💡 Lưu ý khi chỉnh sửa:</p>
+              <ul className="list-disc pl-5 space-y-1 text-blue-700">
+                <li>Thay đổi sẽ được áp dụng ngay lập tức</li>
+                <li>Để thay đổi ảnh xe, vui lòng xóa và thêm xe mới</li>
+                <li>Kiểm tra kỹ thông tin trước khi lưu</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>

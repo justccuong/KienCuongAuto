@@ -222,4 +222,14 @@ router.get('/detail/:id', async (req, res) => {
   }
 });
 
+router.get("/count-all", async (req, res) => {
+    try {
+        // Chỉ đếm toàn bộ, không cần logic lọc phức tạp
+        const count = await Car.countDocuments(); 
+        res.json({ count });
+    } catch (err) {
+        // ...
+    }
+});
+
 module.exports = router;

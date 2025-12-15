@@ -2,15 +2,17 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../../utils/axios";
 import OptimizedImage from "../../components/input/OptimizedImage";
+import { useAuth } from "../../context/AuthContext"; // ✅ IMPORT
 import { 
   FaMapMarkerAlt, FaPhoneAlt, FaArrowLeft, FaCheckCircle, 
   FaCogs, FaGasPump, FaRoad, FaCalendarAlt, FaCarSide,
-  FaPalette, FaChair, FaDoorClosed, FaInfoCircle, FaCar
+  FaPalette, FaChair, FaDoorClosed, FaInfoCircle, FaCar, FaEdit
 } from "react-icons/fa";
 
 export default function CarDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth(); // ✅ GET USER
   const [car, setCar] = useState(null);
   const [branch, setBranch] = useState(null);
   const [relatedCars, setRelatedCars] = useState([]);
@@ -37,9 +39,7 @@ export default function CarDetail() {
         const relatedRes = await api.get(
           `/cars?branch=${encodeURIComponent(carData.branch || "")}`
         );
-        // Lấy xe khác xe hiện tại
         const filtered = relatedRes.data.filter((c) => c._id !== carData._id);
-        // Random lấy 4 xe (để xếp vừa đẹp 1 hàng 4 cột)
         const randomCars = filtered.sort(() => 0.5 - Math.random()).slice(0, 4);
         setRelatedCars(randomCars);
       } catch (err) {
@@ -95,17 +95,27 @@ export default function CarDetail() {
     <div className="bg-gray-50 text-gray-900 min-h-screen py-8 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         
-        {/* Nút quay lại */}
-        <div className="mb-6">
-            <button 
-                onClick={() => navigate(-1)} 
-                className="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 font-bold transition-colors text-lg group"
+        {/* Header với nút quay lại và edit admin */}
+        <div className="mb-6 flex justify-between items-center">
+          <button 
+            onClick={() => navigate(-1)} 
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 font-bold transition-colors text-lg group"
+          >
+            <span className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:bg-red-50 transition-colors">
+              <FaArrowLeft className="text-sm" />
+            </span>
+            Quay lại danh sách
+          </button>
+
+          {/* ✅ ADMIN EDIT BUTTON */}
+          {user?.role === 'admin' && (
+            <button
+              onClick={() => navigate(`/admin/edit-car/${car._id}`)}
+              className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
-                <span className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:bg-red-50 transition-colors">
-                    <FaArrowLeft className="text-sm" />
-                </span>
-                Quay lại danh sách
+              <FaEdit /> Chỉnh sửa xe
             </button>
+          )}
         </div>
 
         {/* Layout chính: Ảnh & Thông tin */}
@@ -114,7 +124,6 @@ export default function CarDetail() {
           {/* Cột trái: Gallery Ảnh */}
           <div>
             <div className="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 sticky top-4">
-              {/* Ảnh lớn */}
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] group bg-gray-100">
                 {hasImages ? (
                   <OptimizedImage
@@ -130,7 +139,6 @@ export default function CarDetail() {
                   </div>
                 )}
 
-                {/* Nút điều hướng ảnh */}
                 {hasImages && car.images.length > 1 && (
                   <>
                     <button onClick={prevImage} className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10">
@@ -142,15 +150,13 @@ export default function CarDetail() {
                   </>
                 )}
                 
-                {/* Số thứ tự ảnh */}
                 {hasImages && (
-                    <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
-                        {selectedImage + 1}/{car.images.length}
-                    </div>
+                  <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
+                    {selectedImage + 1}/{car.images.length}
+                  </div>
                 )}
               </div>
 
-              {/* Thumbnails */}
               {hasImages && car.images.length > 1 && (
                 <div className="flex gap-2 mt-2 overflow-x-auto pb-2 px-1 scrollbar-hide snap-x snap-mandatory">
                   {car.images.map((img, index) => (
@@ -162,7 +168,7 @@ export default function CarDetail() {
                       }`}
                       onClick={() => setSelectedImage(index)}
                     >
-                        <OptimizedImage
+                      <OptimizedImage
                         src={img?.url}
                         alt="thumb"
                         width={80}
@@ -181,85 +187,87 @@ export default function CarDetail() {
             
             {/* Header thông tin */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-red-600">
-                <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-snug mb-3">
-                    {car.name}
-                </h1>
-                <p className="text-3xl font-bold text-red-600 mb-4">
-                    {car.price} <span className="text-lg text-gray-500 font-normal">Triệu</span>
-                </p>
-                
-                <div className="flex flex-wrap gap-2">
-                    <span className="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 border border-blue-100">
-                        <FaCheckCircle /> {car.condition}
-                    </span>
-                    <span className="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 border border-green-100">
-                        <FaCheckCircle /> {car.status}
-                    </span>
-                </div>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-snug mb-3">
+                {car.name}
+              </h1>
+              <p className="text-3xl font-bold text-red-600 mb-4">
+                {car.price} <span className="text-lg text-gray-500 font-normal">Triệu</span>
+              </p>
+              
+              <div className="flex flex-wrap gap-2">
+                <span className="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 border border-blue-100">
+                  <FaCheckCircle /> {car.condition}
+                </span>
+                <span className="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 border border-green-100">
+                  <FaCheckCircle /> {car.status}
+                </span>
+              </div>
             </div>
 
             {/* Thông số kỹ thuật */}
             <div className="bg-white p-6 rounded-2xl shadow-sm">
-                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
-                    <FaCogs className="text-red-500" /> Thông số kỹ thuật
-                </h3>
-                <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-sm">
-                    <InfoRow icon={<FaCalendarAlt />} label="Năm SX" value={car.year} />
-                    <InfoRow icon={<FaRoad />} label="Odo" value={`${car.kilometers} km`} />
-                    <InfoRow icon={<FaGasPump />} label="Nhiên liệu" value={car.fuel} />
-                    <InfoRow icon={<FaCogs />} label="Hộp số" value={car.gearbox} />
-                    <InfoRow icon={<FaCarSide />} label="Dẫn động" value={car.drive} />
-                    <InfoRow icon={<FaPalette />} label="Màu sắc" value={car.color} />
-                    <InfoRow icon={<FaChair />} label="Số ghế" value={car.seats} />
-                    <InfoRow icon={<FaDoorClosed />} label="Số cửa" value={car.doors} />
-                </div>
+              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
+                <FaCogs className="text-red-500" /> Thông số kỹ thuật
+              </h3>
+              <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-sm">
+                <InfoRow icon={<FaCalendarAlt />} label="Năm SX" value={car.year} />
+                <InfoRow icon={<FaRoad />} label="Odo" value={`${car.kilometers} km`} />
+                <InfoRow icon={<FaGasPump />} label="Nhiên liệu" value={car.fuel} />
+                <InfoRow icon={<FaCogs />} label="Hộp số" value={car.gearbox} />
+                <InfoRow icon={<FaCarSide />} label="Dẫn động" value={car.drive} />
+                <InfoRow icon={<FaPalette />} label="Màu sắc" value={car.color} />
+                <InfoRow icon={<FaChair />} label="Số ghế" value={car.seats} />
+                <InfoRow icon={<FaDoorClosed />} label="Số cửa" value={car.doors} />
+              </div>
             </div>
 
             {/* Thông tin liên hệ */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div className="flex items-start gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600 flex-shrink-0">
-                        <FaMapMarkerAlt />
-                    </div>
-                    <div>
-                        <p className="font-bold text-gray-900">{car.branch || "Kiên Cường Auto"}</p>
-                        <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                            {branch?.location || "Vui lòng liên hệ để biết địa chỉ chính xác"}
-                        </p>
-                    </div>
+              <div className="flex items-start gap-3 mb-6">
+                <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600 flex-shrink-0">
+                  <FaMapMarkerAlt />
                 </div>
+                <div>
+                  <p className="font-bold text-gray-900">{car.branch || "Kiên Cường Auto"}</p>
+                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                    {branch?.location || "Vui lòng liên hệ để biết địa chỉ chính xác"}
+                  </p>
+                </div>
+              </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                    {branch?.hotline && (
-                        <a href={`tel:${branch.hotline}`} className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-red-200 hover:-translate-y-0.5">
-                            <FaPhoneAlt className="animate-pulse" /> Gọi Ngay
-                        </a>
-                    )}
-                    {branch?.socials?.zalo ? (
-                        <a href={branch.socials.zalo} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-blue-200 hover:-translate-y-0.5">
-                            Chat Zalo
-                        </a>
-                    ) : (
-                        <button disabled className="bg-gray-200 text-gray-400 py-3 rounded-xl font-bold cursor-not-allowed">
-                            Chưa có Zalo
-                        </button>
-                    )}
-                </div>
+              <div className="grid grid-cols-2 gap-3">
+                {branch?.hotline && (
+                  <a href={`tel:${branch.hotline}`} className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-red-200 hover:-translate-y-0.5">
+                    <FaPhoneAlt className="animate-pulse" /> Gọi Ngay
+                  </a>
+                )}
+                {branch?.socials?.zalo ? (
+                  <a href={branch.socials.zalo} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-blue-200 hover:-translate-y-0.5">
+                    Chat Zalo
+                  </a>
+                ) : (
+                  <button disabled className="bg-gray-200 text-gray-400 py-3 rounded-xl font-bold cursor-not-allowed">
+                    Chưa có Zalo
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Mô tả */}
             {car.description && (
-                <div className="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-blue-500">
-                    <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
-                        <FaInfoCircle className="text-blue-500" /> Mô tả chi tiết
-                    </h3>
-                    <div className="text-gray-700 text-sm leading-7 whitespace-pre-line text-justify font-normal bg-gray-50 p-4 rounded-xl border border-gray-200">
-                        {car.description}
-                    </div>
+              <div className="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-blue-500">
+                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
+                  <FaInfoCircle className="text-blue-500" /> Mô tả chi tiết
+                </h3>
+                <div className="text-gray-700 text-sm leading-7 whitespace-pre-line text-justify font-normal bg-gray-50 p-4 rounded-xl border border-gray-200">
+                  {car.description}
                 </div>
+              </div>
             )}
           </div>
         </div>
+
+        {/* Xe tương tự */}
         <div className="mt-16 pt-8 border-t border-gray-200">
           <h3 className="text-2xl font-bold text-gray-900 mb-6 border-l-4 border-red-600 pl-4 flex items-center gap-2">
             <FaCar className="text-red-500" /> Gợi ý xe tương tự
@@ -283,12 +291,10 @@ export default function CarDetail() {
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
                     
-                    {/* Badge Năm */}
                     <div className="absolute top-2 right-2 bg-white/95 backdrop-blur text-gray-800 text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
                       {car.year}
                     </div>
                     
-                    {/* Badge New */}
                     {car.condition === "Xe mới" && (
                       <div className="absolute top-2 left-2 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase shadow-sm">
                         NEW
@@ -296,7 +302,6 @@ export default function CarDetail() {
                     )}
                   </div>
                   
-                  {/* Nội dung chi tiết - Padding nhỏ hơn */}
                   <div className="p-3 flex flex-col flex-grow">
                     <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-2 min-h-[2.5rem]" title={car.name}>
                       {car.name}
@@ -306,7 +311,6 @@ export default function CarDetail() {
                       {new Intl.NumberFormat('vi-VN').format(car.price)} Tr
                     </p>
                     
-                    {/* Thông số kỹ thuật - Ẩn bớt trên card bé */}
                     <div className="flex items-center justify-between text-[10px] text-gray-500 border-t pt-2 bg-gray-50 -mx-3 px-3 py-2 mt-auto">
                       <div className="flex items-center gap-1">
                         <FaCogs className="text-gray-400"/>
@@ -319,7 +323,6 @@ export default function CarDetail() {
                       </div>
                     </div>
                     
-                    {/* Địa chỉ chi nhánh */}
                     <div className="mt-0 pt-1.5 text-[10px] font-bold text-red-600 flex items-center gap-1 truncate border-t border-gray-100 bg-white -mx-3 px-3 pb-0 h-6">
                       <FaMapMarkerAlt /> <span className="truncate">{car.branch}</span>
                     </div>
@@ -329,9 +332,9 @@ export default function CarDetail() {
             </div>
           ) : (
             <div className="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-               <div className="text-3xl text-gray-300 mb-2">🚗</div>
-               <p className="text-gray-500 text-sm">Chưa có xe tương tự.</p>
-               <Link to="/find-car" className="text-red-600 hover:underline text-xs mt-1 inline-block">Xem tất cả kho xe</Link>
+              <div className="text-3xl text-gray-300 mb-2">🚗</div>
+              <p className="text-gray-500 text-sm">Chưa có xe tương tự.</p>
+              <Link to="/find-car" className="text-red-600 hover:underline text-xs mt-1 inline-block">Xem tất cả kho xe</Link>
             </div>
           )}
         </div>
@@ -342,11 +345,11 @@ export default function CarDetail() {
 }
 
 const InfoRow = ({ icon, label, value }) => (
-    <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0 group hover:bg-gray-50 transition-colors px-1 rounded">
-        <div className="flex items-center gap-2.5 text-gray-500 group-hover:text-red-500 transition-colors">
-            <span className="text-base">{icon}</span> 
-            <span className="text-xs font-medium uppercase tracking-wide">{label}</span>
-        </div>
-        <span className="font-bold text-gray-900 truncate max-w-[55%] text-right">{value || "---"}</span>
+  <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0 group hover:bg-gray-50 transition-colors px-1 rounded">
+    <div className="flex items-center gap-2.5 text-gray-500 group-hover:text-red-500 transition-colors">
+      <span className="text-base">{icon}</span> 
+      <span className="text-xs font-medium uppercase tracking-wide">{label}</span>
     </div>
+    <span className="font-bold text-gray-900 truncate max-w-[55%] text-right">{value || "---"}</span>
+  </div>
 );
