@@ -27,7 +27,7 @@ const carSchema = new mongoose.Schema({
       public_id: String,
     }
   ],
- 
+ views: { type: Number, default: 0 },
 });
 
 module.exports = mongoose.model('Car', carSchema);

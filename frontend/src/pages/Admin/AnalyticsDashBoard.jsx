@@ -10,7 +10,7 @@ import OptimizedImage from "../../components/input/OptimizedImage";
 // --- KHAI BÁO DỮ LIỆU CỨNG MẶC ĐỊNH CHO KPI ---
 const INITIAL_KPI = {
   totalVisits: 'N/A', 
-  pageViews: 'N/A', 
+  totalCarViews: 'N/A', // Changed from pageViews
   carCount: 'N/A', 
   conversionRate: 'N/A'
 };
@@ -31,30 +31,33 @@ const AnalyticsDashboard = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // GỌI ĐỒNG THỜI TẤT CẢ API CẦN THIẾT
-        const [statsRes, topCarsRes, kpiRes] = await Promise.all([
+        // GỌI ĐỒNG THỜI TẤT CẢ API CẦN THIẾT (THÊM /overview)
+        const [statsRes, topCarsRes, overviewRes] = await Promise.all([
           axios.get("/api/analytics/stats"), 
           axios.get("/api/analytics/top-cars"),
-          axios.get("/api/cars/count-all"), 
+          axios.get("/api/analytics/overview"), // NEW: Get overview data
         ]);
 
         // 1. XỬ LÝ BIỂU ĐỒ (STATS)
         if (statsRes.data && Array.isArray(statsRes.data) && statsRes.data.length > 0) {
              const formatted = statsRes.data.map(item => {
-                // item._id có format: "2025-12-14" (date string)
-                const dateStr = item._id || '';
+                const dateStr = item._id || ''; // Ví dụ: "2025-12-14"
                 const dateParts = dateStr.split('-');
                 
-                // Chuyển từ 2025-12-14 thành 12/14
+                // Hiển thị: 12/14
                 const displayName = dateParts.length >= 3 
                     ? `${dateParts[1]}/${dateParts[2]}` 
                     : dateStr;
                 
                 return {
+                    originalDate: dateStr, // Giữ lại ngày gốc (YYYY-MM-DD) để sắp xếp
                     name: displayName,
                     visits: item.count || 0
                 };
-             });
+             })
+             // 👇 PHÉP THUẬT Ở ĐÂY: Sắp xếp A->Z theo ngày gốc (Cũ trước - Mới sau)
+             .sort((a, b) => a.originalDate.localeCompare(b.originalDate));
+             
              setStats(formatted);
         } else {
              setStats([]); 
@@ -67,26 +70,20 @@ const AnalyticsDashboard = () => {
            setTopCars([]);
         }
 
-        // 3. XỬ LÝ KPI (Lấy từ dữ liệu thực tế)
-        const totalV = statsRes.data && Array.isArray(statsRes.data) 
-                         ? statsRes.data.reduce((sum, item) => sum + item.count, 0)
-                         : 0;
-
-        // Tính tỷ lệ quan tâm (Conversion Rate)
-        // Công thức: (Số xe được xem / Tổng lượt truy cập) × 100
-        const carViewCount = topCarsRes.data && Array.isArray(topCarsRes.data)
-                           ? topCarsRes.data.reduce((sum, item) => sum + item.count, 0)
-                           : 0;
+        // 3. XỬ LÝ KPI (Từ API /overview)
+        const overview = overviewRes.data || {};
         
-        const conversionRate = totalV > 0 
-                             ? ((carViewCount / totalV) * 100).toFixed(1)
+        // Tính tỷ lệ quan tâm (Conversion Rate)
+        // Công thức: (Tổng views xe / Tổng lượt truy cập) × 100
+        const conversionRate = overview.totalVisits > 0 
+                             ? ((overview.totalViews / overview.totalVisits) * 100).toFixed(1)
                              : '0.0';
 
         setKpis({
-            totalVisits: totalV.toLocaleString('en-US'),
-            pageViews: Math.round(totalV * 1.5).toLocaleString('en-US'),
-            carCount: kpiRes?.data?.count?.toLocaleString('en-US') || 'N/A',
-            conversionRate: `${conversionRate}%`, // Real calculation!
+            totalVisits: overview.totalVisits?.toLocaleString('en-US') || 'N/A',
+            totalCarViews: overview.totalViews?.toLocaleString('en-US') || 'N/A', // Real total from Car.views
+            carCount: overview.totalCars?.toLocaleString('en-US') || 'N/A',
+            conversionRate: `${conversionRate}%`,
         });
 
       } catch (err) {
@@ -131,16 +128,36 @@ const AnalyticsDashboard = () => {
           <p className="text-gray-500 mt-1">Đây là tình hình kinh doanh của vương quốc xe hơi.</p>
         </div>
         <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition">
-          <Calendar className="w-4 h-4" /> 7 ngày qua
+          <Calendar className="w-4 h-4" /> 30 ngày qua
         </button>
       </div>
 
       {/* 2. Các thẻ chỉ số quan trọng (KPIs) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard title="Tổng lượt truy cập" value={kpis.totalVisits} icon={Users} color="bg-blue-500" />
-        <StatCard title="Lượt xem xe (Tổng)" value={kpis.pageViews} icon={Eye} color="bg-indigo-500" />
-        <StatCard title="Xe đang bán" value={kpis.carCount} icon={Car} color="bg-green-500" />
-        <StatCard title="Tỷ lệ quan tâm" value={kpis.conversionRate} icon={TrendingUp} color="bg-pink-500" />
+        <StatCard 
+          title="Tổng lượt truy cập" 
+          value={kpis.totalVisits} 
+          icon={Users} 
+          color="bg-blue-500" 
+        />
+        <StatCard 
+          title="Tổng lượt xem xe" 
+          value={kpis.totalCarViews} 
+          icon={Eye} 
+          color="bg-indigo-500" 
+        />
+        <StatCard 
+          title="Xe đang bán" 
+          value={kpis.carCount} 
+          icon={Car} 
+          color="bg-green-500" 
+        />
+        <StatCard 
+          title="Tỷ lệ quan tâm" 
+          value={kpis.conversionRate} 
+          icon={TrendingUp} 
+          color="bg-pink-500" 
+        />
       </div>
 
       {/* 3. Biểu đồ chính (Main Chart) */}
