@@ -1,16 +1,21 @@
-const mongoose = require('mongoose');
+// backend/models/GlobalStat.js
+const mongoose = require("mongoose");
 
-const globalStatSchema = new mongoose.Schema({
-  // Đây là biến quan trọng nhất: Tổng lượt truy cập trọn đời
-  totalVisits: { 
-    type: Number, 
-    default: 0 
-  },
-  // Nếu muốn sau này đếm thêm cái gì trọn đời thì thêm vào đây
-  lastUpdated: { 
-    type: Date, 
-    default: Date.now 
-  }
+const GlobalStatSchema = new mongoose.Schema({
+    totalVisits: {
+        type: Number,
+        default: 0,
+        required: true
+    },
+    lastUpdated: {
+        type: Date,
+        default: Date.now
+    }
+}, {
+    timestamps: true
 });
 
-module.exports = mongoose.model('GlobalStat', globalStatSchema);
+// Chỉ cho phép 1 document duy nhất trong collection này
+GlobalStatSchema.index({}, { unique: true });
+
+module.exports = mongoose.model("GlobalStat", GlobalStatSchema);

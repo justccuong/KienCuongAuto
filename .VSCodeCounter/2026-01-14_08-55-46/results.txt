@@ -1,0 +1,137 @@
+Date : 2026-01-14 08:55:46
+Directory : d:\_KienCuongAuto_
+Total : 74 files,  12551 codes, 239 comments, 767 blanks, all 13557 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| JSON           |          7 |      7,327 |          0 |          5 |      7,332 |
+| JavaScript JSX |         37 |      4,080 |        144 |        534 |      4,758 |
+| JavaScript     |         24 |        942 |         95 |        167 |      1,204 |
+| Markdown       |          2 |        125 |          0 |         44 |        169 |
+| PostCSS        |          1 |         62 |          0 |         14 |         76 |
+| HTML           |          1 |         13 |          0 |          3 |         16 |
+| XML            |          2 |          2 |          0 |          0 |          2 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                       | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                          |         74 |     12,551 |        239 |        767 |     13,557 |
+| . (Files)                                                                  |          3 |        500 |          0 |         39 |        539 |
+| backend                                                                    |         22 |      3,147 |         91 |        159 |      3,397 |
+| backend (Files)                                                            |          4 |      2,338 |         13 |         18 |      2,369 |
+| backend\controllers                                                        |          1 |         11 |          0 |          1 |         12 |
+| backend\middlewares                                                        |          4 |         70 |          4 |         19 |         93 |
+| backend\models                                                             |          5 |        117 |          4 |         14 |        135 |
+| backend\routes                                                             |          4 |        444 |         68 |         90 |        602 |
+| backend\seed                                                               |          2 |        135 |          0 |          8 |        143 |
+| backend\utils                                                              |          2 |         32 |          2 |          9 |         43 |
+| frontend                                                                   |         49 |      8,904 |        148 |        569 |      9,621 |
+| frontend (Files)                                                           |          6 |      4,739 |          1 |         14 |      4,754 |
+| frontend\public                                                            |          2 |          2 |          0 |          0 |          2 |
+| frontend\public (Files)                                                    |          1 |          1 |          0 |          0 |          1 |
+| frontend\public\favicon_io                                                 |          1 |          1 |          0 |          0 |          1 |
+| frontend\src                                                               |         41 |      4,163 |        147 |        555 |      4,865 |
+| frontend\src (Files)                                                       |          3 |        130 |         11 |         30 |        171 |
+| frontend\src\assets                                                        |          1 |          1 |          0 |          0 |          1 |
+| frontend\src\components                                                    |         20 |      1,576 |         26 |        215 |      1,817 |
+| frontend\src\components (Files)                                            |          2 |         39 |         10 |         10 |         59 |
+| frontend\src\components\input                                              |          7 |        409 |          3 |         58 |        470 |
+| frontend\src\components\layouts                                            |          3 |        333 |          7 |         43 |        383 |
+| frontend\src\components\sections                                           |          6 |        661 |          6 |         83 |        750 |
+| frontend\src\components\ui                                                 |          2 |        134 |          0 |         21 |        155 |
+| frontend\src\context                                                       |          1 |         52 |         11 |          9 |         72 |
+| frontend\src\hooks                                                         |          1 |         38 |          6 |         10 |         54 |
+| frontend\src\pages                                                         |         14 |      2,360 |         93 |        288 |      2,741 |
+| frontend\src\pages\About                                                   |          1 |        118 |          0 |         15 |        133 |
+| frontend\src\pages\Admin                                                   |          5 |        850 |         29 |        108 |        987 |
+| frontend\src\pages\Auth                                                    |          3 |        410 |         28 |         48 |        486 |
+| frontend\src\pages\Branches                                                |          2 |        359 |          0 |         42 |        401 |
+| frontend\src\pages\Car                                                     |          2 |        608 |         36 |         73 |        717 |
+| frontend\src\pages\Home                                                    |          1 |         15 |          0 |          2 |         17 |
+| frontend\src\utils                                                         |          1 |          6 |          0 |          3 |          9 |
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                   | language       | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| d:\_KienCuongAuto_\README.md                                               | Markdown       |        118 |          0 |         38 |        156 |
+| d:\_KienCuongAuto_\backend\controllers\authController.js                   | JavaScript     |         11 |          0 |          1 |         12 |
+| d:\_KienCuongAuto_\backend\middlewares\auth.js                             | JavaScript     |         24 |          0 |          7 |         31 |
+| d:\_KienCuongAuto_\backend\middlewares\rateLimiter.js                      | JavaScript     |         20 |          4 |          3 |         27 |
+| d:\_KienCuongAuto_\backend\middlewares\upload.js                           | JavaScript     |         13 |          0 |          4 |         17 |
+| d:\_KienCuongAuto_\backend\middlewares\verifyToken.js                      | JavaScript     |         13 |          0 |          5 |         18 |
+| d:\_KienCuongAuto_\backend\models\Branch.js                                | JavaScript     |         18 |          0 |          2 |         20 |
+| d:\_KienCuongAuto_\backend\models\Car.js                                   | JavaScript     |         31 |          0 |          3 |         34 |
+| d:\_KienCuongAuto_\backend\models\GlobalStat.js                            | JavaScript     |         16 |          2 |          3 |         21 |
+| d:\_KienCuongAuto_\backend\models\User.js                                  | JavaScript     |         22 |          0 |          3 |         25 |
+| d:\_KienCuongAuto_\backend\models\Visit.js                                 | JavaScript     |         30 |          2 |          3 |         35 |
+| d:\_KienCuongAuto_\backend\package-lock.json                               | JSON           |      2,242 |          0 |          1 |      2,243 |
+| d:\_KienCuongAuto_\backend\package.json                                    | JSON           |         32 |          0 |          1 |         33 |
+| d:\_KienCuongAuto_\backend\routes\analytics.js                             | JavaScript     |        142 |         27 |         30 |        199 |
+| d:\_KienCuongAuto_\backend\routes\auth.js                                  | JavaScript     |        121 |          7 |         25 |        153 |
+| d:\_KienCuongAuto_\backend\routes\branchRoutes.js                          | JavaScript     |         12 |          0 |          3 |         15 |
+| d:\_KienCuongAuto_\backend\routes\cars.js                                  | JavaScript     |        169 |         34 |         32 |        235 |
+| d:\_KienCuongAuto_\backend\seed\sampleBranches.js                          | JavaScript     |        115 |          0 |          1 |        116 |
+| d:\_KienCuongAuto_\backend\seed\seedBranches.js                            | JavaScript     |         20 |          0 |          7 |         27 |
+| d:\_KienCuongAuto_\backend\server.js                                       | JavaScript     |         53 |         12 |         13 |         78 |
+| d:\_KienCuongAuto_\backend\testDis.js                                      | JavaScript     |         11 |          1 |          3 |         15 |
+| d:\_KienCuongAuto_\backend\utils\cloudinary.js                             | JavaScript     |          7 |          0 |          3 |         10 |
+| d:\_KienCuongAuto_\backend\utils\discordLogger.js                          | JavaScript     |         25 |          2 |          6 |         33 |
+| d:\_KienCuongAuto_\frontend\README.md                                      | Markdown       |          7 |          0 |          6 |         13 |
+| d:\_KienCuongAuto_\frontend\eslint.config.js                               | JavaScript     |         32 |          0 |          2 |         34 |
+| d:\_KienCuongAuto_\frontend\index.html                                     | HTML           |         13 |          0 |          3 |         16 |
+| d:\_KienCuongAuto_\frontend\package-lock.json                              | JSON           |      4,623 |          0 |          1 |      4,624 |
+| d:\_KienCuongAuto_\frontend\package.json                                   | JSON           |         47 |          0 |          1 |         48 |
+| d:\_KienCuongAuto_\frontend\public\favicon_io\site.webmanifest             | JSON           |          1 |          0 |          0 |          1 |
+| d:\_KienCuongAuto_\frontend\public\vite.svg                                | XML            |          1 |          0 |          0 |          1 |
+| d:\_KienCuongAuto_\frontend\src\App.jsx                                    | JavaScript JSX |         59 |         11 |         14 |         84 |
+| d:\_KienCuongAuto_\frontend\src\assets\react.svg                           | XML            |          1 |          0 |          0 |          1 |
+| d:\_KienCuongAuto_\frontend\src\components\AdminRoute.jsx                  | JavaScript JSX |         25 |          7 |          6 |         38 |
+| d:\_KienCuongAuto_\frontend\src\components\ScrollToTop.js                  | JavaScript     |         14 |          3 |          4 |         21 |
+| d:\_KienCuongAuto_\frontend\src\components\input\ColorSelect.jsx           | JavaScript JSX |         98 |          0 |         11 |        109 |
+| d:\_KienCuongAuto_\frontend\src\components\input\FixedChatButton.jsx       | JavaScript JSX |        100 |          0 |         19 |        119 |
+| d:\_KienCuongAuto_\frontend\src\components\input\OptimizedImage.jsx        | JavaScript JSX |         33 |          0 |          5 |         38 |
+| d:\_KienCuongAuto_\frontend\src\components\input\ScrollToTop.jsx           | JavaScript JSX |         26 |          0 |          8 |         34 |
+| d:\_KienCuongAuto_\frontend\src\components\input\SearchableSelect.jsx      | JavaScript JSX |         94 |          0 |         10 |        104 |
+| d:\_KienCuongAuto_\frontend\src\components\input\car-image-slider.jsx      | JavaScript JSX |         25 |          2 |          3 |         30 |
+| d:\_KienCuongAuto_\frontend\src\components\input\similar-cars.jsx          | JavaScript JSX |         33 |          1 |          2 |         36 |
+| d:\_KienCuongAuto_\frontend\src\components\layouts\Footer.jsx              | JavaScript JSX |        154 |          6 |         19 |        179 |
+| d:\_KienCuongAuto_\frontend\src\components\layouts\Header.jsx              | JavaScript JSX |        161 |          1 |         19 |        181 |
+| d:\_KienCuongAuto_\frontend\src\components\layouts\Layout.jsx              | JavaScript JSX |         18 |          0 |          5 |         23 |
+| d:\_KienCuongAuto_\frontend\src\components\sections\AddCarForm.jsx         | JavaScript JSX |        232 |          0 |         35 |        267 |
+| d:\_KienCuongAuto_\frontend\src\components\sections\BranchesSection.jsx    | JavaScript JSX |        108 |          0 |         17 |        125 |
+| d:\_KienCuongAuto_\frontend\src\components\sections\CarSearchBar.jsx       | JavaScript JSX |         95 |          0 |         12 |        107 |
+| d:\_KienCuongAuto_\frontend\src\components\sections\HeroSection.jsx        | JavaScript JSX |         61 |          0 |          6 |         67 |
+| d:\_KienCuongAuto_\frontend\src\components\sections\NewArrivalsSection.jsx | JavaScript JSX |         93 |          6 |          9 |        108 |
+| d:\_KienCuongAuto_\frontend\src\components\sections\ServicesSection.jsx    | JavaScript JSX |         72 |          0 |          4 |         76 |
+| d:\_KienCuongAuto_\frontend\src\components\ui\Pagination.jsx               | JavaScript JSX |        113 |          0 |         18 |        131 |
+| d:\_KienCuongAuto_\frontend\src\components\ui\card.jsx                     | JavaScript JSX |         21 |          0 |          3 |         24 |
+| d:\_KienCuongAuto_\frontend\src\context\AuthContext.jsx                    | JavaScript JSX |         52 |         11 |          9 |         72 |
+| d:\_KienCuongAuto_\frontend\src\hooks\usePageTracking.jsx                  | JavaScript JSX |         38 |          6 |         10 |         54 |
+| d:\_KienCuongAuto_\frontend\src\index.css                                  | PostCSS        |         62 |          0 |         14 |         76 |
+| d:\_KienCuongAuto_\frontend\src\main.jsx                                   | JavaScript JSX |          9 |          0 |          2 |         11 |
+| d:\_KienCuongAuto_\frontend\src\pages\About\AboutKienCuong.jsx             | JavaScript JSX |        118 |          0 |         15 |        133 |
+| d:\_KienCuongAuto_\frontend\src\pages\Admin\AddCar.jsx                     | JavaScript JSX |         81 |          0 |         12 |         93 |
+| d:\_KienCuongAuto_\frontend\src\pages\Admin\AnalyticsDashBoard.jsx         | JavaScript JSX |        207 |          9 |         26 |        242 |
+| d:\_KienCuongAuto_\frontend\src\pages\Admin\CarManager.jsx                 | JavaScript JSX |        261 |          9 |         31 |        301 |
+| d:\_KienCuongAuto_\frontend\src\pages\Admin\EditCar.jsx                    | JavaScript JSX |        257 |          4 |         32 |        293 |
+| d:\_KienCuongAuto_\frontend\src\pages\Admin\Overview.jsx                   | JavaScript JSX |         44 |          7 |          7 |         58 |
+| d:\_KienCuongAuto_\frontend\src\pages\Auth\Account.jsx                     | JavaScript JSX |        147 |         12 |         18 |        177 |
+| d:\_KienCuongAuto_\frontend\src\pages\Auth\Login.jsx                       | JavaScript JSX |        120 |          7 |         14 |        141 |
+| d:\_KienCuongAuto_\frontend\src\pages\Auth\SignUp.jsx                      | JavaScript JSX |        143 |          9 |         16 |        168 |
+| d:\_KienCuongAuto_\frontend\src\pages\Branches\BranchDetail.jsx            | JavaScript JSX |        257 |          0 |         24 |        281 |
+| d:\_KienCuongAuto_\frontend\src\pages\Branches\Branches.jsx                | JavaScript JSX |        102 |          0 |         18 |        120 |
+| d:\_KienCuongAuto_\frontend\src\pages\Car\BuyCar.jsx                       | JavaScript JSX |        298 |         26 |         38 |        362 |
+| d:\_KienCuongAuto_\frontend\src\pages\Car\CarDetail.jsx                    | JavaScript JSX |        310 |         10 |         35 |        355 |
+| d:\_KienCuongAuto_\frontend\src\pages\Home\Home.jsx                        | JavaScript JSX |         15 |          0 |          2 |         17 |
+| d:\_KienCuongAuto_\frontend\src\utils\axios.js                             | JavaScript     |          6 |          0 |          3 |          9 |
+| d:\_KienCuongAuto_\frontend\vite.config.js                                 | JavaScript     |         17 |          1 |          1 |         19 |
+| d:\_KienCuongAuto_\package-lock.json                                       | JSON           |        370 |          0 |          1 |        371 |
+| d:\_KienCuongAuto_\package.json                                            | JSON           |         12 |          0 |          0 |         12 |
+| Total                                                                      |                |     12,551 |        239 |        767 |     13,557 |
++----------------------------------------------------------------------------+----------------+------------+------------+------------+------------+

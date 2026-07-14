@@ -26,6 +26,7 @@
     "react-router-dom": "^7.4.1",
     "react-toastify": "^11.0.5",
     "recharts": "^3.5.1",
+    "requirement": "^0.0.8",
     "swiper": "^11.2.7",
     "tailwindcss": "^4.0.17",
     "tw-elements-react": "^1.0.0-alpha-end"

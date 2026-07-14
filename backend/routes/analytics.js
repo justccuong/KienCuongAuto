@@ -2,8 +2,9 @@
 const router = require("express").Router();
 const Visit = require("../models/Visit"); 
 const Car = require("../models/Car");
+const GlobalStat = require("../models/GlobalStat"); // ⭐ MUST HAVE THIS MODEL
 
-// Hàm tiện ích: Lấy slug từ URL (Ví dụ: /cars/mercedes-g63-abc -> mercedes-g63-abc)
+// Hàm tiện ích: Lấy slug từ URL
 const extractCarSlug = (pageUrl) => {
     if (!pageUrl || typeof pageUrl !== 'string') return '';
     const parts = pageUrl.split('/').filter(Boolean);
@@ -20,30 +21,25 @@ const isValidObjectId = (str) => {
 // ==========================================
 router.get("/top-cars", async (req, res) => {
     try {
-        // Query trực tiếp từ bảng Car theo views
-        const topCars = await Car.find({ views: { $gt: 0 } }) // Chỉ lấy xe có view > 0
-            .sort({ views: -1 }) // Sắp xếp giảm dần (cao nhất đứng đầu)
-            .limit(5) // Lấy top 5 xe
-            .select('name slug images views price'); // Chỉ lấy trường cần thiết
+        const topCars = await Car.find({ views: { $gt: 0 } })
+            .sort({ views: -1 })
+            .limit(5)
+            .select('name slug images views price');
 
-        // Kiểm tra nếu không có dữ liệu
         if (!topCars || topCars.length === 0) {
             return res.json([]);
         }
 
-        // Format lại dữ liệu cho khớp với Frontend
         const formattedData = topCars.map(car => ({
             _id: car._id,
             carName: car.name,
             slug: car.slug,
-            // Lấy ảnh đầu tiên, fallback nếu không có
             carImage: car.images?.[0]?.url || car.images?.[0] || 'https://via.placeholder.com/100?text=Car',
-            count: car.views || 0, // Frontend dùng 'count', ta map 'views' sang
+            count: car.views || 0,
             price: car.price
         }));
 
         console.log('✅ Top cars loaded:', formattedData.length);
-
         res.json(formattedData);
 
     } catch (err) {
@@ -55,9 +51,11 @@ router.get("/top-cars", async (req, res) => {
     }
 });
 
+// ==========================================
+// 2. API: Track visits (CHỈ ĐẾM SESSION MỚI)
+// ==========================================
 router.post("/track", async (req, res) => {
     try {
-        // 👇 Lấy thêm biến isNewSession từ Frontend gửi lên
         const { page, referrer, userAgent, isNewSession } = req.body;
 
         if (!page) return res.status(400).json({ error: 'Page URL required' });
@@ -67,7 +65,7 @@ router.post("/track", async (req, res) => {
             return res.status(200).json({ message: 'Ignored' });
         }
 
-        // 1. CỘNG VIEW XE (Vẫn cộng mỗi lần bấm vào, để xe nhìn hot)
+        // 1. CỘNG VIEW XE (Mỗi lần xem)
         if (page.includes('/cars/')) {
             const slugOrId = extractCarSlug(page);
             if (slugOrId) {
@@ -79,43 +77,43 @@ router.post("/track", async (req, res) => {
             }
         }
 
-        // 2. CỘNG TỔNG TRUY CẬP (GLOBAL STAT)
-        // 🔥 CHỈ CỘNG KHI LÀ PHIÊN MỚI (isNewSession = true)
+        // 2. CHỈ LƯU VISIT KHI LÀ SESSION MỚI
         if (isNewSession) {
+            // Cộng GlobalStat
             await GlobalStat.findOneAndUpdate(
                 {}, 
                 { $inc: { totalVisits: 1 }, $set: { lastUpdated: new Date() } }, 
                 { upsert: true, new: true, setDefaultsOnInsert: true }
             );
-            // console.log("🚀 Khách mới - Đã +1 Visit");
+            
+            // Lưu Visit log (để vẽ biểu đồ theo ngày)
+            await Visit.create({
+                page, 
+                referrer: referrer || '', 
+                userAgent: userAgent || '', 
+                timestamp: new Date()
+            });
+            
+            console.log("🚀 New session - Visit +1");
         } else {
-            // console.log("👻 Khách cũ đang lướt - Không cộng Visit");
+            console.log("👻 Same session - No tracking");
         }
-
-        // 3. LƯU LOG CHI TIẾT
-        // Vẫn lưu log để vẽ biểu đồ "Hoạt động trong ngày".
-        // (Nếu Hoàng tử muốn biểu đồ cũng chỉ hiện Visit thì bọc cái này vào if (isNewSession) luôn)
-        // Nhưng thường biểu đồ nên hiện Pageview (nhảy nhót nhiều) cho đẹp.
-        await Visit.create({
-            page, 
-            referrer: referrer || '', 
-            userAgent: userAgent || '', 
-            timestamp: new Date()
-        });
 
         res.status(201).json({ success: true });
 
     } catch (err) {
         console.error("❌ Lỗi tracking:", err);
-        res.status(500).json({ error: 'Failed' });
+        res.status(500).json({ error: 'Failed', message: err.message });
     }
 });
 
 // ==========================================
-// 3. API: Lấy thống kê lượt truy cập theo ngày
+// 3. API: Lấy VISITS theo ngày (cho biểu đồ)
 // ==========================================
 router.get("/stats", async (req, res) => {
     try {
+        // Bây giờ Visit chỉ lưu khi isNewSession = true
+        // Nên đây là số lượt truy cập (sessions) theo ngày
         const stats = await Visit.aggregate([
             {
                 $group: {
@@ -128,7 +126,7 @@ router.get("/stats", async (req, res) => {
                     count: { $sum: 1 }
                 }
             },
-            { $sort: { _id: 1 } }, // Sort tăng dần để vẽ biểu đồ từ trái qua phải
+            { $sort: { _id: 1 } },
             { $limit: 30 }
         ]);
 
@@ -145,42 +143,54 @@ router.get("/stats", async (req, res) => {
 // ==========================================
 // 4. API: Tổng quan thống kê Dashboard
 // ==========================================
-// URL: GET /api/analytics/overview
-// Mục đích: Hiển thị các số liệu tổng quan cho trang Admin Dashboard
 router.get("/overview", async (req, res) => {
     try {
-        // Lấy ngày hôm nay (00:00:00)
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        const [totalVisits, totalCars, totalViews, todayVisits] = await Promise.all([
-            // Tổng lượt visit (30 ngày do TTL index)
-            Visit.countDocuments(),
-            
+        // ⭐ LẤY HOẶC TẠO GLOBAL STAT
+        let globalStat = await GlobalStat.findOne({});
+        
+        // Nếu chưa có, tạo mới
+        if (!globalStat) {
+            globalStat = await GlobalStat.create({ 
+                totalVisits: 0, 
+                lastUpdated: new Date() 
+            });
+            console.log("📊 Created new GlobalStat document");
+        }
+
+        const [totalCars, totalViewsArray, todayVisits] = await Promise.all([
             // Tổng số xe
             Car.countDocuments(),
             
-            // Tổng views của tất cả xe (từ Car.views)
+            // Tổng views của xe
             Car.aggregate([
                 { $group: { _id: null, total: { $sum: "$views" } } }
             ]),
             
-            // Lượt visit hôm nay
+            // Visits hôm nay (từ Visit collection)
             Visit.countDocuments({ 
                 createdAt: { $gte: today } 
             })
         ]);
 
-        res.json({
-            totalVisits,
-            totalCars,
-            totalViews: totalViews[0]?.total || 0,
-            todayVisits
-        });
+        const totalViews = totalViewsArray[0]?.total || 0;
+
+        const responseData = {
+            totalVisits: globalStat.totalVisits || 0, // Unique sessions (từ GlobalStat)
+            totalCars: totalCars || 0,
+            totalViews: totalViews, // Total car views
+            todayVisits: todayVisits || 0 // Visits hôm nay
+        };
+
+        console.log("📊 Overview data:", responseData);
+        res.json(responseData);
+
     } catch (err) {
         console.error("❌ Lỗi lấy overview:", err);
         res.status(500).json({ 
-            error: 'Không thể lấy dữ liệu tổng quan',
+            error: 'Không thể lấu dữ liệu tổng quan',
             message: err.message 
         });
     }

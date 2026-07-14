@@ -1,0 +1,76 @@
+"filename", "language", "Markdown", "JSON", "HTML", "JavaScript", "PostCSS", "JavaScript JSX", "XML", "comment", "blank", "total"
+"d:\_KienCuongAuto_\README.md", "Markdown", 118, 0, 0, 0, 0, 0, 0, 0, 38, 156
+"d:\_KienCuongAuto_\backend\controllers\authController.js", "JavaScript", 0, 0, 0, 11, 0, 0, 0, 0, 1, 12
+"d:\_KienCuongAuto_\backend\middlewares\auth.js", "JavaScript", 0, 0, 0, 24, 0, 0, 0, 0, 7, 31
+"d:\_KienCuongAuto_\backend\middlewares\rateLimiter.js", "JavaScript", 0, 0, 0, 20, 0, 0, 0, 4, 3, 27
+"d:\_KienCuongAuto_\backend\middlewares\upload.js", "JavaScript", 0, 0, 0, 13, 0, 0, 0, 0, 4, 17
+"d:\_KienCuongAuto_\backend\middlewares\verifyToken.js", "JavaScript", 0, 0, 0, 13, 0, 0, 0, 0, 5, 18
+"d:\_KienCuongAuto_\backend\models\Branch.js", "JavaScript", 0, 0, 0, 18, 0, 0, 0, 0, 2, 20
+"d:\_KienCuongAuto_\backend\models\Car.js", "JavaScript", 0, 0, 0, 31, 0, 0, 0, 0, 3, 34
+"d:\_KienCuongAuto_\backend\models\GlobalStat.js", "JavaScript", 0, 0, 0, 16, 0, 0, 0, 2, 3, 21
+"d:\_KienCuongAuto_\backend\models\User.js", "JavaScript", 0, 0, 0, 22, 0, 0, 0, 0, 3, 25
+"d:\_KienCuongAuto_\backend\models\Visit.js", "JavaScript", 0, 0, 0, 30, 0, 0, 0, 2, 3, 35
+"d:\_KienCuongAuto_\backend\package-lock.json", "JSON", 0, 2242, 0, 0, 0, 0, 0, 0, 1, 2243
+"d:\_KienCuongAuto_\backend\package.json", "JSON", 0, 32, 0, 0, 0, 0, 0, 0, 1, 33
+"d:\_KienCuongAuto_\backend\routes\analytics.js", "JavaScript", 0, 0, 0, 142, 0, 0, 0, 27, 30, 199
+"d:\_KienCuongAuto_\backend\routes\auth.js", "JavaScript", 0, 0, 0, 121, 0, 0, 0, 7, 25, 153
+"d:\_KienCuongAuto_\backend\routes\branchRoutes.js", "JavaScript", 0, 0, 0, 12, 0, 0, 0, 0, 3, 15
+"d:\_KienCuongAuto_\backend\routes\cars.js", "JavaScript", 0, 0, 0, 169, 0, 0, 0, 34, 32, 235
+"d:\_KienCuongAuto_\backend\seed\sampleBranches.js", "JavaScript", 0, 0, 0, 115, 0, 0, 0, 0, 1, 116
+"d:\_KienCuongAuto_\backend\seed\seedBranches.js", "JavaScript", 0, 0, 0, 20, 0, 0, 0, 0, 7, 27
+"d:\_KienCuongAuto_\backend\server.js", "JavaScript", 0, 0, 0, 53, 0, 0, 0, 12, 13, 78
+"d:\_KienCuongAuto_\backend\testDis.js", "JavaScript", 0, 0, 0, 11, 0, 0, 0, 1, 3, 15
+"d:\_KienCuongAuto_\backend\utils\cloudinary.js", "JavaScript", 0, 0, 0, 7, 0, 0, 0, 0, 3, 10
+"d:\_KienCuongAuto_\backend\utils\discordLogger.js", "JavaScript", 0, 0, 0, 25, 0, 0, 0, 2, 6, 33
+"d:\_KienCuongAuto_\frontend\README.md", "Markdown", 7, 0, 0, 0, 0, 0, 0, 0, 6, 13
+"d:\_KienCuongAuto_\frontend\eslint.config.js", "JavaScript", 0, 0, 0, 32, 0, 0, 0, 0, 2, 34
+"d:\_KienCuongAuto_\frontend\index.html", "HTML", 0, 0, 13, 0, 0, 0, 0, 0, 3, 16
+"d:\_KienCuongAuto_\frontend\package-lock.json", "JSON", 0, 4623, 0, 0, 0, 0, 0, 0, 1, 4624
+"d:\_KienCuongAuto_\frontend\package.json", "JSON", 0, 47, 0, 0, 0, 0, 0, 0, 1, 48
+"d:\_KienCuongAuto_\frontend\public\favicon_io\site.webmanifest", "JSON", 0, 1, 0, 0, 0, 0, 0, 0, 0, 1
+"d:\_KienCuongAuto_\frontend\public\vite.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"d:\_KienCuongAuto_\frontend\src\App.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 59, 0, 11, 14, 84
+"d:\_KienCuongAuto_\frontend\src\assets\react.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"d:\_KienCuongAuto_\frontend\src\components\AdminRoute.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 25, 0, 7, 6, 38
+"d:\_KienCuongAuto_\frontend\src\components\ScrollToTop.js", "JavaScript", 0, 0, 0, 14, 0, 0, 0, 3, 4, 21
+"d:\_KienCuongAuto_\frontend\src\components\input\ColorSelect.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 98, 0, 0, 11, 109
+"d:\_KienCuongAuto_\frontend\src\components\input\FixedChatButton.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 100, 0, 0, 19, 119
+"d:\_KienCuongAuto_\frontend\src\components\input\OptimizedImage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 33, 0, 0, 5, 38
+"d:\_KienCuongAuto_\frontend\src\components\input\ScrollToTop.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 26, 0, 0, 8, 34
+"d:\_KienCuongAuto_\frontend\src\components\input\SearchableSelect.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 94, 0, 0, 10, 104
+"d:\_KienCuongAuto_\frontend\src\components\input\car-image-slider.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 25, 0, 2, 3, 30
+"d:\_KienCuongAuto_\frontend\src\components\input\similar-cars.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 33, 0, 1, 2, 36
+"d:\_KienCuongAuto_\frontend\src\components\layouts\Footer.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 154, 0, 6, 19, 179
+"d:\_KienCuongAuto_\frontend\src\components\layouts\Header.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 161, 0, 1, 19, 181
+"d:\_KienCuongAuto_\frontend\src\components\layouts\Layout.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 18, 0, 0, 5, 23
+"d:\_KienCuongAuto_\frontend\src\components\sections\AddCarForm.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 232, 0, 0, 35, 267
+"d:\_KienCuongAuto_\frontend\src\components\sections\BranchesSection.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 108, 0, 0, 17, 125
+"d:\_KienCuongAuto_\frontend\src\components\sections\CarSearchBar.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 95, 0, 0, 12, 107
+"d:\_KienCuongAuto_\frontend\src\components\sections\HeroSection.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 61, 0, 0, 6, 67
+"d:\_KienCuongAuto_\frontend\src\components\sections\NewArrivalsSection.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 93, 0, 6, 9, 108
+"d:\_KienCuongAuto_\frontend\src\components\sections\ServicesSection.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 72, 0, 0, 4, 76
+"d:\_KienCuongAuto_\frontend\src\components\ui\Pagination.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 113, 0, 0, 18, 131
+"d:\_KienCuongAuto_\frontend\src\components\ui\card.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 21, 0, 0, 3, 24
+"d:\_KienCuongAuto_\frontend\src\context\AuthContext.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 52, 0, 11, 9, 72
+"d:\_KienCuongAuto_\frontend\src\hooks\usePageTracking.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 38, 0, 6, 10, 54
+"d:\_KienCuongAuto_\frontend\src\index.css", "PostCSS", 0, 0, 0, 0, 62, 0, 0, 0, 14, 76
+"d:\_KienCuongAuto_\frontend\src\main.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 9, 0, 0, 2, 11
+"d:\_KienCuongAuto_\frontend\src\pages\About\AboutKienCuong.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 118, 0, 0, 15, 133
+"d:\_KienCuongAuto_\frontend\src\pages\Admin\AddCar.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 81, 0, 0, 12, 93
+"d:\_KienCuongAuto_\frontend\src\pages\Admin\AnalyticsDashBoard.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 207, 0, 9, 26, 242
+"d:\_KienCuongAuto_\frontend\src\pages\Admin\CarManager.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 261, 0, 9, 31, 301
+"d:\_KienCuongAuto_\frontend\src\pages\Admin\EditCar.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 257, 0, 4, 32, 293
+"d:\_KienCuongAuto_\frontend\src\pages\Admin\Overview.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 44, 0, 7, 7, 58
+"d:\_KienCuongAuto_\frontend\src\pages\Auth\Account.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 147, 0, 12, 18, 177
+"d:\_KienCuongAuto_\frontend\src\pages\Auth\Login.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 120, 0, 7, 14, 141
+"d:\_KienCuongAuto_\frontend\src\pages\Auth\SignUp.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 143, 0, 9, 16, 168
+"d:\_KienCuongAuto_\frontend\src\pages\Branches\BranchDetail.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 257, 0, 0, 24, 281
+"d:\_KienCuongAuto_\frontend\src\pages\Branches\Branches.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 102, 0, 0, 18, 120
+"d:\_KienCuongAuto_\frontend\src\pages\Car\BuyCar.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 298, 0, 26, 38, 362
+"d:\_KienCuongAuto_\frontend\src\pages\Car\CarDetail.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 310, 0, 10, 35, 355
+"d:\_KienCuongAuto_\frontend\src\pages\Home\Home.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 15, 0, 0, 2, 17
+"d:\_KienCuongAuto_\frontend\src\utils\axios.js", "JavaScript", 0, 0, 0, 6, 0, 0, 0, 0, 3, 9
+"d:\_KienCuongAuto_\frontend\vite.config.js", "JavaScript", 0, 0, 0, 17, 0, 0, 0, 1, 1, 19
+"d:\_KienCuongAuto_\package-lock.json", "JSON", 0, 370, 0, 0, 0, 0, 0, 0, 1, 371
+"d:\_KienCuongAuto_\package.json", "JSON", 0, 12, 0, 0, 0, 0, 0, 0, 0, 12
+"Total", "-", 125, 7327, 13, 942, 62, 4080, 2, 239, 767, 13557
