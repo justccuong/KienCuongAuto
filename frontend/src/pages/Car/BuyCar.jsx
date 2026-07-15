@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import api from "../../utils/axios";
 import { Link } from "react-router-dom";
-import { Search, SlidersHorizontal, Car, MapPin, RefreshCw, Settings, Fuel, Route } from "lucide-react";
+import { Search, SlidersHorizontal, Car, MapPin, RefreshCw, Settings, Fuel, Route, ChevronDown, ChevronUp } from "lucide-react";
+import SkeletonCard from "../../components/ui/SkeletonCard";
 
 import ColorSelect from "../../components/input/ColorSelect";
 import SearchableSelect from "../../components/input/SearchableSelect";
@@ -40,6 +41,7 @@ const FindCarPage = () => {
   const [cars, setCars] = useState([]);
   const [branches, setBranches] = useState([]); 
   const [loading, setLoading] = useState(true);
+  const [showFiltersMobile, setShowFiltersMobile] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
   
   const [filters, setFilters] = useState({});
@@ -145,18 +147,30 @@ const FindCarPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           
           {/* SIDEBAR BỘ LỌC */}
-          <div className={`lg:col-span-1 space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 top-20">
-              <div className="flex justify-between items-center border-b pb-2 mb-4">
+          <div className="lg:col-span-1">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-20">
+              <div 
+                className="flex justify-between items-center border-b pb-2 mb-4 cursor-pointer lg:cursor-default"
+                onClick={() => setShowFiltersMobile(!showFiltersMobile)}
+              >
                 <h3 className="font-bold text-lg flex items-center gap-2">
                   <SlidersHorizontal className="text-red-600" size={18} /> Bộ lọc
                 </h3>
-                <button onClick={resetFilters} className="text-xs text-red-500 hover:underline flex items-center gap-1">
-                  <RefreshCw size={12} /> Đặt lại
-                </button>
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); resetFilters(); }} 
+                    className="text-xs text-red-500 hover:underline flex items-center gap-1"
+                  >
+                    <RefreshCw size={12} /> Đặt lại
+                  </button>
+                  <span className="lg:hidden text-gray-500">
+                    {showFiltersMobile ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  </span>
+                </div>
               </div>
 
-              <div className="mb-6">
+              <div className={`transition-all duration-300 overflow-hidden ${showFiltersMobile ? "max-h-[2000px] opacity-100 mt-4" : "max-h-0 opacity-0 lg:max-h-[2000px] lg:opacity-100 lg:mt-0"}`}>
+                <div className="mb-6">
                 <label className="font-semibold text-sm mb-2 block text-gray-700">Khoảng giá (Triệu VNĐ)</label>
                 <div className="flex gap-2 items-center">
                   <input
@@ -235,15 +249,17 @@ const FindCarPage = () => {
               >
                 XÓA TẤT CẢ BỘ LỌC
               </button>
+              </div>
             </div>
           </div>
 
           {/* MAIN CONTENT: DANH SÁCH XE */}
           <div className="lg:col-span-3">
             {loading ? (
-              <div className="text-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-                <p className="text-gray-500 font-medium">Đang tải dữ liệu xe...</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <SkeletonCard key={index} />
+                ))}
               </div>
             ) : cars.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-dashed border-gray-300">

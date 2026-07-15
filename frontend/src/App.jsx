@@ -11,6 +11,10 @@ import usePageTracking from "./hooks/usePageTracking";
 // --- IMPORT AUTH PROVIDER ---
 import { AuthProvider } from "./context/AuthContext";
 
+// --- IMPORT TOAST ---
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 // --- Pages: Auth ---
 import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/SignUp";
@@ -37,6 +41,7 @@ const AppContent = () => {
         <>
             <FixedChatButtons />
             <ScrollToTop />
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
 
             <Routes>
                 {/* 1. AUTH ROUTES (Không có Layout) */}

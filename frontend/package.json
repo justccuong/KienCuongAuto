@@ -29,7 +29,8 @@
     "requirement": "^0.0.8",
     "swiper": "^11.2.7",
     "tailwindcss": "^4.0.17",
-    "tw-elements-react": "^1.0.0-alpha-end"
+    "tw-elements-react": "^1.0.0-alpha-end",
+    "yet-another-react-lightbox": "^3.32.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
@@ -43,6 +44,7 @@
     "globals": "^15.15.0",
     "postcss": "^8.5.6",
     "postcss-import": "^16.1.1",
+    "puppeteer": "^25.3.0",
     "vite": "^6.2.0"
   }
 }

@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../utils/axios";
 import OptimizedImage from "../input/OptimizedImage";
+import SkeletonCard from "../ui/SkeletonCard";
 import { ArrowRight, Flame, Settings, Route } from "lucide-react";
 
 const NewArrivalsSection = () => {
   const [cars, setCars] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchNewestCars = async () => {
+      setLoading(true);
       try {
         const res = await api.get("/cars", { params: { limit: 8 } });
         // Support both new paginated format and old array format
@@ -17,12 +20,14 @@ const NewArrivalsSection = () => {
         setCars(Array.isArray(newestCars) ? newestCars : []);
       } catch (err) {
         console.error("Lỗi fetch xe mới:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchNewestCars();
   }, []);
 
-  if (cars.length === 0) return null;
+  if (!loading && cars.length === 0) return null;
 
   return (
     <section className="py-12 md:py-16 px-4 bg-white">
@@ -47,7 +52,11 @@ const NewArrivalsSection = () => {
 
         {/* Grid Xe */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {cars.map((car) => (
+          {loading
+            ? Array.from({ length: 4 }).map((_, index) => (
+                <SkeletonCard key={index} />
+              ))
+            : cars.map((car) => (
             <div
               key={car._id}
               onClick={() => navigate(`/cars/${car._id}`)}

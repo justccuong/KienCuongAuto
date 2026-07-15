@@ -3,6 +3,9 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../../utils/axios";
 import OptimizedImage from "../../components/input/OptimizedImage";
 import { useAuth } from "../../context/AuthContext"; // ✅ IMPORT
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import { 
   FaMapMarkerAlt, FaPhoneAlt, FaArrowLeft, FaCheckCircle, 
   FaCogs, FaGasPump, FaRoad, FaCalendarAlt, FaCarSide,
@@ -17,6 +20,7 @@ export default function CarDetail() {
   const [branch, setBranch] = useState(null);
   const [relatedCars, setRelatedCars] = useState([]);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const thumbnailRefs = useRef([]);
 
@@ -124,7 +128,10 @@ export default function CarDetail() {
           {/* Cột trái: Gallery Ảnh */}
           <div>
             <div className="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 sticky top-4">
-              <div className="relative rounded-xl overflow-hidden aspect-[4/3] group bg-gray-100">
+              <div 
+                className="relative rounded-xl overflow-hidden aspect-[4/3] group bg-gray-100 cursor-zoom-in"
+                onClick={() => setLightboxOpen(true)}
+              >
                 {hasImages ? (
                   <OptimizedImage
                     src={car.images[selectedImage]?.url}
@@ -141,10 +148,16 @@ export default function CarDetail() {
 
                 {hasImages && car.images.length > 1 && (
                   <>
-                    <button onClick={prevImage} className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); prevImage(); }} 
+                      className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10"
+                    >
                       &#10094;
                     </button>
-                    <button onClick={nextImage} className="absolute top-1/2 right-2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); nextImage(); }} 
+                      className="absolute top-1/2 right-2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10"
+                    >
                       &#10095;
                     </button>
                   </>
@@ -178,6 +191,19 @@ export default function CarDetail() {
                     </div>
                   ))}
                 </div>
+              )}
+              
+              {hasImages && (
+                <Lightbox
+                  open={lightboxOpen}
+                  close={() => setLightboxOpen(false)}
+                  index={selectedImage}
+                  slides={car.images.map(img => ({ src: img?.url }))}
+                  plugins={[Zoom]}
+                  on={{
+                    view: ({ index }) => setSelectedImage(index)
+                  }}
+                />
               )}
             </div>
           </div>

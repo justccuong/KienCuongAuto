@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation, matchPath } from "react-router-dom"; 
-import api from "../../utils/axios"; 
+import React from "react";
+import { Link } from "react-router-dom";
+import useBranchContact from "../../hooks/useBranchContact";
 import { Facebook, Youtube, Phone, MapPin } from "lucide-react";
 
 const TikTokIcon = () => (
@@ -10,7 +10,7 @@ const TikTokIcon = () => (
 );
 
 const Footer = () => {
-  const location = useLocation();
+  const branchInfo = useBranchContact();
 
   const DEFAULT_INFO = {
     hotline: "0562 73 6868",
@@ -21,60 +21,11 @@ const Footer = () => {
     address: "771 Đình Ấm, Khai Quang, Vĩnh Yên, Vĩnh Phúc"
   };
 
-  const [info, setInfo] = useState(DEFAULT_INFO);
-
-  // Logic lấy thông tin (Giữ nguyên)
-  useEffect(() => {
-    const updateFooterInfo = async () => {
-      const path = location.pathname;
-      const carMatch = matchPath("/cars/:id", path);
-      if (carMatch) {
-        try {
-          const carRes = await api.get(`/cars/detail/${carMatch.params.id}`);
-          const branchName = carRes.data.car.branch;
-          if (branchName) {
-            const branchesRes = await api.get("/branches");
-            const foundBranch = branchesRes.data.find(b => b.name === branchName);
-            if (foundBranch) {
-              setInfo({
-                hotline: foundBranch.hotline || DEFAULT_INFO.hotline,
-                facebook: foundBranch.socials?.facebook || DEFAULT_INFO.facebook,
-                tiktok: foundBranch.socials?.tiktok || DEFAULT_INFO.tiktok,
-                zalo: foundBranch.socials?.zalo || DEFAULT_INFO.zalo,
-                address: foundBranch.location || DEFAULT_INFO.address,
-                youtube: DEFAULT_INFO.youtube, 
-              });
-              return;
-            }
-          }
-        } catch (err) {
-          console.error("Lỗi lấy thông tin chi nhánh:", err);
-        }
-      }
-      const branchMatch = matchPath("/branches/:id", path);
-      if (branchMatch) {
-        try {
-          const branchesRes = await api.get("/branches");
-          const foundBranch = branchesRes.data.find(b => b.id === branchMatch.params.id || b._id === branchMatch.params.id);
-          if (foundBranch) {
-            setInfo({
-              hotline: foundBranch.hotline || DEFAULT_INFO.hotline,
-              facebook: foundBranch.socials?.facebook || DEFAULT_INFO.facebook,
-              tiktok: foundBranch.socials?.tiktok || DEFAULT_INFO.tiktok,
-              zalo: foundBranch.socials?.zalo || DEFAULT_INFO.zalo,
-              address: foundBranch.location || DEFAULT_INFO.address,
-              youtube: DEFAULT_INFO.youtube,
-            });
-            return;
-          }
-        } catch (err) {
-          console.error("Lỗi lấy thông tin chi nhánh:", err);
-        }
-      }
-      setInfo(DEFAULT_INFO);
-    };
-    updateFooterInfo();
-  }, [location.pathname]);
+  const hotline = branchInfo?.hotline || DEFAULT_INFO.hotline;
+  const facebook = branchInfo?.socials?.facebook || DEFAULT_INFO.facebook;
+  const tiktok = branchInfo?.socials?.tiktok || DEFAULT_INFO.tiktok;
+  const address = branchInfo?.location || DEFAULT_INFO.address;
+  const youtube = DEFAULT_INFO.youtube;
 
   return (
     <div className="bg-gray-50 border-t border-gray-200 mt-auto">
@@ -122,32 +73,32 @@ const Footer = () => {
             </h3>
             
             <div className="flex flex-col gap-3 w-fit text-left">
-                <a href={info.facebook} target="_blank" rel="noreferrer" aria-label="Facebook Kiên Cường Auto" className="flex items-center gap-3 hover:text-blue-600 transition-colors text-sm group">
+                <a href={facebook} target="_blank" rel="noreferrer" aria-label="Facebook Kiên Cường Auto" className="flex items-center gap-3 hover:text-blue-600 transition-colors text-sm group">
                   <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">
                     <Facebook size={16} />
                   </div>
                   <span className="font-medium">Facebook</span>
                 </a>
 
-                <a href={info.youtube} target="_blank" rel="noreferrer" aria-label="YouTube Kiên Cường Auto" className="flex items-center gap-3 hover:text-red-600 transition-colors text-sm group">
+                <a href={youtube} target="_blank" rel="noreferrer" aria-label="YouTube Kiên Cường Auto" className="flex items-center gap-3 hover:text-red-600 transition-colors text-sm group">
                   <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all">
                     <Youtube size={16} />
                   </div>
                   <span className="font-medium">Youtube</span>
                 </a>
 
-                <a href={info.tiktok} target="_blank" rel="noreferrer" aria-label="TikTok Kiên Cường Auto" className="flex items-center gap-3 hover:text-black transition-colors text-sm group">
+                <a href={tiktok} target="_blank" rel="noreferrer" aria-label="TikTok Kiên Cường Auto" className="flex items-center gap-3 hover:text-black transition-colors text-sm group">
                   <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-black group-hover:bg-black group-hover:text-white transition-all">
                     <TikTokIcon />
                   </div>
                   <span className="font-medium">TikTok</span>
                 </a>
 
-                <a href={`tel:${info.hotline.replace(/\s/g, '')}`} aria-label="Gọi hotline" className="flex items-center gap-3 hover:text-green-600 transition-colors text-sm font-bold group">
+                <a href={`tel:${hotline.replace(/\s/g, '')}`} aria-label="Gọi hotline" className="flex items-center gap-3 hover:text-green-600 transition-colors text-sm font-bold group">
                    <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all">
                      <Phone size={16} />
                    </div>
-                   <span className="text-base">{info.hotline}</span>
+                   <span className="text-base">{hotline}</span>
                 </a>
             </div>
           </div>
@@ -160,7 +111,7 @@ const Footer = () => {
              
              <div className="text-sm text-gray-500 flex gap-2 items-start justify-center sm:justify-start text-left max-w-xs sm:max-w-none">
                 <MapPin className="text-red-500 mt-1 flex-shrink-0" size={16} />
-                <span className="leading-snug">{info.address}</span>
+                <span className="leading-snug">{address}</span>
              </div>
 
              <a href="mailto:contact@kiencuongauto.vn" className="text-gray-800 font-bold hover:text-red-600 transition-colors mt-3 block">

@@ -1,73 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, matchPath } from "react-router-dom";
-import api from "../../utils/axios";
+import React from "react";
+import useBranchContact from "../../hooks/useBranchContact";
 
 const FixedChatButtons = () => {
-  const location = useLocation();
+  const branchInfo = useBranchContact();
 
   const DEFAULT_CONTACT = {
     zalo: "0562736868",
     facebook: "https://www.facebook.com/kiencuongmedia",
   };
 
-  const [contact, setContact] = useState(DEFAULT_CONTACT);
-
-  useEffect(() => {
-    const updateContactInfo = async () => {
-      const path = location.pathname;
-
-      const carMatch = matchPath("/cars/:id", path);
-      if (carMatch) {
-        try {
-          const carRes = await api.get(`/cars/detail/${carMatch.params.id}`);
-          const branchName = carRes.data.car.branch;
-
-          if (branchName) {
-            const branchesRes = await api.get("/branches");
-            const foundBranch = branchesRes.data.find(b => b.name === branchName);
-            
-            if (foundBranch) {
-              setContact({
-                zalo: foundBranch.hotline || DEFAULT_CONTACT.zalo,
-                facebook: foundBranch.socials?.facebook || DEFAULT_CONTACT.facebook,
-              });
-              return;
-            }
-          }
-        } catch (err) {
-          console.error("Lỗi lấy contact từ xe:", err);
-        }
-      }
-
-      const branchMatch = matchPath("/branches/:id", path);
-      if (branchMatch) {
-        try {
-          const branchesRes = await api.get("/branches");
-          const foundBranch = branchesRes.data.find(b => b.id === branchMatch.params.id || b._id === branchMatch.params.id);
-
-          if (foundBranch) {
-            setContact({
-              zalo: foundBranch.hotline || DEFAULT_CONTACT.zalo,
-              facebook: foundBranch.socials?.facebook || DEFAULT_CONTACT.facebook,
-            });
-            return;
-          }
-        } catch (err) {
-          console.error("Lỗi lấy contact từ chi nhánh:", err);
-        }
-      }
-
-      setContact(DEFAULT_CONTACT);
-    };
-
-    updateContactInfo();
-  }, [location.pathname]);
+  const zalo = branchInfo?.hotline || DEFAULT_CONTACT.zalo;
+  const facebook = branchInfo?.socials?.facebook || DEFAULT_CONTACT.facebook;
 
   return (
     <div className="fixed bottom-6 left-6 z-50 flex flex-col gap-4 group">
       
       <a
-        href={`https://zalo.me/${contact.zalo.replace(/\s/g, "")}`}
+        href={`https://zalo.me/${zalo.replace(/\s/g, "")}`}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat Zalo với Kiên Cường Auto"
@@ -85,7 +34,7 @@ const FixedChatButtons = () => {
       </a>
 
       <a
-        href={contact.facebook}
+        href={facebook}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat Messenger với Kiên Cường Auto"
