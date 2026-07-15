@@ -55,9 +55,9 @@ app.use(cors({
 app.use(globalLimiter);
 
 // --- KẾT NỐI MONGODB ---
-// mongoose.connect(process.env.MONGODB_URI)
-// .then(() => console.log("✅ MongoDB connected"))
-// .catch((err) => console.error("❌ DB connection error:", err));
+mongoose.connect(process.env.MONGODB_URI)
+.then(() => console.log("✅ MongoDB connected"))
+.catch((err) => console.error("❌ DB connection error:", err));
 
 // --- ROUTES ---
 const authRoutes = require("./routes/auth");
