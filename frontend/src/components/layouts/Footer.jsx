@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, matchPath } from "react-router-dom"; 
 import api from "../../utils/axios"; 
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import { Facebook, Youtube, Phone, MapPin } from "lucide-react";
+
+const TikTokIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" className="w-4 h-4">
+    <path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/>
+  </svg>
+);
 
 const Footer = () => {
   const location = useLocation();
@@ -41,7 +47,9 @@ const Footer = () => {
               return;
             }
           }
-        } catch (err) {}
+        } catch (err) {
+          console.error("Lỗi lấy thông tin chi nhánh:", err);
+        }
       }
       const branchMatch = matchPath("/branches/:id", path);
       if (branchMatch) {
@@ -59,7 +67,9 @@ const Footer = () => {
             });
             return;
           }
-        } catch (err) {}
+        } catch (err) {
+          console.error("Lỗi lấy thông tin chi nhánh:", err);
+        }
       }
       setInfo(DEFAULT_INFO);
     };
@@ -89,7 +99,7 @@ const Footer = () => {
                 dẫn lối thành công.
               </q>
             </p>
-            <div className="text-xs text-gray-400">© 2025 KienCuongAuto.</div>
+            <div className="text-xs text-gray-400">© {new Date().getFullYear()} KienCuongAuto.</div>
           </div>
 
           {/* CỘT 2: DANH MỤC */}
@@ -105,38 +115,37 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* CỘT 3: KẾT NỐI (Đã Fix thẳng hàng) */}
+          {/* CỘT 3: KẾT NỐI */}
           <div className="flex flex-col items-center sm:items-start">
             <h3 className="font-bold text-gray-900 uppercase tracking-wider text-sm mb-4 border-b-2 border-red-500 pb-1 w-fit">
               Kết nối
             </h3>
             
-            {/* 👇 FIX QUAN TRỌNG: Bọc trong w-fit để icon thẳng hàng dọc */}
             <div className="flex flex-col gap-3 w-fit text-left">
-                <a href={info.facebook} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-blue-600 transition-colors text-sm group">
+                <a href={info.facebook} target="_blank" rel="noreferrer" aria-label="Facebook Kiên Cường Auto" className="flex items-center gap-3 hover:text-blue-600 transition-colors text-sm group">
                   <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                    <i className="fab fa-facebook-f"></i>
+                    <Facebook size={16} />
                   </div>
                   <span className="font-medium">Facebook</span>
                 </a>
 
-                <a href={info.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-red-600 transition-colors text-sm group">
+                <a href={info.youtube} target="_blank" rel="noreferrer" aria-label="YouTube Kiên Cường Auto" className="flex items-center gap-3 hover:text-red-600 transition-colors text-sm group">
                   <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all">
-                    <i className="fab fa-youtube"></i>
+                    <Youtube size={16} />
                   </div>
                   <span className="font-medium">Youtube</span>
                 </a>
 
-                <a href={info.tiktok} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-black transition-colors text-sm group">
+                <a href={info.tiktok} target="_blank" rel="noreferrer" aria-label="TikTok Kiên Cường Auto" className="flex items-center gap-3 hover:text-black transition-colors text-sm group">
                   <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-black group-hover:bg-black group-hover:text-white transition-all">
-                    <i className="fab fa-tiktok"></i>
+                    <TikTokIcon />
                   </div>
                   <span className="font-medium">TikTok</span>
                 </a>
 
-                <a href={`tel:${info.hotline.replace(/\s/g, '')}`} className="flex items-center gap-3 hover:text-green-600 transition-colors text-sm font-bold group">
-                   <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all animate-pulse">
-                     <i className="fas fa-phone-alt"></i>
+                <a href={`tel:${info.hotline.replace(/\s/g, '')}`} aria-label="Gọi hotline" className="flex items-center gap-3 hover:text-green-600 transition-colors text-sm font-bold group">
+                   <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all">
+                     <Phone size={16} />
                    </div>
                    <span className="text-base">{info.hotline}</span>
                 </a>
@@ -150,7 +159,7 @@ const Footer = () => {
              </h3>
              
              <div className="text-sm text-gray-500 flex gap-2 items-start justify-center sm:justify-start text-left max-w-xs sm:max-w-none">
-                <i className="fas fa-map-marker-alt text-red-500 mt-1 flex-shrink-0"></i>
+                <MapPin className="text-red-500 mt-1 flex-shrink-0" size={16} />
                 <span className="leading-snug">{info.address}</span>
              </div>
 
@@ -165,7 +174,7 @@ const Footer = () => {
                   rel="noreferrer" 
                   className="inline-flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  Code with <span className="text-red-500 animate-pulse">❤️</span> by <span className="font-mono font-bold">justccuong</span>
+                  Code with <span className="text-red-500">❤️</span> by <span className="font-mono font-bold">justccuong</span>
                 </a>
              </div>
           </div>

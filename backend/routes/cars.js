@@ -123,7 +123,8 @@ router.get('/', async (req, res) => {
       'name', 'minPrice', 'maxPrice', // Lọc cơ bản
       'branch', 'status', 'color', 'drive', 
       'gearbox', 'condition', 'fuel', 'manufacturer', 
-      'installment', 'quality'
+      'installment', 'quality',
+      'limit', 'page', 'sort' // Phân trang & sắp xếp
     ];
 
     // B. KIỂM TRA THAM SỐ LẠ (Chống Hack)
@@ -190,8 +191,26 @@ router.get('/', async (req, res) => {
 
     // Thực thi
     // console.log("🔍 Final Query:", JSON.stringify(query));
-    const cars = await Car.find(query).sort({ _id: -1 }); // Mới nhất lên đầu
-    res.json(cars);
+
+    // Pagination & Sort
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 0; // 0 = no limit (backwards compatible)
+    const skip = (page - 1) * (limit || 0);
+    const sortOrder = req.query.sort === 'oldest' ? { _id: 1 } : { _id: -1 };
+
+    let queryBuilder = Car.find(query).sort(sortOrder);
+    if (limit > 0) {
+      queryBuilder = queryBuilder.skip(skip).limit(limit);
+    }
+
+    const cars = await queryBuilder;
+
+    if (limit > 0) {
+      const total = await Car.countDocuments(query);
+      res.json({ cars, total, page, limit, totalPages: Math.ceil(total / limit) });
+    } else {
+      res.json(cars); // Backwards compatible: return array
+    }
 
   } catch (err) {
     console.error("❌ Error getting cars:", err);

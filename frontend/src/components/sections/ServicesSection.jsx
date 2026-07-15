@@ -1,41 +1,41 @@
 import React from "react";
 import {
-  FaUsers,
-  FaTags,
-  FaCheckSquare,
-  FaTruck,
-  FaCreditCard,
-  FaCar,
-} from "react-icons/fa";
+  Users,
+  Tag,
+  BadgeCheck,
+  Truck,
+  CreditCard,
+  Car,
+} from "lucide-react";
 
 const strengths = [
   {
-    icon: <FaUsers />,
+    icon: <Users size={24} />,
     title: "Đội ngũ chuyên nghiệp",
     desc: "Nhân viên tận tâm, được đào tạo bài bản, sẵn sàng tư vấn 24/7.",
   },
   {
-    icon: <FaTags />,
+    icon: <Tag size={24} />,
     title: "Giá cả cạnh tranh",
     desc: "Cam kết giá tốt nhất thị trường cùng nhiều chương trình ưu đãi hấp dẫn.",
   },
   {
-    icon: <FaCheckSquare />,
+    icon: <BadgeCheck size={24} />,
     title: "Uy tín hàng đầu",
     desc: "Chữ tín là kim chỉ nam. Cam kết chất lượng xe và pháp lý minh bạch.",
   },
   {
-    icon: <FaTruck />,
+    icon: <Truck size={24} />,
     title: "Giao xe tận nhà",
     desc: "Hỗ trợ vận chuyển xe an toàn đến tận tay khách hàng trên toàn quốc.",
   },
   {
-    icon: <FaCreditCard />,
+    icon: <CreditCard size={24} />,
     title: "Hỗ trợ trả góp 70%",
     desc: "Thủ tục nhanh gọn, lãi suất ưu đãi, thời gian vay linh hoạt tới 7 năm.",
   },
   {
-    icon: <FaCar />,
+    icon: <Car size={24} />,
     title: "Lái thử miễn phí",
     desc: "Trải nghiệm thực tế các dòng xe có sẵn tại showroom trước khi quyết định.",
   },

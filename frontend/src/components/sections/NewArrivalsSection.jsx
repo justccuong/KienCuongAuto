@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../utils/axios";
 import OptimizedImage from "../input/OptimizedImage";
-import { FaArrowRight, FaFire, FaCogs, FaRoad } from "react-icons/fa";
+import { ArrowRight, Flame, Settings, Route } from "lucide-react";
 
 const NewArrivalsSection = () => {
   const [cars, setCars] = useState([]);
@@ -11,10 +11,10 @@ const NewArrivalsSection = () => {
   useEffect(() => {
     const fetchNewestCars = async () => {
       try {
-        const res = await api.get("/cars");
-        // Lấy 8 xe mới nhất
-        const newestCars = res.data.slice(-8).reverse(); 
-        setCars(newestCars);
+        const res = await api.get("/cars", { params: { limit: 8 } });
+        // Support both new paginated format and old array format
+        const newestCars = res.data.cars || res.data;
+        setCars(Array.isArray(newestCars) ? newestCars : []);
       } catch (err) {
         console.error("Lỗi fetch xe mới:", err);
       }
@@ -31,7 +31,7 @@ const NewArrivalsSection = () => {
         <div className="flex justify-between items-end mb-8">
           <div>
             <span className="text-red-600 font-bold uppercase tracking-wider text-xs md:text-sm bg-red-50 px-3 py-1 rounded-full border border-red-100 mb-2 inline-block">
-              <FaFire className="inline mr-1" /> Hot Arrivals
+              <Flame className="inline mr-1" size={14} /> Hot Arrivals
             </span>
             <h2 className="text-2xl md:text-4xl font-extrabold text-gray-900 leading-tight">
               Xe Vừa Cập Bến
@@ -41,7 +41,7 @@ const NewArrivalsSection = () => {
             to="/find-car" 
             className="hidden md:flex items-center gap-2 text-gray-600 hover:text-red-600 font-semibold transition"
           >
-            Xem tất cả <FaArrowRight />
+            Xem tất cả <ArrowRight size={16} />
           </Link>
         </div>
 
@@ -78,11 +78,11 @@ const NewArrivalsSection = () => {
                 {/* Thông số kỹ thuật */}
                 <div className="mt-auto flex items-center justify-between text-[11px] text-gray-500 border-t pt-3 bg-gray-50 -mx-4 -mb-4 px-4 py-2.5">
                    <div className="flex items-center gap-1.5">
-                      <FaCogs className="text-gray-400"/> 
+                      <Settings className="text-gray-400" size={14} /> 
                       <span className="truncate max-w-[80px]">{car.gearbox?.replace("Hộp số ", "")}</span>
                    </div>
                    <div className="flex items-center gap-1.5">
-                      <FaRoad className="text-gray-400"/> 
+                      <Route className="text-gray-400" size={14} /> 
                       <span>{car.kilometers}km</span>
                    </div>
                 </div>
@@ -97,7 +97,7 @@ const NewArrivalsSection = () => {
             to="/find-car" 
             className="inline-flex items-center justify-center gap-2 w-full bg-gray-100 text-gray-800 py-3 rounded-xl font-bold hover:bg-gray-200 transition"
           >
-            Xem tất cả xe <FaArrowRight />
+            Xem tất cả xe <ArrowRight size={16} />
           </Link>
         </div>
       </div>

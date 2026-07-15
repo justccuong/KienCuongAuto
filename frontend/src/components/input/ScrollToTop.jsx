@@ -4,7 +4,7 @@ const ScrollToTop = () => {
     const [isVisible, setIsVisible] = useState(false);
 
     const toggleVisibility = useCallback(() => {
-        setIsVisible(window.scrollY > 0);
+        setIsVisible(window.scrollY > 300);
     }, []);
 
     useEffect(() => {
@@ -20,13 +20,15 @@ const ScrollToTop = () => {
     };
 
     return (
-        <div
+        <button
             onClick={scrollToTop}
-            className={`fixed bottom-6 right-6 rounded-full z-50 transition-all hover:translate-y-[-5px] hover:scale-105 duration-300 
+            type="button"
+            aria-label="Cuộn lên đầu trang"
+            className={`fixed bottom-6 right-6 rounded-full z-50 transition-all hover:translate-y-[-5px] hover:scale-105 duration-300 cursor-pointer
                 ${isVisible ? "flex" : "hidden"}`}
         >
-            <img className="w-16 h-auto" src="/scroll_top.png" alt="scroll to top" />
-        </div>
+            <img className="w-16 h-auto" src="/scroll_top.png" alt="Cuộn lên đầu trang" />
+        </button>
     );
 };
 

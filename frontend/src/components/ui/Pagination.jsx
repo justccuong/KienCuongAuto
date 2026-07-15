@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { 
-  FaChevronLeft, FaChevronRight, 
-  FaAngleDoubleLeft, FaAngleDoubleRight, 
-  FaArrowRight 
-} from "react-icons/fa";
+  ChevronLeft, ChevronRight, 
+  ChevronsLeft, ChevronsRight, 
+  ArrowRight 
+} from "lucide-react";
 
 const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -39,12 +39,12 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
       onPageChange(pageNumber);
       setInputPage(""); 
     } else {
-      alert(`Vui lòng nhập số trang từ 1 đến ${totalPages}`);
+      setInputPage("");
     }
   };
 
   return (
-    <div className="flex flex-col md:flex-row justify-center items-center gap-4 mt-12 text-gray-600">
+    <nav className="flex flex-col md:flex-row justify-center items-center gap-4 mt-12 text-gray-600" aria-label="Phân trang">
       
       <div className="flex items-center gap-2">
         
@@ -54,9 +54,9 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
           className={`w-9 h-9 flex items-center justify-center rounded-lg border transition-all ${
             currentPage === 1 ? "bg-gray-100 text-gray-300 cursor-not-allowed" : "hover:bg-red-50 hover:text-red-600 hover:border-red-600"
           }`}
-          title="Trang đầu"
+          aria-label="Trang đầu tiên"
         >
-          <FaAngleDoubleLeft />
+          <ChevronsLeft size={16} />
         </button>
 
         <button
@@ -65,14 +65,17 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
           className={`w-9 h-9 flex items-center justify-center rounded-lg border transition-all ${
             currentPage === 1 ? "bg-gray-100 text-gray-300 cursor-not-allowed" : "hover:bg-red-50 hover:text-red-600 hover:border-red-600"
           }`}
+          aria-label="Trang trước"
         >
-          <FaChevronLeft />
+          <ChevronLeft size={16} />
         </button>
 
         {renderPageNumbers().map((number) => (
           <button
             key={number}
             onClick={() => onPageChange(number)}
+            aria-current={currentPage === number ? "page" : undefined}
+            aria-label={`Trang ${number}`}
             className={`w-9 h-9 flex items-center justify-center rounded-lg font-bold text-sm transition-all shadow-sm ${
               currentPage === number
                 ? "bg-red-600 text-white border-red-600 scale-110"
@@ -89,8 +92,9 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
           className={`w-9 h-9 flex items-center justify-center rounded-lg border transition-all ${
             currentPage === totalPages ? "bg-gray-100 text-gray-300 cursor-not-allowed" : "hover:bg-red-50 hover:text-red-600 hover:border-red-600"
           }`}
+          aria-label="Trang tiếp theo"
         >
-          <FaChevronRight />
+          <ChevronRight size={16} />
         </button>
 
         <button
@@ -99,9 +103,9 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
           className={`w-9 h-9 flex items-center justify-center rounded-lg border transition-all ${
             currentPage === totalPages ? "bg-gray-100 text-gray-300 cursor-not-allowed" : "hover:bg-red-50 hover:text-red-600 hover:border-red-600"
           }`}
-          title="Trang cuối"
+          aria-label="Trang cuối cùng"
         >
-          <FaAngleDoubleRight />
+          <ChevronsRight size={16} />
         </button>
       </div>
 
@@ -118,13 +122,14 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
         />
         <button 
           type="submit"
+          aria-label="Đi đến trang"
           className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-red-600 hover:text-white rounded-md transition-colors"
         >
-          <FaArrowRight className="text-xs" />
+          <ArrowRight size={14} />
         </button>
       </form>
 
-    </div>
+    </nav>
   );
 };
 

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import api from "../../utils/axios";
-import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate, Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../context/AuthContext"; // ✅ IMPORT AUTH CONTEXT
 
 const Login = () => {
@@ -43,7 +42,7 @@ const Login = () => {
 
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.msg || "Invalid email or password");
+      setError(err.response?.data?.msg || "Email hoặc mật khẩu không đúng");
     } finally {
       setLoading(false);
     }
@@ -58,7 +57,7 @@ const Login = () => {
 
       <div className="relative bg-white rounded-3xl shadow-2xl p-10 w-full max-w-md z-10 transition-all duration-300">
         <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-6 tracking-tight">
-          Welcome back!
+          Chào mừng trở lại!
         </h2>
 
         <form onSubmit={handleLogin} className="space-y-6">
@@ -67,8 +66,8 @@ const Login = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               type="email"
-              placeholder="your@email.com"
-              className="w-full px-4 py-2 border rounded-lg shadow-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              placeholder="email@example.com"
+              className="w-full px-4 py-2 border rounded-lg shadow-sm text-gray-900 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -77,11 +76,11 @@ const Login = () => {
 
           {/* Password */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
             <input
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              className="w-full px-4 py-2 border rounded-lg shadow-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border rounded-lg shadow-sm text-gray-900 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -90,8 +89,9 @@ const Login = () => {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-9 text-gray-600 hover:text-gray-800 focus:outline-none"
+              aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
             >
-              <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
 
@@ -108,8 +108,8 @@ const Login = () => {
             disabled={loading}
             className={`w-full py-2 rounded-lg font-semibold text-white transition-all duration-200 ${
               loading
-                ? "bg-blue-300 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 shadow-md transform hover:-translate-y-0.5"
+                ? "bg-red-300 cursor-not-allowed"
+                : "bg-red-600 hover:bg-red-700 shadow-md transform hover:-translate-y-0.5"
             }`}
           >
             {loading ? (
@@ -118,20 +118,20 @@ const Login = () => {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Logging in...
+                Đang đăng nhập...
               </span>
             ) : (
-              "Login"
+              "Đăng nhập"
             )}
           </button>
         </form>
 
         {/* Sign up link */}
         <p className="text-sm text-center text-gray-700 mt-6">
-          Don't have an account?{" "}
-          <a href="/signup" className="text-blue-600 hover:underline font-medium">
-            Sign up
-          </a>
+          Chưa có tài khoản?{" "}
+          <Link to="/signup" className="text-red-600 hover:underline font-medium">
+            Đăng ký
+          </Link>
         </p>
       </div>
     </div>

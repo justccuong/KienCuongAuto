@@ -1,15 +1,13 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../../utils/axios";
 import { Link } from "react-router-dom";
-import { FaSearch, FaFilter, FaCar, FaMapMarkerAlt, FaSync } from "react-icons/fa";
+import { Search, SlidersHorizontal, Car, MapPin, RefreshCw, Settings, Fuel, Route } from "lucide-react";
 
-// Import components (Giữ nguyên đường dẫn của cậu)
 import ColorSelect from "../../components/input/ColorSelect";
 import SearchableSelect from "../../components/input/SearchableSelect";
 import OptimizedImage from "../../components/input/OptimizedImage";
 import Pagination from "../../components/ui/Pagination"; 
 
-// --- CẤU HÌNH OPTION ---
 const FILTER_OPTIONS = {
   status: { label: "Tình trạng kho", values: ["Sẵn xe", "Hết hàng"] },
   condition: { label: "Tình trạng xe", values: ["Xe mới", "Xe đã qua sử dụng"] },
@@ -39,30 +37,56 @@ const COLOR_OPTIONS = [
 const ITEMS_PER_PAGE = 15; 
 
 const FindCarPage = () => {
-  // --- STATE ---
   const [cars, setCars] = useState([]);
   const [branches, setBranches] = useState([]); 
   const [loading, setLoading] = useState(true);
+  const [totalItems, setTotalItems] = useState(0);
   
   const [filters, setFilters] = useState({});
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [showFilters, setShowFilters] = useState(false); 
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  // --- FETCH DATA ---
+  // Debounce search input
   useEffect(() => {
-    const initData = async () => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, debouncedSearch, minPrice, maxPrice]);
+
+  // Fetch Data (Server-side filtering & pagination)
+  useEffect(() => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        // Gọi song song 2 API để tiết kiệm thời gian
+        const params = { ...filters, page: currentPage, limit: ITEMS_PER_PAGE };
+        if (debouncedSearch) params.name = debouncedSearch;
+        if (minPrice) params.minPrice = minPrice;
+        if (maxPrice) params.maxPrice = maxPrice;
+        
         const [carsRes, branchesRes] = await Promise.all([
-          api.get("/cars"),     // Lấy tất cả xe (Backend trả về full do không gửi params)
-          api.get("/branches")  // Lấy danh sách chi nhánh
+          api.get("/cars", { params }),
+          api.get("/branches")
         ]);
-        setCars(carsRes.data);
+        
+        if (carsRes.data && carsRes.data.cars) {
+          setCars(carsRes.data.cars);
+          setTotalItems(carsRes.data.total);
+        } else {
+          const dataArray = Array.isArray(carsRes.data) ? carsRes.data : [];
+          setCars(dataArray);
+          setTotalItems(dataArray.length);
+        }
         setBranches(branchesRes.data);
       } catch (err) {
         console.error("Lỗi tải dữ liệu:", err);
@@ -70,40 +94,8 @@ const FindCarPage = () => {
         setLoading(false);
       }
     };
-    initData();
-  }, []);
-
-  // --- FILTER LOGIC (Dùng useMemo để tối ưu hiệu năng) ---
-  const filteredCars = useMemo(() => {
-    return cars.filter((car) => {
-      // 1. Lọc theo tên (Search)
-      const matchesSearch = !search || car.name.toLowerCase().includes(search.toLowerCase());
-      
-      // 2. Lọc theo giá (Price Range) - Logic này Backend chưa có nên lọc ở đây là chuẩn
-      const price = parseInt(car.price || 0);
-      const matchesMinPrice = !minPrice || price >= parseInt(minPrice);
-      const matchesMaxPrice = !maxPrice || price <= parseInt(maxPrice);
-
-      // 3. Lọc theo các tiêu chí khác (Dropdown)
-      const matchesFilters = Object.keys(filters).every((key) => {
-        if (!filters[key]) return true; // Nếu filter đó chưa chọn gì thì bỏ qua
-        // So sánh chuỗi (ép về lowercase để không phân biệt hoa thường)
-        return car[key]?.toString().toLowerCase().includes(filters[key].toLowerCase());
-      });
-
-      return matchesSearch && matchesMinPrice && matchesMaxPrice && matchesFilters;
-    });
-  }, [cars, search, minPrice, maxPrice, filters]); // Chỉ tính lại khi các dependency này đổi
-
-  // --- PAGINATION LOGIC ---
-  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
-  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
-  const currentCars = filteredCars.slice(indexOfFirstItem, indexOfLastItem);
-
-  // Reset về trang 1 khi user thay đổi bộ lọc
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters, search, minPrice, maxPrice]);
+    fetchData();
+  }, [filters, debouncedSearch, minPrice, maxPrice, currentPage]);
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -122,15 +114,13 @@ const FindCarPage = () => {
     setSearch("");
   };
 
-  // --- RENDER ---
   return (
     <div className="bg-gray-50 min-h-screen py-8 px-4">
       <div className="max-w-7xl mx-auto">
         
-        {/* HEADER & SEARCH BAR */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <span className="text-red-600"><FaCar /></span> Tìm mua xe
+            <span className="text-red-600"><Car size={28} /></span> Tìm mua xe
           </h1>
           
           <div className="relative w-full md:w-1/2 lg:w-1/3">
@@ -141,14 +131,14 @@ const FindCarPage = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <FaSearch className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-400 text-lg" />
+            <Search className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-400" size={20} />
           </div>
 
           <button 
             className="md:hidden flex items-center gap-2 text-gray-600 bg-white px-4 py-2 rounded-lg shadow border active:bg-gray-100"
             onClick={() => setShowFilters(!showFilters)}
           >
-            <FaFilter /> {showFilters ? "Ẩn bộ lọc" : "Bộ lọc"}
+            <SlidersHorizontal size={16} /> {showFilters ? "Ẩn bộ lọc" : "Bộ lọc"}
           </button>
         </div>
 
@@ -159,14 +149,13 @@ const FindCarPage = () => {
             <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 top-20">
               <div className="flex justify-between items-center border-b pb-2 mb-4">
                 <h3 className="font-bold text-lg flex items-center gap-2">
-                  <FaFilter className="text-red-600" /> Bộ lọc
+                  <SlidersHorizontal className="text-red-600" size={18} /> Bộ lọc
                 </h3>
                 <button onClick={resetFilters} className="text-xs text-red-500 hover:underline flex items-center gap-1">
-                  <FaSync className="text-[10px]" /> Đặt lại
+                  <RefreshCw size={12} /> Đặt lại
                 </button>
               </div>
 
-              {/* Lọc Giá */}
               <div className="mb-6">
                 <label className="font-semibold text-sm mb-2 block text-gray-700">Khoảng giá (Triệu VNĐ)</label>
                 <div className="flex gap-2 items-center">
@@ -188,7 +177,6 @@ const FindCarPage = () => {
                 </div>
               </div>
 
-              {/* Lọc Chi nhánh */}
               <div className="mb-4">
                 <label className="font-semibold text-sm mb-1 block text-gray-700">Chi nhánh</label>
                 <select
@@ -204,7 +192,6 @@ const FindCarPage = () => {
                 </select>
               </div>
 
-              {/* Lọc Hãng (Searchable) */}
               <div className="mb-4">
                 <SearchableSelect
                   label="Hãng sản xuất"
@@ -215,7 +202,6 @@ const FindCarPage = () => {
                 />
               </div>
 
-              {/* Các bộ lọc Select khác */}
               {Object.entries(FILTER_OPTIONS).map(([key, { label, values }]) => (
                 <div className="mb-4" key={key}>
                   <label className="font-semibold text-sm mb-1 block text-gray-700">{label}</label>
@@ -233,7 +219,6 @@ const FindCarPage = () => {
                 </div>
               ))}
 
-              {/* Lọc Màu */}
               <div className="mt-6 pt-4 border-t">
                 <ColorSelect
                   label="Màu sắc"
@@ -260,10 +245,10 @@ const FindCarPage = () => {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
                 <p className="text-gray-500 font-medium">Đang tải dữ liệu xe...</p>
               </div>
-            ) : filteredCars.length === 0 ? (
+            ) : cars.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-dashed border-gray-300">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 text-gray-400 mb-4">
-                  <FaSearch className="text-2xl" />
+                  <Search size={28} />
                 </div>
                 <h3 className="text-lg font-bold text-gray-800">Không tìm thấy xe nào</h3>
                 <p className="text-gray-500 mt-1 px-4">Hãy thử điều chỉnh khoảng giá hoặc bỏ bớt bộ lọc xem sao.</p>
@@ -273,23 +258,20 @@ const FindCarPage = () => {
               </div>
             ) : (
               <div className="space-y-8">
-                {/* Result Info */}
                 <div className="flex justify-between items-center px-2 border-l-4 border-red-600 pl-3">
                   <p className="text-gray-700 font-medium">
-                      Tìm thấy <strong className="text-red-600 text-lg">{filteredCars.length}</strong> xe phù hợp
+                      Tìm thấy <strong className="text-red-600 text-lg">{totalItems}</strong> xe phù hợp
                   </p>
                   <span className="text-sm text-gray-400 bg-gray-100 px-2 py-1 rounded">Trang {currentPage}</span>
                 </div>
 
-                {/* Grid Xe */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {currentCars.map((car) => (
+                  {cars.map((car) => (
                     <Link
                       to={`/cars/${car._id}`}
                       key={car._id}
                       className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer border border-gray-100 hover:-translate-y-1 block h-full flex flex-col"
                     >
-                      {/* Ảnh xe */}
                       <div className="relative aspect-[4/3] overflow-hidden bg-gray-200">
                         <OptimizedImage
                           src={car.images?.[0]?.url}
@@ -298,11 +280,9 @@ const FindCarPage = () => {
                           height={300}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />
-                        {/* Năm sản xuất Badge */}
                         <div className="absolute top-3 right-3 bg-white/95 backdrop-blur text-gray-800 text-xs font-bold px-2.5 py-1 rounded-md shadow-sm">
                           {car.year}
                         </div>
-                        {/* Tình trạng Badge (Nếu mới) */}
                         {car.condition === "Xe mới" && (
                            <div className="absolute top-3 left-3 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">
                              NEW
@@ -320,23 +300,23 @@ const FindCarPage = () => {
                         
                         <div className="flex items-center justify-between text-xs text-gray-500 border-t pt-3 bg-gray-50 -mx-4 px-4 py-3 mt-auto">
                           <div className="flex flex-col items-center gap-1">
-                             <i className="fas fa-cogs text-gray-400"></i>
+                             <Settings className="text-gray-400" size={14} />
                              <span className="font-medium">{car.gearbox?.replace("Hộp số ", "")}</span>
                           </div>
                           <div className="h-6 w-px bg-gray-200"></div>
                           <div className="flex flex-col items-center gap-1">
-                             <i className="fas fa-gas-pump text-gray-400"></i>
+                             <Fuel className="text-gray-400" size={14} />
                              <span className="font-medium">{car.fuel || "N/A"}</span>
                           </div>
                           <div className="h-6 w-px bg-gray-200"></div>
                           <div className="flex flex-col items-center gap-1">
-                             <i className="fas fa-road text-gray-400"></i>
+                             <Route className="text-gray-400" size={14} />
                              <span className="font-medium">{car.kilometers ? `${car.kilometers} km` : "0 km"}</span>
                           </div>
                         </div>
                         
                         <div className="mt-0 pt-2 text-xs font-bold text-red-600 flex items-center gap-1 truncate border-t border-gray-100 bg-white -mx-4 px-4 pb-0 h-8">
-                          <FaMapMarkerAlt /> <span className="truncate">{car.branch}</span>
+                          <MapPin size={14} /> <span className="truncate">{car.branch}</span>
                         </div>
                       </div>
                     </Link>
@@ -345,7 +325,7 @@ const FindCarPage = () => {
 
                 <Pagination 
                     itemsPerPage={ITEMS_PER_PAGE} 
-                    totalItems={filteredCars.length} 
+                    totalItems={totalItems} 
                     currentPage={currentPage}
                     onPageChange={paginate}
                 />

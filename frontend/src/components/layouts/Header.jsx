@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import { Link, useNavigate } from "react-router-dom";
+import { Search, X, Menu, User } from "lucide-react";
 import CarSearchBar from "../sections/CarSearchBar";
 import { useAuth } from "../../context/AuthContext"; // ✅ USE AUTH CONTEXT
 
@@ -43,7 +43,7 @@ const Header = () => {
           <Link to="/home" className="block">
             <img 
               src="/logo_done.png" 
-              alt="logo" 
+              alt="Kiên Cường Auto" 
               className="h-8 md:h-10 w-auto max-w-[150px] md:max-w-none object-contain" 
             />
           </Link>
@@ -74,7 +74,7 @@ const Header = () => {
                 className="flex items-center gap-2 hover:bg-gray-100 px-2 py-1 rounded transition-colors group"
                 title="Xem thông tin tài khoản"
               >
-                <i className="fa-regular fa-user text-red-600 text-lg group-hover:scale-110 transition-transform"></i>
+                <User className="text-red-600 group-hover:scale-110 transition-transform" size={20} />
                 <span className="text-sm font-semibold truncate max-w-[120px] text-gray-700 group-hover:text-red-600">
                   {user.name}
                 </span>
@@ -103,8 +103,9 @@ const Header = () => {
               setIsOpen(false); 
             }}
             className={`text-xl p-2 transition-colors ${showSearch ? 'text-red-600' : 'text-gray-600'}`}
+            aria-label={showSearch ? 'Đóng tìm kiếm' : 'Tìm kiếm'}
           >
-             <i className={`fas ${showSearch ? 'fa-times' : 'fa-search'}`}></i>
+             {showSearch ? <X size={20} /> : <Search size={20} />}
           </button>
           
           <button
@@ -114,8 +115,10 @@ const Header = () => {
               setShowSearch(false);
             }}
             className="text-2xl text-gray-800 focus:outline-none p-1"
+            aria-label={isOpen ? 'Đóng menu' : 'Mở menu'}
+            aria-expanded={isOpen}
           >
-            <i className={`fas ${isOpen ? 'fa-times' : 'fa-bars'}`}></i>
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
@@ -151,7 +154,7 @@ const Header = () => {
                     onClick={() => setIsOpen(false)} 
                   >
                     <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600">
-                       <i className="fa-regular fa-user"></i>
+                       <User size={16} />
                     </div>
                     <span className="font-bold text-gray-800">{user.name}</span>
                   </Link>
