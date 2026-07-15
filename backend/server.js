@@ -14,7 +14,16 @@ const { globalLimiter, authLimiter } = require('./middlewares/rateLimiter');
 const app = express();
 
 // --- MIDDLEWARES CƠ BẢN ---
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://static.cloudflareinsights.com"],
+      imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
+      connectSrc: ["'self'", "https://api.cloudinary.com"],
+    },
+  },
+}));
 app.use(compression());
 app.set('trust proxy', 1); 
 app.use(cookieParser());
