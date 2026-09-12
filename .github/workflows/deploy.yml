@@ -1,58 +1,70 @@
-name: CI/CD - Build & Deploy to Dokploy
+name: CI/CD - Deploy to VPS
 
 on:
   push:
     branches:
-      - main  # Trigger workflow when pushing to main branch
+      - main
+  workflow_dispatch:
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
 
     steps:
-      - name: Checkout Code
+      - name: 🚚 Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GitHub Container Registry (GHCR)
-        uses: docker/login-action@v3
+      - name: ⚙️ Set up Node.js 20
+        uses: actions/setup-node@v4
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
-      # Convert repository name to lowercase to comply with docker tagging rules
-      - name: Downcase Repo Owner and Name
-        id: repo_names
+      - name: 📦 Install Frontend Dependencies
         run: |
-          echo "owner=${OWNER,,}" >> $GITHUB_OUTPUT
-          echo "name=${NAME,,}" >> $GITHUB_OUTPUT
-        env:
-          OWNER: '${{ github.repository_owner }}'
-          NAME: '${{ github.event.repository.name }}'
+          cd frontend
+          npm ci
 
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
+      - name: 🔨 Build Frontend (Vite)
+        run: |
+          cd frontend
+          npm run build
+
+      - name: 📂 Transfer Frontend dist to VPS
+        uses: appleboy/scp-action@v0.1.7
         with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ steps.repo_names.outputs.owner }}/${{ steps.repo_names.outputs.name }}:latest
-            ghcr.io/${{ steps.repo_names.outputs.owner }}/${{ steps.repo_names.outputs.name }}:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: "frontend/dist/*"
+          target: "/root/KienCuongAuto/frontend/dist"
+          strip_components: 2
+          rm: true
 
-      - name: Trigger Dokploy Deployment Webhook
-        run: |
-          if [ -z "${{ secrets.DOKPLOY_WEBHOOK_URL }}" ]; then
-            echo "⚠️ DOKPLOY_WEBHOOK_URL secret is not set. Skipping deploy trigger."
-          else
-            echo "🚀 Triggering Dokploy deployment..."
-            curl -X POST "${{ secrets.DOKPLOY_WEBHOOK_URL }}"
-          fi
+      - name: 🚀 Deploy Backend & Reload PM2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            set -e
+            echo "📥 Navigating to project directory..."
+            cd /root/KienCuongAuto
+
+            echo "🔄 Pulling latest source code..."
+            git pull origin main
+
+            echo "📦 Installing backend production dependencies..."
+            cd /root/KienCuongAuto/backend
+            npm install --omit=dev
+
+            echo "⚡ Reloading PM2 process (zero-downtime)..."
+            pm2 reload kca-backend --update-env || pm2 restart kca-backend
+
+            echo "✅ Deployment finished successfully!"
