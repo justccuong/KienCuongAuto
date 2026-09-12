@@ -1,155 +1,170 @@
-# 🚗 Kien Cuong Auto
+# 🚗 Kiên Cường Auto - Full-Stack Dealership Platform
 
-![Project Status](https://img.shields.io/badge/status-live-success.svg)
-![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)
-![Stack](https://img.shields.io/badge/stack-MERN-blue.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Stack](https://img.shields.io/badge/Stack-MERN%20%2B%20Vite-blue.svg)](https://react.dev/)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF.svg?logo=github-actions)](https://github.com/justccuong/KienCuongAuto/actions)
+[![Website](https://img.shields.io/badge/Website-kiencuongauto.vn-success.svg)](https://kiencuongauto.vn)
 
-> **Kien Cuong Auto** is a full-stack web application designed to manage car dealership operations, including inventory tracking, branch management, and customer services. The system is fully deployed and secured on a Linux VPS.
+> **Kiên Cường Auto** is a production-grade, full-stack web application designed for car dealership operations—featuring real-time vehicle inventory management, multi-branch administration, customer engagement tools, and an admin analytics dashboard. Fully deployed on an Ubuntu VPS with automated CI/CD and production hardening.
 
-## 🌐 Live Demo
+---
 
-👉 **Website:** [https://kiencuongauto.vn](https://kiencuongauto.vn)  
-*(Note: System is running on Ubuntu VPS with Nginx Reverse Proxy & SSL)*
+## 🌐 Live Production
 
-## 🛠️ Tech Stack
+- **Official Website:** [https://kiencuongauto.vn](https://kiencuongauto.vn)
+- **Infrastructure:** Ubuntu Linux VPS • Nginx Reverse Proxy • Let's Encrypt SSL • Cloudflare CDN & WAF
 
-This project demonstrates a complete **Software Development Life Cycle (SDLC)** from coding to deployment.
+---
 
-### 💻 Frontend (Client)
-- **React.js**: Functional Components, Hooks.
-- **State Management**: Context API / Redux.
-- **Routing**: React Router v6.
-- **UI/UX**: Tailwind CSS (Utility-first framework) for modern & responsive design.
-- **API Client**: Axios (with Interceptors).
+## 🛠️ Architecture & Tech Stack
 
-### 🔙 Backend (Server)
-- **Node.js & Express**: High-performance RESTful API.
-- **Database**: MongoDB (Mongoose ORM) for flexible data modeling.
-- **Authentication**: JWT (JSON Web Token) & Bcrypt (Password Hashing).
-- **Security**: HTTP-Only Cookies, Input Validation, CORS configuration.
+```
+[ Client: React 19 + Tailwind 4 ] 
+          │  (HTTPS / Cloudflare)
+          ▼
+[ Nginx Reverse Proxy (Port 443) ]
+          │  (Proxy pass to localhost:5000)
+          ▼
+[ Node.js & Express 5 API (PM2 Cluster) ]
+     ├── Authentication (JWT + HTTP-Only Cookie)
+     ├── Security (Helmet CSP, Rate Limiting, ReDoS Sanitization)
+     ├── Database: MongoDB Atlas (Mongoose 8)
+     └── Media: Cloudinary CDN
+```
 
-### ⚙️ DevOps & Deployment (Highlight)
-- **Server**: Ubuntu 20.04/22.04 LTS VPS.
-- **Web Server**: Nginx (Reverse Proxy configuration).
-- **Security**: SSL/TLS Certificate (Let's Encrypt) via Certbot.
-- **Process Management**: PM2/Systemd for zero-downtime reload.
-- **Firewall**: UFW configured for specific ports.
+### 💻 Frontend
+- **React 19** & **Vite 6** for blazing-fast builds and HMR.
+- **Tailwind CSS v4** for modern, responsive UI design tokens.
+- **React Router v7** with SPA client-side routing.
+- **Yet-Another-React-Lightbox** & **Swiper** for high-resolution vehicle gallery inspection.
+- **Axios** with centralized request interceptors.
+
+### 🔙 Backend
+- **Node.js (v20 LTS)** & **Express 5** high-performance RESTful API.
+- **MongoDB Atlas** with **Mongoose 8** schema validation and aggregation pipelines.
+- **Security Suite:**
+  - `helmet`: Content Security Policy configured for Cloudinary & Cloudflare.
+  - `express-rate-limit`: Global request throttling & dedicated brute-force protection for Auth routes.
+  - `express-mongo-sanitize` & custom Regex escaping against NoSQL Injection and ReDoS.
+  - `bcrypt` & `jsonwebtoken`: Password hashing and stateless authentication stored in secure `HTTP-Only` cookies (`SameSite=None`, `Secure`).
+- **Cloudinary SDK**: Cloud media management with automatic image deletion when vehicles are removed.
+
+### ⚙️ DevOps & CI/CD Pipeline
+- **Automated Deployments:** GitHub Actions workflow triggered on push to `main`:
+  1. Builds frontend assets on GitHub Runners (16GB RAM) to eliminate VPS resource exhaustion (OOM).
+  2. Syncs static bundle directly to `/var/www/kiencuongauto/` via SCP.
+  3. Deploys backend source code via SSH, installs dependencies, and reloads PM2 (`kca-backend`) with zero downtime.
+- **Process Management:** PM2 with automatic startup recovery.
+- **Network & DNS:** Cloudflare proxy with TLS 1.3 and edge caching.
 
 ---
 
 ## 🔑 Key Features
 
-### 1. Authentication & Security
-- 🔐 Secure Login/Register/Logout flow.
-- 🛡️ Role-based Authorization (**Admin** vs **User**).
-- 🍪 Secure Cookie management (SameSite/Secure attributes).
+### 1. Showroom & Inventory Management
+- Multi-criteria vehicle filtering: Price range, manufacturer, gearbox, fuel type, drivetrain, and condition.
+- High-res image carousel with interactive lightbox zoom.
+- One-click contact CTA: Call hotline, copy phone number, and direct Zalo connection per branch.
 
-### 2. Vehicle Inventory (CRUD)
-- View list of available cars with filters.
-- Admin: Add, Edit, Delete vehicle information (Images, Price, Specs).
+### 2. Multi-Branch Operations
+- Multi-location dealership showroom management.
+- Dynamic fallback contact information per branch.
 
-### 3. Branch Management
-- Manage multiple dealership locations.
-- Real-time updates across the system.
+### 3. Analytics & Administrative Controls
+- Role-based authorization (`Admin` vs `User`).
+- Dashboard metrics: Page visits, top-viewed vehicles, and daily engagement charts.
 
 ---
 
-## 🚀 Installation & Setup
-
-Follow these steps to run the project locally.
+## 🚀 Local Development Setup
 
 ### Prerequisites
-- Node.js (v16+)
-- MongoDB (Local or Atlas URI)
-- Git
+- Node.js (v20+)
+- MongoDB connection string (Local or MongoDB Atlas)
+- Cloudinary credentials (optional for image uploads)
 
 ### 1. Clone the repository
 ```bash
-git clone [https://github.com/justccuong/KienCuongAuto.git](https://github.com/justccuong/KienCuongAuto.git)
+git clone https://github.com/justccuong/KienCuongAuto.git
 cd KienCuongAuto
-````
+```
 
-### 2\. Backend Setup
-
+### 2. Backend Setup
 ```bash
 cd backend
 npm install
 ```
 
-Create a `.env` file in the `backend` folder:
-
+Create a `.env` file in the `backend/` directory (refer to `.env.example`):
 ```env
 PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_super_secret_key
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_super_secret_jwt_key
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+CLIENT_URL=http://localhost:5173
 NODE_ENV=development
 ```
 
-Start the server:
-
+Start the backend server:
 ```bash
 npm start
-# Server runs on http://localhost:5000
+# Server listens on http://localhost:5000
 ```
 
-### 3\. Frontend Setup
-
+### 3. Frontend Setup
 ```bash
-cd frontend
+cd ../frontend
 npm install
 ```
 
-Start the React app:
-
+Start the Vite development server:
 ```bash
-npm start
-# App runs on http://localhost:3000
+npm run dev
+# Vite runs on http://localhost:5173 with proxy to http://localhost:5000/api
 ```
 
------
+---
 
 ## 📂 Project Structure
 
 ```bash
 KienCuongAuto/
-├── backend/                 # Node.js & Express Server
-│   ├── config/              # Database & Environment Configs
-│   ├── controllers/         # Business Logic Handlers
-│   ├── middleware/          # Authentication & Upload Middleware
-│   ├── models/              # Mongoose Schemas (User, Car, Branch)
-│   ├── routes/              # API Endpoint Definitions
-│   ├── seed/                # Database Seed Data
-│   ├── utils/               # Utilities (Cloudinary, etc.)
-│   └── server.js            # Server Entry Point
+├── .github/workflows/       # Automated CI/CD deployment pipelines
+├── backend/
+│   ├── controllers/         # Business logic handlers
+│   ├── middlewares/         # Auth, Rate Limiter, Upload & Security middlewares
+│   ├── models/              # Mongoose schemas (Car, Branch, User, Visit, etc.)
+│   ├── routes/              # RESTful API endpoints (/api/cars, /api/auth, etc.)
+│   ├── utils/               # Cloudinary & helper utilities
+│   ├── .env.example         # Environment variable template
+│   └── server.js            # Express server entry point
 │
-├── frontend/                # ReactJS (Vite) Client
-│   ├── public/              # Static Assets (Images, Icons)
+├── frontend/
+│   ├── public/              # Static assets, logos, branch photos
 │   └── src/
-│       ├── components/      # Reusable UI Components
-│       │   ├── input/       # Form Controls (Select, Button...)
-│       │   ├── layouts/     # Layout Wrappers (Header, Footer)
-│       │   ├── sections/    # Major Page Sections (Hero, Services)
-│       │   └── ui/          # Basic UI Elements (Cards, Pagination)
-│       ├── pages/           # Main Application Views
-│       │   ├── Admin/       # Admin Dashboard
-│       │   ├── Auth/        # Login & Registration
-│       │   ├── Branches/    # Branch Management
-│       │   ├── Car/         # Car Listing & Details
-│       │   └── Home/        # Landing Page
-│       ├── utils/           # Axios Config & Helpers
-│       ├── App.jsx          # Routing Setup
-│       └── main.jsx         # React DOM Root
+│       ├── components/      # Modular UI components (SearchBar, Nav, Footer, Modal)
+│       ├── hooks/           # Custom React hooks (useBranchContact, etc.)
+│       ├── pages/           # Views (Home, BuyCar, CarDetail, Admin, Auth)
+│       ├── utils/           # Axios instance & formatters
+│       ├── App.jsx          # Router & Route guards
+│       └── main.jsx         # Application entry
 │
-└── package.json
+├── LICENSE                  # MIT Open Source License
+└── README.md
 ```
 
------
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details.
+
+---
 
 ## 👨‍💻 Author
 
-  - **GitHub:** [github.com/justccuong](https://github.com/justccuong)
-  - **Role:** Full-stack Developer & DevOps
-
------
-
-*If you find this project helpful, please give it a star ⭐\!*
+**Cao Cường (justccuong)**  
+- GitHub: [@justccuong](https://github.com/justccuong)  
+- Portfolio / Live Project: [kiencuongauto.vn](https://kiencuongauto.vn)
