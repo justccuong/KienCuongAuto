@@ -40,7 +40,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT || 22 }}
           source: "frontend/dist/*"
-          target: "/root/KienCuongAuto/frontend/dist"
+          target: "/var/www/kiencuongauto"
           strip_components: 2
           rm: true
 
