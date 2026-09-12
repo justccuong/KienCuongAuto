@@ -9,8 +9,13 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import { 
   FaMapMarkerAlt, FaPhoneAlt, FaArrowLeft, FaCheckCircle, 
   FaCogs, FaGasPump, FaRoad, FaCalendarAlt, FaCarSide,
-  FaPalette, FaChair, FaDoorClosed, FaInfoCircle, FaCar, FaEdit
+  FaPalette, FaChair, FaDoorClosed, FaInfoCircle, FaCar, FaEdit,
+  FaCopy, FaCheck
 } from "react-icons/fa";
+
+const DEFAULT_HOTLINE = "0562 73 6868";
+const DEFAULT_ADDRESS = "771 Đình Ấm, Khai Quang, Vĩnh Yên, Vĩnh Phúc";
+const DEFAULT_ZALO = "https://zalo.me/0562736868";
 
 export default function CarDetail() {
   const { id } = useParams();
@@ -22,6 +27,7 @@ export default function CarDetail() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [copiedPhone, setCopiedPhone] = useState(false);
   const thumbnailRefs = useRef([]);
 
   useEffect(() => {
@@ -248,36 +254,98 @@ export default function CarDetail() {
             </div>
 
             {/* Thông tin liên hệ */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <div className="flex items-start gap-3 mb-6">
-                <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600 flex-shrink-0">
-                  <FaMapMarkerAlt />
-                </div>
-                <div>
-                  <p className="font-bold text-gray-900">{car.branch || "Kiên Cường Auto"}</p>
-                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                    {branch?.location || "Vui lòng liên hệ để biết địa chỉ chính xác"}
-                  </p>
-                </div>
-              </div>
+            {(() => {
+              const hotline = branch?.hotline || DEFAULT_HOTLINE;
+              const cleanPhone = hotline.replace(/\s/g, "");
+              const zaloLink = branch?.socials?.zalo || `https://zalo.me/${cleanPhone}`;
+              const branchAddress = branch?.location || DEFAULT_ADDRESS;
 
-              <div className="grid grid-cols-2 gap-3">
-                {branch?.hotline && (
-                  <a href={`tel:${branch.hotline}`} className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-red-200 hover:-translate-y-0.5">
-                    <FaPhoneAlt className="animate-pulse" /> Gọi Ngay
-                  </a>
-                )}
-                {branch?.socials?.zalo ? (
-                  <a href={branch.socials.zalo} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-blue-200 hover:-translate-y-0.5">
-                    Chat Zalo
-                  </a>
-                ) : (
-                  <button disabled className="bg-gray-200 text-gray-400 py-3 rounded-xl font-bold cursor-not-allowed">
-                    Chưa có Zalo
-                  </button>
-                )}
-              </div>
-            </div>
+              const handleCopyPhone = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (navigator?.clipboard?.writeText) {
+                  navigator.clipboard.writeText(cleanPhone);
+                }
+                setCopiedPhone(true);
+                setTimeout(() => setCopiedPhone(false), 2000);
+              };
+
+              return (
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                  <div className="flex items-start gap-3 mb-5">
+                    <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600 flex-shrink-0">
+                      <FaMapMarkerAlt />
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900">{car.branch || "Kiên Cường Auto"}</p>
+                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                        {branchAddress}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Hiển thị số Hotline rõ ràng kèm nút sao chép */}
+                  <div className="bg-red-50/80 border border-red-200/80 rounded-xl p-3.5 mb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-red-600 text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <FaPhoneAlt className="text-sm" />
+                      </div>
+                      <div>
+                        <span className="text-[11px] uppercase tracking-wider font-bold text-red-600 block">
+                          Hotline tư vấn
+                        </span>
+                        <a
+                          href={`tel:${cleanPhone}`}
+                          className="text-lg font-black text-gray-900 hover:text-red-600 transition tracking-wide"
+                        >
+                          {hotline}
+                        </a>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleCopyPhone}
+                      className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition shadow-sm cursor-pointer ${
+                        copiedPhone
+                          ? "bg-green-600 border-green-600 text-white"
+                          : "bg-white border-red-200 text-red-600 hover:bg-red-50"
+                      }`}
+                      title="Sao chép số điện thoại"
+                    >
+                      {copiedPhone ? (
+                        <>
+                          <FaCheck className="text-xs" />
+                          <span>Đã chép!</span>
+                        </>
+                      ) : (
+                        <>
+                          <FaCopy className="text-xs" />
+                          <span>Sao chép</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <a
+                      href={`tel:${cleanPhone}`}
+                      className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold text-sm sm:text-base transition shadow-lg shadow-red-200 hover:-translate-y-0.5 text-center"
+                    >
+                      <FaPhoneAlt className="animate-pulse flex-shrink-0 text-sm" />
+                      <span>Gọi {hotline}</span>
+                    </a>
+                    <a
+                      href={zaloLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm sm:text-base transition shadow-lg shadow-blue-200 hover:-translate-y-0.5 text-center"
+                    >
+                      <span>Chat Zalo</span>
+                    </a>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Mô tả */}
             {car.description && (
