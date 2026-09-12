@@ -3,6 +3,7 @@ const router = require("express").Router();
 const Visit = require("../models/Visit"); 
 const Car = require("../models/Car");
 const GlobalStat = require("../models/GlobalStat"); // ⭐ MUST HAVE THIS MODEL
+const { isAuthenticated, isAdmin } = require("../middlewares/auth");
 
 // Hàm tiện ích: Lấy slug từ URL
 const extractCarSlug = (pageUrl) => {
@@ -17,9 +18,9 @@ const isValidObjectId = (str) => {
 };
 
 // ==========================================
-// 1. API: Lấy Top Xe (Sử dụng Car.views)
+// 1. API: Lấy Top Xe (Sử dụng Car.views) - CHỈ ADMIN
 // ==========================================
-router.get("/top-cars", async (req, res) => {
+router.get("/top-cars", isAuthenticated, isAdmin, async (req, res) => {
     try {
         const topCars = await Car.find({ views: { $gt: 0 } })
             .sort({ views: -1 })
@@ -108,9 +109,9 @@ router.post("/track", async (req, res) => {
 });
 
 // ==========================================
-// 3. API: Lấy VISITS theo ngày (cho biểu đồ)
+// 3. API: Lấy VISITS theo ngày (cho biểu đồ) - CHỈ ADMIN
 // ==========================================
-router.get("/stats", async (req, res) => {
+router.get("/stats", isAuthenticated, isAdmin, async (req, res) => {
     try {
         // Bây giờ Visit chỉ lưu khi isNewSession = true
         // Nên đây là số lượt truy cập (sessions) theo ngày
@@ -141,9 +142,9 @@ router.get("/stats", async (req, res) => {
 });
 
 // ==========================================
-// 4. API: Tổng quan thống kê Dashboard
+// 4. API: Tổng quan thống kê Dashboard - CHỈ ADMIN
 // ==========================================
-router.get("/overview", async (req, res) => {
+router.get("/overview", isAuthenticated, isAdmin, async (req, res) => {
     try {
         const today = new Date();
         today.setHours(0, 0, 0, 0);

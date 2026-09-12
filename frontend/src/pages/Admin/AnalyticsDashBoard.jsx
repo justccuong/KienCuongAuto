@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import axios from "axios";
+import api from "../../utils/axios";
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
 } from "recharts";
@@ -30,9 +30,9 @@ const AnalyticsDashboard = () => {
       setLoading(true);
       try {
         const [statsRes, topCarsRes, overviewRes] = await Promise.all([
-          axios.get("/api/analytics/stats"), 
-          axios.get("/api/analytics/top-cars"),
-          axios.get("/api/analytics/overview"),
+          api.get("/analytics/stats"), 
+          api.get("/analytics/top-cars"),
+          api.get("/analytics/overview"),
         ]);
 
         // 1. XỬ LÝ BIỂU ĐỒ (Visits theo ngày - chỉ unique sessions)
