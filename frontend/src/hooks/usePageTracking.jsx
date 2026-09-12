@@ -27,15 +27,24 @@ const usePageTracking = () => {
         return;
     }
 
+    // 4. KIỂM TRA SESSION TRONG SESSIONSTORAGE:
+    // Chỉ tính 1 visit cho mỗi phiên làm việc (mở tab/trình duyệt mới), đổi trang trong phiên không cộng thêm
+    const sessionKey = "kca_session_active";
+    let isNewSession = false;
+    if (!sessionStorage.getItem(sessionKey)) {
+        sessionStorage.setItem(sessionKey, "true");
+        isNewSession = true;
+    }
+
     const track = async () => {
-      // ... (logic gọi axios.post cũ)
       try {
         await axios.post("/api/analytics/track", {
           page: pathname,
+          isNewSession,
+          referrer: document.referrer || '',
         });
-        console.log(`Tracked: ${pathname}`);
+        console.log(`Tracked: ${pathname} (newSession: ${isNewSession})`);
       } catch (e) {
-        // ... (logic xử lý lỗi 429 cũ)
         if (axios.isAxiosError(e) && e.response && e.response.status === 429) {
              console.log("Tracking error (ignore): Rate Limited.");
         } else {

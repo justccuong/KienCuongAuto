@@ -113,9 +113,18 @@ router.post("/track", async (req, res) => {
 // ==========================================
 router.get("/stats", isAuthenticated, isAdmin, async (req, res) => {
     try {
-        // Bây giờ Visit chỉ lưu khi isNewSession = true
-        // Nên đây là số lượt truy cập (sessions) theo ngày
+        const range = req.query.range || "30d";
+        let days = 30;
+        if (range === "7d") days = 7;
+        else if (range === "90d") days = 90;
+        else if (range === "1y") days = 365;
+
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - (days - 1));
+        startDate.setHours(0, 0, 0, 0);
+
         const stats = await Visit.aggregate([
+            { $match: { createdAt: { $gte: startDate } } },
             {
                 $group: {
                     _id: {
@@ -127,11 +136,36 @@ router.get("/stats", isAuthenticated, isAdmin, async (req, res) => {
                     count: { $sum: 1 }
                 }
             },
-            { $sort: { _id: 1 } },
-            { $limit: 30 }
+            { $sort: { _id: 1 } }
         ]);
 
-        res.json(stats);
+        // Tạo map từ dữ liệu DB
+        const dateMap = {};
+        for (const item of stats) {
+            dateMap[item._id] = item.count;
+        }
+
+        // Tạo chuỗi ngày liên tục từ startDate đến hôm nay để biểu đồ không bị đứt đoạn và luôn chạm mốc hiện tại
+        const result = [];
+        const current = new Date(startDate);
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
+
+        while (current <= today) {
+            const yyyy = current.getFullYear();
+            const mm = String(current.getMonth() + 1).padStart(2, '0');
+            const dd = String(current.getDate()).padStart(2, '0');
+            const key = `${yyyy}-${mm}-${dd}`;
+
+            result.push({
+                _id: key,
+                count: dateMap[key] || 0
+            });
+
+            current.setDate(current.getDate() + 1);
+        }
+
+        res.json(result);
     } catch (err) {
         console.error("❌ Lỗi lấy stats:", err);
         res.status(500).json({ 

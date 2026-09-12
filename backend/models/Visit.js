@@ -32,4 +32,7 @@ const VisitSchema = new mongoose.Schema({
 VisitSchema.index({ page: 1, timestamp: -1 });
 VisitSchema.index({ createdAt: -1 });
 
+// TTL Index: Tự động dọn sạch log truy cập cũ hơn 1 năm (365 ngày) để chống tràn database
+VisitSchema.index({ createdAt: 1 }, { expireAfterSeconds: 365 * 24 * 60 * 60 });
+
 module.exports = mongoose.model("Visit", VisitSchema);
