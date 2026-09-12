@@ -67,4 +67,7 @@ jobs:
             echo "⚡ Reloading PM2 process (zero-downtime)..."
             pm2 reload kca-backend --update-env || pm2 restart kca-backend
 
+            echo "🌐 Reloading Nginx..."
+            systemctl reload nginx
+
             echo "✅ Deployment finished successfully!"
